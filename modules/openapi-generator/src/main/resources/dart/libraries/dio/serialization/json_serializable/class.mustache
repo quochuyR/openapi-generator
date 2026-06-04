@@ -2,11 +2,13 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
 {{/skipCopyWith}}
 import 'package:json_annotation/json_annotation.dart';
+import 'package:annotation_builder/annotation_builder.dart';
 {{#useEquatable}}
 import 'package:equatable/src/equatable_utils.dart';
 {{/useEquatable}}
 
 part '{{classFilename}}.g.dart';
+part '{{classFilename}}.map.g.dart';
 
 {{!
     Classes with polymorphism or composition may generate unused imports,
@@ -29,6 +31,7 @@ part '{{classFilename}}.g.dart';
   disallowUnrecognizedKeys: false,
   explicitToJson: true,
 )
+@MapAnnotation()
 class {{{classname}}} {
 {{>serialization/json_serializable/dart_constructor}}
 
@@ -122,9 +125,13 @@ class {{{classname}}} {
   {{/useEquatable}}
 
   factory {{{classname}}}.fromJson(Map<String, dynamic> json) => _${{{classname}}}FromJson(json);
+  factory {{{classname}}}.fromDartMap(Map<String, dynamic> json) => _${{{classname}}}FromDartMap(json);
 
   Map<String, dynamic> toJson() => _${{{classname}}}ToJson(this);
+  Map<String, dynamic> toDartMap() => _${{{classname}}}ToDartMap(this);
 
+
+  
   @override
   String toString() {
     return toJson().toString();
