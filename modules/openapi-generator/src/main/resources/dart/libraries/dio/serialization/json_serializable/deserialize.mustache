@@ -12,6 +12,9 @@ final _regMap = RegExp(r'^Map<String,(.*)>$');
 
   ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType, {bool growable= true}) {
       switch (targetType) {
+        case 'Object':
+          // Schema không có kiểu (vd List<object>) -> giữ nguyên dữ liệu đã decode, không có model để fromJson
+          return value as ReturnType;
         case 'String':
           return '$value' as ReturnType;
         case 'int':
