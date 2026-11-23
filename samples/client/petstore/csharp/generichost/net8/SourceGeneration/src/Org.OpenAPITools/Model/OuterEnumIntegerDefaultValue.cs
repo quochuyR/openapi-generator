@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -60,13 +59,13 @@ namespace Org.OpenAPITools.Model
         /// <returns></returns>
         public static OuterEnumIntegerDefaultValue FromString(string value)
         {
-            if (value.Equals((0).ToString()))
+            if (value.Equals((0).ToString(System.Globalization.CultureInfo.InvariantCulture)))
                 return OuterEnumIntegerDefaultValue.NUMBER_0;
 
-            if (value.Equals((1).ToString()))
+            if (value.Equals((1).ToString(System.Globalization.CultureInfo.InvariantCulture)))
                 return OuterEnumIntegerDefaultValue.NUMBER_1;
 
-            if (value.Equals((2).ToString()))
+            if (value.Equals((2).ToString(System.Globalization.CultureInfo.InvariantCulture)))
                 return OuterEnumIntegerDefaultValue.NUMBER_2;
 
             throw new NotImplementedException($"Could not convert value to type OuterEnumIntegerDefaultValue: '{value}'");
@@ -79,13 +78,13 @@ namespace Org.OpenAPITools.Model
         /// <returns></returns>
         public static OuterEnumIntegerDefaultValue? FromStringOrDefault(string value)
         {
-            if (value.Equals((0).ToString()))
+            if (value.Equals((0).ToString(System.Globalization.CultureInfo.InvariantCulture)))
                 return OuterEnumIntegerDefaultValue.NUMBER_0;
 
-            if (value.Equals((1).ToString()))
+            if (value.Equals((1).ToString(System.Globalization.CultureInfo.InvariantCulture)))
                 return OuterEnumIntegerDefaultValue.NUMBER_1;
 
-            if (value.Equals((2).ToString()))
+            if (value.Equals((2).ToString(System.Globalization.CultureInfo.InvariantCulture)))
                 return OuterEnumIntegerDefaultValue.NUMBER_2;
 
             return null;
@@ -118,15 +117,10 @@ namespace Org.OpenAPITools.Model
         /// <returns></returns>
         public override OuterEnumIntegerDefaultValue Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            string? rawValue = reader.GetString();
-
-            OuterEnumIntegerDefaultValue? result = rawValue == null
-                ? null
-                : OuterEnumIntegerDefaultValueValueConverter.FromStringOrDefault(rawValue);
-
+            string rawValue = reader.GetInt32().ToString(System.Globalization.CultureInfo.InvariantCulture);
+            OuterEnumIntegerDefaultValue? result = OuterEnumIntegerDefaultValueValueConverter.FromStringOrDefault(rawValue);
             if (result != null)
                 return result.Value;
-
             throw new JsonException();
         }
 
@@ -138,7 +132,7 @@ namespace Org.OpenAPITools.Model
         /// <param name="options"></param>
         public override void Write(Utf8JsonWriter writer, OuterEnumIntegerDefaultValue outerEnumIntegerDefaultValue, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(OuterEnumIntegerDefaultValueValueConverter.ToJsonValue(outerEnumIntegerDefaultValue).ToString());
+            writer.WriteNumberValue(OuterEnumIntegerDefaultValueValueConverter.ToJsonValue(outerEnumIntegerDefaultValue));
         }
     }
 
@@ -156,15 +150,13 @@ namespace Org.OpenAPITools.Model
         /// <returns></returns>
         public override OuterEnumIntegerDefaultValue? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            string? rawValue = reader.GetString();
+            if (reader.TokenType == JsonTokenType.Null)
+                return null;
 
-            OuterEnumIntegerDefaultValue? result = rawValue == null
-                ? null
-                : OuterEnumIntegerDefaultValueValueConverter.FromStringOrDefault(rawValue);
-
+            string rawValue = reader.GetInt32().ToString(System.Globalization.CultureInfo.InvariantCulture);
+            OuterEnumIntegerDefaultValue? result = OuterEnumIntegerDefaultValueValueConverter.FromStringOrDefault(rawValue);
             if (result != null)
                 return result.Value;
-
             throw new JsonException();
         }
 
@@ -176,15 +168,10 @@ namespace Org.OpenAPITools.Model
         /// <param name="options"></param>
         public override void Write(Utf8JsonWriter writer, OuterEnumIntegerDefaultValue? outerEnumIntegerDefaultValue, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(outerEnumIntegerDefaultValue.HasValue ? OuterEnumIntegerDefaultValueValueConverter.ToJsonValue(outerEnumIntegerDefaultValue.Value).ToString() : "null");
+            if (outerEnumIntegerDefaultValue.HasValue)
+                writer.WriteNumberValue(OuterEnumIntegerDefaultValueValueConverter.ToJsonValue(outerEnumIntegerDefaultValue.Value));
+            else
+                writer.WriteNullValue();
         }
     }
-
-
-    /// <summary>
-    /// The OuterEnumIntegerDefaultValueSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(OuterEnumIntegerDefaultValue))]
-    public partial class OuterEnumIntegerDefaultValueSerializationContext : JsonSerializerContext { }
 }

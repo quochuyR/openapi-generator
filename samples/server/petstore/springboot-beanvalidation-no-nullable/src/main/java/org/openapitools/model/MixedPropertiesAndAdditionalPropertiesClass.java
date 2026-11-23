@@ -1,40 +1,44 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import org.openapitools.model.Animal;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-
-
-import java.util.*;
-import javax.annotation.Generated;
 
 /**
  * MixedPropertiesAndAdditionalPropertiesClass
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class MixedPropertiesAndAdditionalPropertiesClass {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable UUID uuid;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime dateTime;
 
-  @Valid
-  private Map<String, Animal> map = new HashMap<>();
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
+  private Map<String, @Valid Animal> map = new HashMap<>();
 
   public MixedPropertiesAndAdditionalPropertiesClass uuid(@Nullable UUID uuid) {
     this.uuid = uuid;
@@ -46,12 +50,13 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
    * @return uuid
    */
   @Valid 
-  @ApiModelProperty(value = "")
+  @Schema(name = "uuid", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("uuid")
   public @Nullable UUID getUuid() {
     return uuid;
   }
 
+  @JsonProperty("uuid")
   public void setUuid(@Nullable UUID uuid) {
     this.uuid = uuid;
   }
@@ -66,17 +71,18 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
    * @return dateTime
    */
   @Valid 
-  @ApiModelProperty(value = "")
+  @Schema(name = "dateTime", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("dateTime")
   public @Nullable OffsetDateTime getDateTime() {
     return dateTime;
   }
 
+  @JsonProperty("dateTime")
   public void setDateTime(@Nullable OffsetDateTime dateTime) {
     this.dateTime = dateTime;
   }
 
-  public MixedPropertiesAndAdditionalPropertiesClass map(Map<String, Animal> map) {
+  public MixedPropertiesAndAdditionalPropertiesClass map(Map<String, @Valid Animal> map) {
     this.map = map;
     return this;
   }
@@ -93,14 +99,15 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
    * Get map
    * @return map
    */
-  @Valid 
-  @ApiModelProperty(value = "")
+  
+  @Schema(name = "map", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("map")
-  public Map<String, Animal> getMap() {
+  public Map<String, @Valid Animal> getMap() {
     return map;
   }
 
-  public void setMap(Map<String, Animal> map) {
+  @JsonProperty("map")
+  public void setMap(Map<String, @Valid Animal> map) {
     this.map = map;
   }
 
@@ -139,10 +146,7 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

@@ -18,6 +18,8 @@ repositories {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+    // emit type annotations such as List<@Valid Pet> so Bean Validation can see them at runtime
+    kotlinOptions.freeCompilerArgs += "-Xemit-jvm-type-annotations"
 }
 
 plugins {
@@ -58,6 +60,7 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-oauth2:2.2.5.RELEASE")
 
     implementation("javax.validation:validation-api")
+
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 
 }

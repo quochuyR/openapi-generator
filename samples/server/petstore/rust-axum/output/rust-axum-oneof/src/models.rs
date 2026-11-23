@@ -1,11 +1,23 @@
 #![allow(unused_qualifications)]
 
+#[cfg(feature = "server")]
 use http::HeaderValue;
 use validator::Validate;
 
 #[cfg(feature = "server")]
 use crate::header;
 use crate::{models, types::*};
+
+#[cfg(feature = "server")]
+#[allow(dead_code)]
+pub type SSE = std::pin::Pin<
+    std::boxed::Box<
+        dyn futures_util::Stream<
+                Item = std::result::Result<axum::response::sse::Event, std::convert::Infallible>,
+            > + std::marker::Send
+            + std::marker::Sync,
+    >,
+>;
 
 #[allow(dead_code)]
 fn from_validation_error(e: validator::ValidationError) -> validator::ValidationErrors {
@@ -14,9 +26,21 @@ fn from_validation_error(e: validator::ValidationError) -> validator::Validation
     errs
 }
 
+/// XSS detection relies on `ammonia`, which is only pulled in by the `server` feature.
+/// Without it (e.g. models-only WASM builds), values are never flagged as HTML.
+#[cfg(feature = "server")]
+fn contains_html(v: &str) -> bool {
+    ammonia::is_html(v)
+}
+
+#[cfg(not(feature = "server"))]
+fn contains_html(_v: &str) -> bool {
+    false
+}
+
 #[allow(dead_code)]
 pub fn check_xss_string(v: &str) -> std::result::Result<(), validator::ValidationError> {
-    if ammonia::is_html(v) {
+    if contains_html(v) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -25,7 +49,7 @@ pub fn check_xss_string(v: &str) -> std::result::Result<(), validator::Validatio
 
 #[allow(dead_code)]
 pub fn check_xss_vec_string(v: &[String]) -> std::result::Result<(), validator::ValidationError> {
-    if v.iter().any(|i| ammonia::is_html(i)) {
+    if v.iter().any(|i| contains_html(i)) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -36,7 +60,7 @@ pub fn check_xss_vec_string(v: &[String]) -> std::result::Result<(), validator::
 pub fn check_xss_map_string(
     v: &std::collections::HashMap<String, String>,
 ) -> std::result::Result<(), validator::ValidationError> {
-    if v.keys().any(|k| ammonia::is_html(k)) || v.values().any(|v| ammonia::is_html(v)) {
+    if v.keys().any(|k| contains_html(k)) || v.values().any(|v| contains_html(v)) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -50,7 +74,7 @@ pub fn check_xss_map_nested<T>(
 where
     T: validator::Validate,
 {
-    if v.keys().any(|k| ammonia::is_html(k)) || v.values().any(|v| v.validate().is_err()) {
+    if v.keys().any(|k| contains_html(k)) || v.values().any(|v| v.validate().is_err()) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -61,7 +85,7 @@ where
 pub fn check_xss_map<T>(
     v: &std::collections::HashMap<String, T>,
 ) -> std::result::Result<(), validator::ValidationError> {
-    if v.keys().any(|k| ammonia::is_html(k)) {
+    if v.keys().any(|k| contains_html(k)) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -70,6 +94,7 @@ pub fn check_xss_map<T>(
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
+#[serde(deny_unknown_fields)]
 pub struct Goodbye {
     /// Note: inline enums are not fully supported by openapi-generator
     #[serde(default = "Goodbye::_name_for_op")]
@@ -159,10 +184,7 @@ impl std::str::FromStr for Goodbye {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "op" => intermediate_rep.op.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "op" => intermediate_rep.op.push(val.to_string()),
                     #[allow(clippy::redundant_clone)]
                     "d" => intermediate_rep.d.push(
                         <models::GoodbyeD as std::str::FromStr>::from_str(val)
@@ -304,10 +326,7 @@ impl std::str::FromStr for GoodbyeD {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "goodbye_message" => intermediate_rep.goodbye_message.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "goodbye_message" => intermediate_rep.goodbye_message.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing GoodbyeD".to_string(),
@@ -375,6 +394,7 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<GoodbyeD> {
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
+#[serde(deny_unknown_fields)]
 pub struct Greeting {
     #[serde(rename = "d")]
     #[validate(nested)]
@@ -467,10 +487,7 @@ impl std::str::FromStr for Greeting {
                         <models::GreetingD as std::str::FromStr>::from_str(val)
                             .map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "op" => intermediate_rep.op.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "op" => intermediate_rep.op.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing Greeting".to_string(),
@@ -607,10 +624,7 @@ impl std::str::FromStr for GreetingD {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "greet_message" => intermediate_rep.greet_message.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "greet_message" => intermediate_rep.greet_message.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing GreetingD".to_string(),
@@ -678,6 +692,7 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<GreetingD> {
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
+#[serde(deny_unknown_fields)]
 pub struct Hello {
     /// Note: inline enums are not fully supported by openapi-generator
     #[serde(default = "Hello::_name_for_op")]
@@ -767,10 +782,7 @@ impl std::str::FromStr for Hello {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "op" => intermediate_rep.op.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "op" => intermediate_rep.op.push(val.to_string()),
                     #[allow(clippy::redundant_clone)]
                     "d" => intermediate_rep.d.push(
                         <models::HelloD as std::str::FromStr>::from_str(val)
@@ -910,10 +922,7 @@ impl std::str::FromStr for HelloD {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "welcome_message" => intermediate_rep.welcome_message.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "welcome_message" => intermediate_rep.welcome_message.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing HelloD".to_string(),
@@ -1192,10 +1201,7 @@ impl std::str::FromStr for YoMessage {
                         <models::YoMessageD as std::str::FromStr>::from_str(val)
                             .map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "op" => intermediate_rep.op.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "op" => intermediate_rep.op.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing YoMessage".to_string(),
@@ -1332,10 +1338,7 @@ impl std::str::FromStr for YoMessageD {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "nickname" => intermediate_rep.nickname.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "nickname" => intermediate_rep.nickname.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing YoMessageD".to_string(),

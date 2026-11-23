@@ -81,6 +81,14 @@ public enum DownloadException: Error, Sendable {
     case requestMissingURL
 }
 
+public enum RequestBuilderError: Error, Sendable {
+    case bodyEncodingFailed(any Error)
+    case unsupportedHTTPMethod(String)
+    case unsupportedMediaType(String)
+    case unsupportedParameterValue(key: String)
+    case unsupportedResponseType(String)
+}
+
 public enum DecodableRequestBuilderError: Error, Sendable {
     case emptyDataResponse
     case nilHTTPResponse
@@ -116,25 +124,20 @@ public struct Response<T> {
 extension Response : Sendable where T : Sendable {}
 
 public final class RequestTask: @unchecked Sendable {
-    private let lock = NSRecursiveLock()
-    private var task: URLSessionDataTaskProtocol?
+    private let _state = OpenAPIMutex<URLSessionDataTaskProtocol?>(nil)
 
     internal func set(task: URLSessionDataTaskProtocol) {
-        lock.withLock {
-            self.task = task
-        }
+        _state.withValue { $0 = task }
     }
 
     internal func get() -> URLSessionDataTaskProtocol? {
-        lock.withLock {
-            task
-        }
+        _state.value
     }
 
     public func cancel() {
-        lock.withLock {
-            task?.cancel()
-            task = nil
+        _state.withValue {
+            $0?.cancel()
+            $0 = nil
         }
     }
 }

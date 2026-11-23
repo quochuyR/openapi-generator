@@ -1,30 +1,28 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
 import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-
-
 import java.util.*;
-import javax.annotation.Generated;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 /**
  * SpecialModelName
  */
 
 @JsonTypeName("_special_model.name_")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class SpecialModelName {
 
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private Optional<Long> $specialPropertyName = Optional.empty();
 
   public SpecialModelName $specialPropertyName(Long $specialPropertyName) {
@@ -37,12 +35,13 @@ public class SpecialModelName {
    * @return $specialPropertyName
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "$special[property.name]", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("$special[property.name]")
   public Optional<Long> get$SpecialPropertyName() {
     return $specialPropertyName;
   }
 
+  @JsonProperty("$special[property.name]")
   public void set$SpecialPropertyName(Optional<Long> $specialPropertyName) {
     this.$specialPropertyName = $specialPropertyName;
   }
@@ -77,11 +76,8 @@ public class SpecialModelName {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
   
   public static class Builder {

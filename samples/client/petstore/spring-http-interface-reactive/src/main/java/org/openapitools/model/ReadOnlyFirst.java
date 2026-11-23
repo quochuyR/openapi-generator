@@ -1,27 +1,26 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Generated;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 /**
  * ReadOnlyFirst
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class ReadOnlyFirst {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String bar;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String baz;
 
   public ReadOnlyFirst bar(@Nullable String bar) {
@@ -33,12 +32,12 @@ public class ReadOnlyFirst {
    * Get bar
    * @return bar
    */
-  
   @JsonProperty("bar")
   public @Nullable String getBar() {
     return bar;
   }
 
+  @JsonProperty("bar")
   public void setBar(@Nullable String bar) {
     this.bar = bar;
   }
@@ -52,12 +51,12 @@ public class ReadOnlyFirst {
    * Get baz
    * @return baz
    */
-  
   @JsonProperty("baz")
   public @Nullable String getBaz() {
     return baz;
   }
 
+  @JsonProperty("baz")
   public void setBaz(@Nullable String baz) {
     this.baz = baz;
   }
@@ -95,10 +94,7 @@ public class ReadOnlyFirst {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

@@ -8,18 +8,18 @@ import org.springframework.http.MediaType;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 
 /**
  * A delegate to be called by the {@link PetApiController}}.
  * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public interface PetApiDelegate {
 
     default Optional<NativeWebRequest> getRequest() {
@@ -35,11 +35,11 @@ public interface PetApiDelegate {
      *         or Invalid input (status code 405)
      * @see PetApi#addPet
      */
-    default Pet addPet(Pet pet) {
+    default @Valid Pet addPet(Pet pet) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"name\" : \"doggie\", \"id\" : 0, \"category\" : { \"name\" : \"name\", \"id\" : 6 }, \"tags\" : [ { \"name\" : \"name\", \"id\" : 1 }, { \"name\" : \"name\", \"id\" : 1 } ], \"status\" : \"available\" }";
+                    String exampleString = "{ \"id\" : 0, \"category\" : { \"id\" : 6, \"name\" : \"name\" }, \"name\" : \"doggie\", \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"tags\" : [ { \"id\" : 1, \"name\" : \"name\" }, { \"id\" : 1, \"name\" : \"name\" } ], \"status\" : \"available\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -78,11 +78,11 @@ public interface PetApiDelegate {
      *         or Invalid status value (status code 400)
      * @see PetApi#findPetsByStatus
      */
-    default List<Pet> findPetsByStatus(List<String> status) {
+    default @Valid List<@Valid Pet> findPetsByStatus(List<String> status) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"name\" : \"doggie\", \"id\" : 0, \"category\" : { \"name\" : \"name\", \"id\" : 6 }, \"tags\" : [ { \"name\" : \"name\", \"id\" : 1 }, { \"name\" : \"name\", \"id\" : 1 } ], \"status\" : \"available\" }, { \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"name\" : \"doggie\", \"id\" : 0, \"category\" : { \"name\" : \"name\", \"id\" : 6 }, \"tags\" : [ { \"name\" : \"name\", \"id\" : 1 }, { \"name\" : \"name\", \"id\" : 1 } ], \"status\" : \"available\" } ]";
+                    String exampleString = "[ { \"id\" : 0, \"category\" : { \"id\" : 6, \"name\" : \"name\" }, \"name\" : \"doggie\", \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"tags\" : [ { \"id\" : 1, \"name\" : \"name\" }, { \"id\" : 1, \"name\" : \"name\" } ], \"status\" : \"available\" }, { \"id\" : 0, \"category\" : { \"id\" : 6, \"name\" : \"name\" }, \"name\" : \"doggie\", \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"tags\" : [ { \"id\" : 1, \"name\" : \"name\" }, { \"id\" : 1, \"name\" : \"name\" } ], \"status\" : \"available\" } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -108,11 +108,11 @@ public interface PetApiDelegate {
      * @see PetApi#findPetsByTags
      */
     @Deprecated
-    default List<Pet> findPetsByTags(List<String> tags) {
+    default @Valid List<@Valid Pet> findPetsByTags(List<String> tags) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "[ { \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"name\" : \"doggie\", \"id\" : 0, \"category\" : { \"name\" : \"name\", \"id\" : 6 }, \"tags\" : [ { \"name\" : \"name\", \"id\" : 1 }, { \"name\" : \"name\", \"id\" : 1 } ], \"status\" : \"available\" }, { \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"name\" : \"doggie\", \"id\" : 0, \"category\" : { \"name\" : \"name\", \"id\" : 6 }, \"tags\" : [ { \"name\" : \"name\", \"id\" : 1 }, { \"name\" : \"name\", \"id\" : 1 } ], \"status\" : \"available\" } ]";
+                    String exampleString = "[ { \"id\" : 0, \"category\" : { \"id\" : 6, \"name\" : \"name\" }, \"name\" : \"doggie\", \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"tags\" : [ { \"id\" : 1, \"name\" : \"name\" }, { \"id\" : 1, \"name\" : \"name\" } ], \"status\" : \"available\" }, { \"id\" : 0, \"category\" : { \"id\" : 6, \"name\" : \"name\" }, \"name\" : \"doggie\", \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"tags\" : [ { \"id\" : 1, \"name\" : \"name\" }, { \"id\" : 1, \"name\" : \"name\" } ], \"status\" : \"available\" } ]";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -137,11 +137,11 @@ public interface PetApiDelegate {
      *         or Pet not found (status code 404)
      * @see PetApi#getPetById
      */
-    default Pet getPetById(Long petId) {
+    default @Valid Pet getPetById(Long petId) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"name\" : \"doggie\", \"id\" : 0, \"category\" : { \"name\" : \"name\", \"id\" : 6 }, \"tags\" : [ { \"name\" : \"name\", \"id\" : 1 }, { \"name\" : \"name\", \"id\" : 1 } ], \"status\" : \"available\" }";
+                    String exampleString = "{ \"id\" : 0, \"category\" : { \"id\" : 6, \"name\" : \"name\" }, \"name\" : \"doggie\", \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"tags\" : [ { \"id\" : 1, \"name\" : \"name\" }, { \"id\" : 1, \"name\" : \"name\" } ], \"status\" : \"available\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -169,11 +169,11 @@ public interface PetApiDelegate {
      * @see <a href="http://petstore.swagger.io/v2/doc/updatePet">Update an existing pet Documentation</a>
      * @see PetApi#updatePet
      */
-    default Pet updatePet(Pet pet) {
+    default @Valid Pet updatePet(Pet pet) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"name\" : \"doggie\", \"id\" : 0, \"category\" : { \"name\" : \"name\", \"id\" : 6 }, \"tags\" : [ { \"name\" : \"name\", \"id\" : 1 }, { \"name\" : \"name\", \"id\" : 1 } ], \"status\" : \"available\" }";
+                    String exampleString = "{ \"id\" : 0, \"category\" : { \"id\" : 6, \"name\" : \"name\" }, \"name\" : \"doggie\", \"photoUrls\" : [ \"photoUrls\", \"photoUrls\" ], \"tags\" : [ { \"id\" : 1, \"name\" : \"name\" }, { \"id\" : 1, \"name\" : \"name\" } ], \"status\" : \"available\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -215,7 +215,7 @@ public interface PetApiDelegate {
      * @return successful operation (status code 200)
      * @see PetApi#uploadFile
      */
-    default ModelApiResponse uploadFile(Long petId,
+    default @Valid ModelApiResponse uploadFile(Long petId,
         String additionalMetadata,
         MultipartFile file) {
         getRequest().ifPresent(request -> {

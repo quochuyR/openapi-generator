@@ -82,6 +82,14 @@ public enum DownloadException: Error, Sendable {
     case requestMissingURL
 }
 
+public enum RequestBuilderError: Error, Sendable {
+    case bodyEncodingFailed(any Error)
+    case unsupportedHTTPMethod(String)
+    case unsupportedMediaType(String)
+    case unsupportedParameterValue(key: String)
+    case unsupportedResponseType(String)
+}
+
 public enum DecodableRequestBuilderError: Error, Sendable {
     case emptyDataResponse
     case nilHTTPResponse
@@ -133,25 +141,20 @@ public struct AnyResponseSerializer<T: Sendable>: ResponseSerializer {
 }
 
 public final class RequestTask: @unchecked Sendable {
-    private let lock = NSRecursiveLock()
-    private var request: Request?
+    private let _state = OpenAPIMutex<Request?>(nil)
 
     internal func set(request: Request) {
-        lock.withLock {
-            self.request = request
-        }
+        _state.withValue { $0 = request }
     }
 
     internal func get() -> Request? {
-        lock.withLock {
-            request
-        }
+        _state.value
     }
 
     public func cancel() {
-        lock.withLock {
-            request?.cancel()
-            request = nil
+        _state.withValue {
+            $0?.cancel()
+            $0 = nil
         }
     }
 }

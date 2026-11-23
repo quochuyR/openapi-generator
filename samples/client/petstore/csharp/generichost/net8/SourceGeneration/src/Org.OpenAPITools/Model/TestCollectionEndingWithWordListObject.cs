@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -56,7 +55,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets TestCollectionEndingWithWordList
         /// </summary>
         [JsonPropertyName("TestCollectionEndingWithWordList")]
-        public List<TestCollectionEndingWithWordList>? TestCollectionEndingWithWordList { get { return this.TestCollectionEndingWithWordListOption; } set { this.TestCollectionEndingWithWordListOption = new(value); } }
+        public List<TestCollectionEndingWithWordList>? TestCollectionEndingWithWordList { get { return this.TestCollectionEndingWithWordListOption.Value; } set { this.TestCollectionEndingWithWordListOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -83,7 +82,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -92,8 +91,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="TestCollectionEndingWithWordListObject" />
     /// </summary>
-    public class TestCollectionEndingWithWordListObjectJsonConverter : JsonConverter<TestCollectionEndingWithWordListObject>
+    public partial class TestCollectionEndingWithWordListObjectJsonConverter : JsonConverter<TestCollectionEndingWithWordListObject>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TestCollectionEndingWithWordListObjectJsonConverter" /> class.
+        /// </summary>
+        public TestCollectionEndingWithWordListObjectJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="TestCollectionEndingWithWordListObject" />
         /// </summary>
@@ -138,7 +147,7 @@ namespace Org.OpenAPITools.Model
             }
 
             if (testCollectionEndingWithWordList.IsSet && testCollectionEndingWithWordList.Value == null)
-                throw new ArgumentNullException(nameof(testCollectionEndingWithWordList), "Property is not nullable for class TestCollectionEndingWithWordListObject.");
+                throw new JsonException("Property is not nullable for class TestCollectionEndingWithWordListObject: TestCollectionEndingWithWordList.");
 
             return new TestCollectionEndingWithWordListObject(testCollectionEndingWithWordList);
         }
@@ -149,7 +158,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="testCollectionEndingWithWordListObject"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, TestCollectionEndingWithWordListObject testCollectionEndingWithWordListObject, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -164,11 +172,10 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="testCollectionEndingWithWordListObject"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, TestCollectionEndingWithWordListObject testCollectionEndingWithWordListObject, JsonSerializerOptions jsonSerializerOptions)
         {
             if (testCollectionEndingWithWordListObject.TestCollectionEndingWithWordListOption.IsSet && testCollectionEndingWithWordListObject.TestCollectionEndingWithWordList == null)
-                throw new ArgumentNullException(nameof(testCollectionEndingWithWordListObject.TestCollectionEndingWithWordList), "Property is required for class TestCollectionEndingWithWordListObject.");
+                throw new JsonException("Cannot write null property TestCollectionEndingWithWordListObject.TestCollectionEndingWithWordList to non-nullable JSON property 'TestCollectionEndingWithWordList'.");
 
             if (testCollectionEndingWithWordListObject.TestCollectionEndingWithWordListOption.IsSet)
             {
@@ -177,11 +184,4 @@ namespace Org.OpenAPITools.Model
             }
         }
     }
-
-    /// <summary>
-    /// The TestCollectionEndingWithWordListObjectSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(TestCollectionEndingWithWordListObject))]
-    public partial class TestCollectionEndingWithWordListObjectSerializationContext : JsonSerializerContext { }
 }

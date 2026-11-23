@@ -43,6 +43,10 @@
                         <plugin>spring</plugin>
                     </compilerPlugins>
                     <jvmTarget>11</jvmTarget>
+                    <args>
+                        <!-- emit type annotations such as List<@Valid Pet> so Bean Validation can see them at runtime -->
+                        <arg>-Xemit-jvm-type-annotations</arg>
+                    </args>
                 </configuration>
                 <executions>
                     <execution>
@@ -120,6 +124,11 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
             <version>${javax-annotation.version}</version>
@@ -129,6 +138,11 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>
             <version>${kotlin-test-junit5.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

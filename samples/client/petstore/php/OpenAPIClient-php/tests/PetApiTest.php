@@ -414,8 +414,8 @@ class PetApiTest extends TestCase
         $contents = $request->getBody()->getContents();
 
         $this->assertBodyContents('name', $name, $contents);
-        $this->assertBodyContents('photo_urls[0]', $photo_urls[0], $contents);
-        $this->assertBodyContents('photo_urls[1]', $photo_urls[1], $contents);
+        $this->assertBodyContents('photoUrls[0]', $photo_urls[0], $contents);
+        $this->assertBodyContents('photoUrls[1]', $photo_urls[1], $contents);
         $this->assertBodyContents('category[id]', $category->getId(), $contents);
         $this->assertBodyContents('category[name]', $category->getName(), $contents);
         $this->assertBodyContents('tags[0][id]', $tags[0]->getId(), $contents);
@@ -433,14 +433,12 @@ class PetApiTest extends TestCase
         $length = strlen((string) ($value));
         $contents = implode("\n", array_map('trim', explode("\n", $contents)));
 
-        $expected = <<<END
-            Content-Disposition: form-data; name="{$name}"
-            Content-Length: {$length}
-            
-            {$value}
-            END;
+        // guzzlehttp/psr7 3.x no longer adds a Content-Length header to each part
+        $expected = '/' . preg_quote("Content-Disposition: form-data; name=\"{$name}\"", '/')
+            . "\n(Content-Length: {$length}\n)?\n"
+            . preg_quote((string) $value, '/') . "\n/";
 
-        $this->assertStringContainsString($expected, $contents);
+        $this->assertMatchesRegularExpression($expected, $contents);
     }
 
 //    Disabled as currently we don't have any endpoint that would return file

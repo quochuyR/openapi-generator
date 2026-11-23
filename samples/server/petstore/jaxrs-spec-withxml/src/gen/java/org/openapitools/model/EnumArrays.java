@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 
 @JsonTypeName("EnumArrays")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")    @XmlAccessorType(XmlAccessType.FIELD)
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")    @XmlAccessorType(XmlAccessType.FIELD)
      @XmlType(name = "EnumArrays", propOrder =
     { "justSymbol", "arrayEnum"
     })
@@ -134,7 +134,7 @@ public enum ArrayEnumEnum {
     }
 }
 
-  private @Valid List<ArrayEnumEnum> arrayEnum = new ArrayList<>();
+  private List<ArrayEnumEnum> arrayEnum = new ArrayList<>();
 
   protected EnumArrays(EnumArraysBuilder<?, ?> b) {
     this.justSymbol = b.justSymbol;
@@ -235,10 +235,7 @@ public enum ArrayEnumEnum {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 
 
@@ -276,4 +273,3 @@ public enum ArrayEnumEnum {
     }
   }
 }
-

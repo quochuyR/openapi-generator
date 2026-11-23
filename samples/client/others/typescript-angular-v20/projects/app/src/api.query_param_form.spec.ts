@@ -7,7 +7,13 @@ import {DefaultService, Filter, provideApi} from '@swagger/typescript-angular-qu
 const ids: number[] = [4, 5];
 const filter: Filter = {name: 'John', age: 37, nicknames: ['Joe', 'Joey']};
 const filterWithSpecialCharacters: Filter = {name: 'Éléonore &,|+', age: 42, nicknames: ['Elé', 'Ellie']};
+const filterWithUndefined: Filter = {name: 'John', age: undefined, nicknames: ['Joe']};
+const filterAllUndefined: Filter = {name: undefined, age: undefined, nicknames: undefined};
+const filterWithNullItems = {name: 'John', nicknames: ['Joe', null, undefined]} as unknown as Filter;
+const filterWithOnlyNullItems = {name: 'John', nicknames: [null, undefined], age: 37} as unknown as Filter;
+const filterWithEmptyArray: Filter = {name: 'John', nicknames: [], age: 37};
 const country: string = "Belgium";
+const tags: Set<string> = new Set(['a', 'b']);
 
 describe('Form Query Param testing', () => {
   let httpTesting: HttpTestingController;
@@ -74,9 +80,28 @@ describe('Form Query Param testing', () => {
     expect(req.request.method).toEqual('GET');
   });
 
+  it('should separate the query parameter with ampersands (object with undefined field)', async () => {
+    service.searchExplode(undefined, filterWithUndefined, undefined).subscribe();
+
+    const req = httpTesting.expectOne('http://localhost/search_explode?name=John&nicknames=Joe');
+    expect(req.request.method).toEqual('GET');
+  });
+
   it('should separate the query parameter with ampersands (simple only)', async () => {
     service.searchExplode(undefined, undefined, country).subscribe();
     const req = httpTesting.expectOne('http://localhost/search_explode?country=Belgium');
+    expect(req.request.method).toEqual('GET');
+  });
+
+  it('should separate the query parameter with ampersands (set only)', async () => {
+    service.searchExplode(undefined, undefined, undefined, tags).subscribe();
+    const req = httpTesting.expectOne('http://localhost/search_explode?tags=a&tags=b');
+    expect(req.request.method).toEqual('GET');
+  });
+
+  it('should separate the query parameter with ampersands (all set including tags)', async () => {
+    service.searchExplode(ids, filter, country, tags).subscribe();
+    const req = httpTesting.expectOne('http://localhost/search_explode?ids=4&ids=5&name=John&age=37&nicknames=Joe&nicknames=Joey&country=Belgium&tags=a&tags=b');
     expect(req.request.method).toEqual('GET');
   });
 
@@ -120,9 +145,56 @@ describe('Form Query Param testing', () => {
     expect(req.request.method).toEqual('GET');
   });
 
+  it('should separate the query parameter with comma (object with undefined field)', async () => {
+    service.searchNotExplode(undefined, filterWithUndefined, undefined).subscribe();
+
+    const req = httpTesting.expectOne('http://localhost/search_not_explode?filter=name,John,nicknames,Joe');
+    expect(req.request.method).toEqual('GET');
+  });
+
+  it('should separate the query parameter with comma (object with all fields undefined)', async () => {
+    service.searchNotExplode(undefined, filterAllUndefined, undefined).subscribe();
+
+    const req = httpTesting.expectOne('http://localhost/search_not_explode?filter=');
+    expect(req.request.method).toEqual('GET');
+  });
+
+  it('should separate the query parameter with comma (object with null array items)', async () => {
+    service.searchNotExplode(undefined, filterWithNullItems, undefined).subscribe();
+
+    const req = httpTesting.expectOne('http://localhost/search_not_explode?filter=name,John,nicknames,Joe');
+    expect(req.request.method).toEqual('GET');
+  });
+
+  it('should separate the query parameter with comma (object with only null array items)', async () => {
+    service.searchNotExplode(undefined, filterWithOnlyNullItems, undefined).subscribe();
+
+    const req = httpTesting.expectOne('http://localhost/search_not_explode?filter=name,John,age,37');
+    expect(req.request.method).toEqual('GET');
+  });
+
+  it('should separate the query parameter with comma (object with empty array field)', async () => {
+    service.searchNotExplode(undefined, filterWithEmptyArray, undefined).subscribe();
+
+    const req = httpTesting.expectOne('http://localhost/search_not_explode?filter=name,John,age,37');
+    expect(req.request.method).toEqual('GET');
+  });
+
   it('should separate the query parameter with comma (simple only)', async () => {
     service.searchNotExplode(undefined, undefined, country).subscribe();
     const req = httpTesting.expectOne('http://localhost/search_not_explode?country=Belgium');
+    expect(req.request.method).toEqual('GET');
+  });
+
+  it('should separate the query parameter with comma (set only)', async () => {
+    service.searchNotExplode(undefined, undefined, undefined, tags).subscribe();
+    const req = httpTesting.expectOne('http://localhost/search_not_explode?tags=a,b');
+    expect(req.request.method).toEqual('GET');
+  });
+
+  it('should separate the query parameter with comma (all set including tags)', async () => {
+    service.searchNotExplode(ids, filter, country, tags).subscribe();
+    const req = httpTesting.expectOne('http://localhost/search_not_explode?ids=4,5&filter=name,John,age,37,nicknames,Joe,Joey&country=Belgium&tags=a,b');
     expect(req.request.method).toEqual('GET');
   });
 

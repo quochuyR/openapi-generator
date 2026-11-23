@@ -1,94 +1,111 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.Generated;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
 
 /**
  * XmlItem
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class XmlItem {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String attributeString;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable BigDecimal attributeNumber;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Integer attributeInteger;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Boolean attributeBoolean;
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Integer> wrappedArray = new ArrayList<>();
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String nameString;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable BigDecimal nameNumber;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Integer nameInteger;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Boolean nameBoolean;
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Integer> nameArray = new ArrayList<>();
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Integer> nameWrappedArray = new ArrayList<>();
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String prefixString;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable BigDecimal prefixNumber;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Integer prefixInteger;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Boolean prefixBoolean;
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Integer> prefixArray = new ArrayList<>();
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Integer> prefixWrappedArray = new ArrayList<>();
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String namespaceString;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable BigDecimal namespaceNumber;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Integer namespaceInteger;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Boolean namespaceBoolean;
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Integer> namespaceArray = new ArrayList<>();
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Integer> namespaceWrappedArray = new ArrayList<>();
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String prefixNsString;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable BigDecimal prefixNsNumber;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Integer prefixNsInteger;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Boolean prefixNsBoolean;
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Integer> prefixNsArray = new ArrayList<>();
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Integer> prefixNsWrappedArray = new ArrayList<>();
 
   public XmlItem attributeString(@Nullable String attributeString) {
@@ -100,12 +117,12 @@ public class XmlItem {
    * Get attributeString
    * @return attributeString
    */
-  
   @JsonProperty("attribute_string")
   public @Nullable String getAttributeString() {
     return attributeString;
   }
 
+  @JsonProperty("attribute_string")
   public void setAttributeString(@Nullable String attributeString) {
     this.attributeString = attributeString;
   }
@@ -119,12 +136,12 @@ public class XmlItem {
    * Get attributeNumber
    * @return attributeNumber
    */
-  
   @JsonProperty("attribute_number")
   public @Nullable BigDecimal getAttributeNumber() {
     return attributeNumber;
   }
 
+  @JsonProperty("attribute_number")
   public void setAttributeNumber(@Nullable BigDecimal attributeNumber) {
     this.attributeNumber = attributeNumber;
   }
@@ -138,12 +155,12 @@ public class XmlItem {
    * Get attributeInteger
    * @return attributeInteger
    */
-  
   @JsonProperty("attribute_integer")
   public @Nullable Integer getAttributeInteger() {
     return attributeInteger;
   }
 
+  @JsonProperty("attribute_integer")
   public void setAttributeInteger(@Nullable Integer attributeInteger) {
     this.attributeInteger = attributeInteger;
   }
@@ -157,12 +174,12 @@ public class XmlItem {
    * Get attributeBoolean
    * @return attributeBoolean
    */
-  
   @JsonProperty("attribute_boolean")
   public @Nullable Boolean getAttributeBoolean() {
     return attributeBoolean;
   }
 
+  @JsonProperty("attribute_boolean")
   public void setAttributeBoolean(@Nullable Boolean attributeBoolean) {
     this.attributeBoolean = attributeBoolean;
   }
@@ -184,12 +201,12 @@ public class XmlItem {
    * Get wrappedArray
    * @return wrappedArray
    */
-  
   @JsonProperty("wrapped_array")
   public List<Integer> getWrappedArray() {
     return wrappedArray;
   }
 
+  @JsonProperty("wrapped_array")
   public void setWrappedArray(List<Integer> wrappedArray) {
     this.wrappedArray = wrappedArray;
   }
@@ -203,12 +220,12 @@ public class XmlItem {
    * Get nameString
    * @return nameString
    */
-  
   @JsonProperty("name_string")
   public @Nullable String getNameString() {
     return nameString;
   }
 
+  @JsonProperty("name_string")
   public void setNameString(@Nullable String nameString) {
     this.nameString = nameString;
   }
@@ -222,12 +239,12 @@ public class XmlItem {
    * Get nameNumber
    * @return nameNumber
    */
-  
   @JsonProperty("name_number")
   public @Nullable BigDecimal getNameNumber() {
     return nameNumber;
   }
 
+  @JsonProperty("name_number")
   public void setNameNumber(@Nullable BigDecimal nameNumber) {
     this.nameNumber = nameNumber;
   }
@@ -241,12 +258,12 @@ public class XmlItem {
    * Get nameInteger
    * @return nameInteger
    */
-  
   @JsonProperty("name_integer")
   public @Nullable Integer getNameInteger() {
     return nameInteger;
   }
 
+  @JsonProperty("name_integer")
   public void setNameInteger(@Nullable Integer nameInteger) {
     this.nameInteger = nameInteger;
   }
@@ -260,12 +277,12 @@ public class XmlItem {
    * Get nameBoolean
    * @return nameBoolean
    */
-  
   @JsonProperty("name_boolean")
   public @Nullable Boolean getNameBoolean() {
     return nameBoolean;
   }
 
+  @JsonProperty("name_boolean")
   public void setNameBoolean(@Nullable Boolean nameBoolean) {
     this.nameBoolean = nameBoolean;
   }
@@ -287,12 +304,12 @@ public class XmlItem {
    * Get nameArray
    * @return nameArray
    */
-  
   @JsonProperty("name_array")
   public List<Integer> getNameArray() {
     return nameArray;
   }
 
+  @JsonProperty("name_array")
   public void setNameArray(List<Integer> nameArray) {
     this.nameArray = nameArray;
   }
@@ -314,12 +331,12 @@ public class XmlItem {
    * Get nameWrappedArray
    * @return nameWrappedArray
    */
-  
   @JsonProperty("name_wrapped_array")
   public List<Integer> getNameWrappedArray() {
     return nameWrappedArray;
   }
 
+  @JsonProperty("name_wrapped_array")
   public void setNameWrappedArray(List<Integer> nameWrappedArray) {
     this.nameWrappedArray = nameWrappedArray;
   }
@@ -333,12 +350,12 @@ public class XmlItem {
    * Get prefixString
    * @return prefixString
    */
-  
   @JsonProperty("prefix_string")
   public @Nullable String getPrefixString() {
     return prefixString;
   }
 
+  @JsonProperty("prefix_string")
   public void setPrefixString(@Nullable String prefixString) {
     this.prefixString = prefixString;
   }
@@ -352,12 +369,12 @@ public class XmlItem {
    * Get prefixNumber
    * @return prefixNumber
    */
-  
   @JsonProperty("prefix_number")
   public @Nullable BigDecimal getPrefixNumber() {
     return prefixNumber;
   }
 
+  @JsonProperty("prefix_number")
   public void setPrefixNumber(@Nullable BigDecimal prefixNumber) {
     this.prefixNumber = prefixNumber;
   }
@@ -371,12 +388,12 @@ public class XmlItem {
    * Get prefixInteger
    * @return prefixInteger
    */
-  
   @JsonProperty("prefix_integer")
   public @Nullable Integer getPrefixInteger() {
     return prefixInteger;
   }
 
+  @JsonProperty("prefix_integer")
   public void setPrefixInteger(@Nullable Integer prefixInteger) {
     this.prefixInteger = prefixInteger;
   }
@@ -390,12 +407,12 @@ public class XmlItem {
    * Get prefixBoolean
    * @return prefixBoolean
    */
-  
   @JsonProperty("prefix_boolean")
   public @Nullable Boolean getPrefixBoolean() {
     return prefixBoolean;
   }
 
+  @JsonProperty("prefix_boolean")
   public void setPrefixBoolean(@Nullable Boolean prefixBoolean) {
     this.prefixBoolean = prefixBoolean;
   }
@@ -417,12 +434,12 @@ public class XmlItem {
    * Get prefixArray
    * @return prefixArray
    */
-  
   @JsonProperty("prefix_array")
   public List<Integer> getPrefixArray() {
     return prefixArray;
   }
 
+  @JsonProperty("prefix_array")
   public void setPrefixArray(List<Integer> prefixArray) {
     this.prefixArray = prefixArray;
   }
@@ -444,12 +461,12 @@ public class XmlItem {
    * Get prefixWrappedArray
    * @return prefixWrappedArray
    */
-  
   @JsonProperty("prefix_wrapped_array")
   public List<Integer> getPrefixWrappedArray() {
     return prefixWrappedArray;
   }
 
+  @JsonProperty("prefix_wrapped_array")
   public void setPrefixWrappedArray(List<Integer> prefixWrappedArray) {
     this.prefixWrappedArray = prefixWrappedArray;
   }
@@ -463,12 +480,12 @@ public class XmlItem {
    * Get namespaceString
    * @return namespaceString
    */
-  
   @JsonProperty("namespace_string")
   public @Nullable String getNamespaceString() {
     return namespaceString;
   }
 
+  @JsonProperty("namespace_string")
   public void setNamespaceString(@Nullable String namespaceString) {
     this.namespaceString = namespaceString;
   }
@@ -482,12 +499,12 @@ public class XmlItem {
    * Get namespaceNumber
    * @return namespaceNumber
    */
-  
   @JsonProperty("namespace_number")
   public @Nullable BigDecimal getNamespaceNumber() {
     return namespaceNumber;
   }
 
+  @JsonProperty("namespace_number")
   public void setNamespaceNumber(@Nullable BigDecimal namespaceNumber) {
     this.namespaceNumber = namespaceNumber;
   }
@@ -501,12 +518,12 @@ public class XmlItem {
    * Get namespaceInteger
    * @return namespaceInteger
    */
-  
   @JsonProperty("namespace_integer")
   public @Nullable Integer getNamespaceInteger() {
     return namespaceInteger;
   }
 
+  @JsonProperty("namespace_integer")
   public void setNamespaceInteger(@Nullable Integer namespaceInteger) {
     this.namespaceInteger = namespaceInteger;
   }
@@ -520,12 +537,12 @@ public class XmlItem {
    * Get namespaceBoolean
    * @return namespaceBoolean
    */
-  
   @JsonProperty("namespace_boolean")
   public @Nullable Boolean getNamespaceBoolean() {
     return namespaceBoolean;
   }
 
+  @JsonProperty("namespace_boolean")
   public void setNamespaceBoolean(@Nullable Boolean namespaceBoolean) {
     this.namespaceBoolean = namespaceBoolean;
   }
@@ -547,12 +564,12 @@ public class XmlItem {
    * Get namespaceArray
    * @return namespaceArray
    */
-  
   @JsonProperty("namespace_array")
   public List<Integer> getNamespaceArray() {
     return namespaceArray;
   }
 
+  @JsonProperty("namespace_array")
   public void setNamespaceArray(List<Integer> namespaceArray) {
     this.namespaceArray = namespaceArray;
   }
@@ -574,12 +591,12 @@ public class XmlItem {
    * Get namespaceWrappedArray
    * @return namespaceWrappedArray
    */
-  
   @JsonProperty("namespace_wrapped_array")
   public List<Integer> getNamespaceWrappedArray() {
     return namespaceWrappedArray;
   }
 
+  @JsonProperty("namespace_wrapped_array")
   public void setNamespaceWrappedArray(List<Integer> namespaceWrappedArray) {
     this.namespaceWrappedArray = namespaceWrappedArray;
   }
@@ -593,12 +610,12 @@ public class XmlItem {
    * Get prefixNsString
    * @return prefixNsString
    */
-  
   @JsonProperty("prefix_ns_string")
   public @Nullable String getPrefixNsString() {
     return prefixNsString;
   }
 
+  @JsonProperty("prefix_ns_string")
   public void setPrefixNsString(@Nullable String prefixNsString) {
     this.prefixNsString = prefixNsString;
   }
@@ -612,12 +629,12 @@ public class XmlItem {
    * Get prefixNsNumber
    * @return prefixNsNumber
    */
-  
   @JsonProperty("prefix_ns_number")
   public @Nullable BigDecimal getPrefixNsNumber() {
     return prefixNsNumber;
   }
 
+  @JsonProperty("prefix_ns_number")
   public void setPrefixNsNumber(@Nullable BigDecimal prefixNsNumber) {
     this.prefixNsNumber = prefixNsNumber;
   }
@@ -631,12 +648,12 @@ public class XmlItem {
    * Get prefixNsInteger
    * @return prefixNsInteger
    */
-  
   @JsonProperty("prefix_ns_integer")
   public @Nullable Integer getPrefixNsInteger() {
     return prefixNsInteger;
   }
 
+  @JsonProperty("prefix_ns_integer")
   public void setPrefixNsInteger(@Nullable Integer prefixNsInteger) {
     this.prefixNsInteger = prefixNsInteger;
   }
@@ -650,12 +667,12 @@ public class XmlItem {
    * Get prefixNsBoolean
    * @return prefixNsBoolean
    */
-  
   @JsonProperty("prefix_ns_boolean")
   public @Nullable Boolean getPrefixNsBoolean() {
     return prefixNsBoolean;
   }
 
+  @JsonProperty("prefix_ns_boolean")
   public void setPrefixNsBoolean(@Nullable Boolean prefixNsBoolean) {
     this.prefixNsBoolean = prefixNsBoolean;
   }
@@ -677,12 +694,12 @@ public class XmlItem {
    * Get prefixNsArray
    * @return prefixNsArray
    */
-  
   @JsonProperty("prefix_ns_array")
   public List<Integer> getPrefixNsArray() {
     return prefixNsArray;
   }
 
+  @JsonProperty("prefix_ns_array")
   public void setPrefixNsArray(List<Integer> prefixNsArray) {
     this.prefixNsArray = prefixNsArray;
   }
@@ -704,12 +721,12 @@ public class XmlItem {
    * Get prefixNsWrappedArray
    * @return prefixNsWrappedArray
    */
-  
   @JsonProperty("prefix_ns_wrapped_array")
   public List<Integer> getPrefixNsWrappedArray() {
     return prefixNsWrappedArray;
   }
 
+  @JsonProperty("prefix_ns_wrapped_array")
   public void setPrefixNsWrappedArray(List<Integer> prefixNsWrappedArray) {
     this.prefixNsWrappedArray = prefixNsWrappedArray;
   }
@@ -801,10 +818,7 @@ public class XmlItem {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

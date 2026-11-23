@@ -1,39 +1,46 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.Nulls;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
+import org.hibernate.validator.constraints.*;
 import org.openapitools.model.AnimalDto;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
 
 /**
  * MixedPropertiesAndAdditionalPropertiesClassDto
  */
 
 @JsonTypeName("MixedPropertiesAndAdditionalPropertiesClass")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class MixedPropertiesAndAdditionalPropertiesClassDto {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable UUID uuid;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime dateTime;
 
-  
-  private Map<String, AnimalDto> map = new HashMap<>();
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
+  private Map<String, @Valid AnimalDto> map = new HashMap<>();
 
   public MixedPropertiesAndAdditionalPropertiesClassDto uuid(@Nullable UUID uuid) {
     this.uuid = uuid;
@@ -44,12 +51,13 @@ public class MixedPropertiesAndAdditionalPropertiesClassDto {
    * Get uuid
    * @return uuid
    */
-  
+  @Valid 
   @JsonProperty("uuid")
   public @Nullable UUID getUuid() {
     return uuid;
   }
 
+  @JsonProperty("uuid")
   public void setUuid(@Nullable UUID uuid) {
     this.uuid = uuid;
   }
@@ -63,17 +71,18 @@ public class MixedPropertiesAndAdditionalPropertiesClassDto {
    * Get dateTime
    * @return dateTime
    */
-  
+  @Valid 
   @JsonProperty("dateTime")
   public @Nullable OffsetDateTime getDateTime() {
     return dateTime;
   }
 
+  @JsonProperty("dateTime")
   public void setDateTime(@Nullable OffsetDateTime dateTime) {
     this.dateTime = dateTime;
   }
 
-  public MixedPropertiesAndAdditionalPropertiesClassDto map(Map<String, AnimalDto> map) {
+  public MixedPropertiesAndAdditionalPropertiesClassDto map(Map<String, @Valid AnimalDto> map) {
     this.map = map;
     return this;
   }
@@ -92,11 +101,12 @@ public class MixedPropertiesAndAdditionalPropertiesClassDto {
    */
   
   @JsonProperty("map")
-  public Map<String, AnimalDto> getMap() {
+  public Map<String, @Valid AnimalDto> getMap() {
     return map;
   }
 
-  public void setMap(Map<String, AnimalDto> map) {
+  @JsonProperty("map")
+  public void setMap(Map<String, @Valid AnimalDto> map) {
     this.map = map;
   }
 
@@ -135,10 +145,7 @@ public class MixedPropertiesAndAdditionalPropertiesClassDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

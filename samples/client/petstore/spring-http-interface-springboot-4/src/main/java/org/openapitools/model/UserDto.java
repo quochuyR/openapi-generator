@@ -1,40 +1,59 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
+import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
+import org.hibernate.validator.constraints.*;
+import org.springframework.lang.Nullable;
 
 /**
  * UserDto
  */
 
 @JsonTypeName("User")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class UserDto {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable Long id;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String username;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String firstName;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String lastName;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String email;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String password;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String phone;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable Integer userStatus;
 
   public UserDto id(@Nullable Long id) {
@@ -52,6 +71,7 @@ public class UserDto {
     return id;
   }
 
+  @JsonProperty("id")
   public void setId(@Nullable Long id) {
     this.id = id;
   }
@@ -71,6 +91,7 @@ public class UserDto {
     return username;
   }
 
+  @JsonProperty("username")
   public void setUsername(@Nullable String username) {
     this.username = username;
   }
@@ -90,6 +111,7 @@ public class UserDto {
     return firstName;
   }
 
+  @JsonProperty("firstName")
   public void setFirstName(@Nullable String firstName) {
     this.firstName = firstName;
   }
@@ -109,6 +131,7 @@ public class UserDto {
     return lastName;
   }
 
+  @JsonProperty("lastName")
   public void setLastName(@Nullable String lastName) {
     this.lastName = lastName;
   }
@@ -128,6 +151,7 @@ public class UserDto {
     return email;
   }
 
+  @JsonProperty("email")
   public void setEmail(@Nullable String email) {
     this.email = email;
   }
@@ -147,6 +171,7 @@ public class UserDto {
     return password;
   }
 
+  @JsonProperty("password")
   public void setPassword(@Nullable String password) {
     this.password = password;
   }
@@ -166,6 +191,7 @@ public class UserDto {
     return phone;
   }
 
+  @JsonProperty("phone")
   public void setPhone(@Nullable String phone) {
     this.phone = phone;
   }
@@ -185,6 +211,7 @@ public class UserDto {
     return userStatus;
   }
 
+  @JsonProperty("userStatus")
   public void setUserStatus(@Nullable Integer userStatus) {
     this.userStatus = userStatus;
   }
@@ -234,10 +261,7 @@ public class UserDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

@@ -1,0 +1,138 @@
+package org.openapitools.configuration;
+
+import jakarta.validation.Constraint;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.Payload;
+import org.springframework.data.domain.Pageable;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+/**
+ * Validates that sort properties in the annotated {@link Pageable} parameter match the allowed values.
+ *
+ * <p>Apply directly on a {@code Pageable} parameter. The validator checks that each sort
+ * property and direction combination in the {@link Pageable} matches one of the strings specified
+ * in {@link #allowedValues()}.
+ *
+ * <p>Two formats are accepted in {@link #allowedValues()}:
+ * <ul>
+ *   <li>{@code "property,direction"} — permits only the specific direction (e.g. {@code "id,asc"},
+ *       {@code "name,desc"}). Direction matching is case-insensitive.
+ *   <li>{@code "property"} — permits any direction for that property (e.g. {@code "id"} matches
+ *       {@code sort=id,asc} and {@code sort=id,desc}). Note: because Spring always normalises a
+ *       bare {@code sort=id} to ascending before the validator runs, bare property names in
+ *       {@link #allowedValues()} effectively allow all directions.
+ * </ul>
+ *
+ * <p>Both formats may be mixed freely. For example {@code {"id", "name,desc"}} allows {@code id}
+ * in any direction but restricts {@code name} to descending only.
+ *
+ * <p>The number of sort orders can additionally be bounded with {@link #minItems()} and
+ * {@link #maxItems()}. An unsorted {@link Pageable} (no sort given) is always accepted, even when
+ * {@code minItems > 0}; the bounds only apply once at least one sort order is present.
+ */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = {ValidSort.SortValidator.class})
+@Target({ElementType.PARAMETER})
+public @interface ValidSort {
+
+    /** The allowed sort strings (e.g. {@code {"id,asc", "id,desc"}}). */
+    String[] allowedValues();
+
+    /** The minimum number of sort orders (default: unbounded). Not enforced for an unsorted {@link Pageable}. */
+    int minItems() default 0;
+
+    /** The maximum number of sort orders (default: unbounded). */
+    int maxItems() default Integer.MAX_VALUE;
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
+
+    String message() default "Invalid sort column";
+
+    class SortValidator implements ConstraintValidator<ValidSort, Pageable> {
+
+        private Set<String> allowedValues;
+        private int minItems;
+        private int maxItems;
+
+        @Override
+        public void initialize(ValidSort constraintAnnotation) {
+            allowedValues = Arrays.stream(constraintAnnotation.allowedValues())
+                    .map(entry -> entry
+                            .replaceAll("(?i),ASC$", ",asc")
+                            .replaceAll("(?i),DESC$", ",desc"))
+                    .collect(Collectors.toSet());
+            minItems = constraintAnnotation.minItems();
+            maxItems = constraintAnnotation.maxItems();
+        }
+
+        @Override
+        public boolean isValid(Pageable pageable, ConstraintValidatorContext context) {
+            if (pageable == null || pageable.getSort().isUnsorted()) {
+                return true;
+            }
+
+            int count = 0;
+            for (Object ignored : pageable.getSort()) {
+                count++;
+            }
+            boolean countValid = count >= minItems && count <= maxItems;
+
+            Map<Integer, String> invalid = new TreeMap<>();
+            int[] index = {0};
+            pageable.getSort().forEach(order -> {
+                String sortValue = order.getProperty() + "," + order.getDirection().name().toLowerCase(java.util.Locale.ROOT);
+                // Accept "property,direction" (exact match) OR "property" alone (any direction allowed)
+                if (!allowedValues.contains(sortValue) && !allowedValues.contains(order.getProperty())) {
+                    invalid.put(index[0], order.getProperty());
+                }
+                index[0]++;
+            });
+
+            if (!countValid || !invalid.isEmpty()) {
+                context.disableDefaultConstraintViolation();
+            }
+            if (!countValid) {
+                String range = maxItems == Integer.MAX_VALUE ? "at least " + minItems
+                        : minItems == 0 ? "at most " + maxItems
+                        : minItems + ".." + maxItems;
+                context.buildConstraintViolationWithTemplate(
+                                context.getDefaultConstraintMessageTemplate()
+                                        + " [expected " + range + " sort order(s), got " + count + "]")
+                        .addPropertyNode("sort")
+                        .addConstraintViolation();
+            }
+            invalid.forEach((i, property) ->
+                    context.buildConstraintViolationWithTemplate(
+                                    context.getDefaultConstraintMessageTemplate()
+                                            + " [" + escapeMessageTemplate(property) + "]")
+                            .addPropertyNode("sort")
+                            .addPropertyNode("property")
+                            .inIterable()
+                            .atIndex(i)
+                            .addConstraintViolation());
+
+            return countValid && invalid.isEmpty();
+        }
+
+        /** Escapes user input so the message interpolator treats it as literal text. */
+        private static String escapeMessageTemplate(String value) {
+            return value.replaceAll("[\\\\{}$]", "\\\\$0");
+        }
+    }
+}

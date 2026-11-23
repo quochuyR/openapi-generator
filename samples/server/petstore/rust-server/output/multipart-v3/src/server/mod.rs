@@ -256,6 +256,53 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
 
             // MultipartRelatedRequestPost - POST /multipart_related_request
             hyper::Method::POST if path.matched(paths::ID_MULTIPART_RELATED_REQUEST) => {
+                handle_multipart_related_request_post(api_impl, uri, headers, body, context, validation, multipart_form_size_limit).await
+            },
+
+            // MultipartRequestPost - POST /multipart_request
+            hyper::Method::POST if path.matched(paths::ID_MULTIPART_REQUEST) => {
+                handle_multipart_request_post(api_impl, uri, headers, body, context, validation, multipart_form_size_limit).await
+            },
+
+            // MultipleIdenticalMimeTypesPost - POST /multiple-identical-mime-types
+            hyper::Method::POST if path.matched(paths::ID_MULTIPLE_IDENTICAL_MIME_TYPES) => {
+                handle_multiple_identical_mime_types_post(api_impl, uri, headers, body, context, validation, multipart_form_size_limit).await
+            },
+
+            _ if path.matched(paths::ID_MULTIPART_RELATED_REQUEST) => method_not_allowed(),
+            _ if path.matched(paths::ID_MULTIPART_REQUEST) => method_not_allowed(),
+            _ if path.matched(paths::ID_MULTIPLE_IDENTICAL_MIME_TYPES) => method_not_allowed(),
+                _ => Ok(Response::builder().status(StatusCode::NOT_FOUND)
+                        .body(BoxBody::new(http_body_util::Empty::new()))
+                        .expect("Unable to create Not Found response"))
+            }
+        }
+        Box::pin(run(
+            self.api_impl.clone(),
+            req,
+            self.validation,
+            self.multipart_form_size_limit
+        ))
+    }
+}
+
+#[allow(unused_variables)]
+async fn handle_multipart_related_request_post<T, C, ReqBody>(
+    mut api_impl: T,
+    uri: hyper::Uri,
+    headers: HeaderMap,
+    body: ReqBody,
+    context: C,
+    validation: bool,
+    multipart_form_size_limit: Option<u64>,
+) -> Result<Response<BoxBody<Bytes, Infallible>>, crate::ServiceError>
+where
+    T: Api<C> + Clone + Send + 'static,
+    C: Has<XSpanIdString>  + Send + Sync + 'static,
+    ReqBody: Body + Send + 'static,
+    ReqBody::Error: Into<Box<dyn Error + Send + Sync>> + Send,
+    ReqBody::Data: Send,
+{
                 // Handle body parameters (note that non-required body parameters will ignore garbage
                 // values, rather than causing a 400 response). Produce warning header and logs for
                 // any unused fields.
@@ -271,6 +318,7 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                     Err(e) => {
                                         return Ok(Response::builder()
                                                 .status(StatusCode::BAD_REQUEST)
+                                                .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                 .body(BoxBody::new(e.to_string()))
                                                 .expect("Unable to create Bad Request response due to unable to read content-type header for MultipartRelatedRequestPost"));
                                     }
@@ -283,6 +331,7 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                     Err(e) => {
                                         return Ok(Response::builder()
                                                 .status(StatusCode::BAD_REQUEST)
+                                                .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                 .body(BoxBody::new(format!("Could not read multipart body for MultipartRelatedRequestPost: {e}")))
                                                 .expect("Unable to create Bad Request response due to unable to read multipart body for MultipartRelatedRequestPost"));
                                     }
@@ -306,6 +355,7 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                                     Ok(json_data) => json_data,
                                                     Err(e) => return Ok(Response::builder()
                                                         .status(StatusCode::BAD_REQUEST)
+                                                        .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                         .body(BoxBody::new(format!("Couldn't parse body parameter models::MultipartRequestObjectField - doesn't match schema: {e}")))
                                                         .expect("Unable to create Bad Request response for invalid body parameter models::MultipartRequestObjectField due to schema"))
                                                 };
@@ -337,10 +387,10 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                     Some(x) => x,
                                     None =>  return Ok(Response::builder()
                                         .status(StatusCode::BAD_REQUEST)
+                                        .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                         .body(BoxBody::new("Missing required multipart/related parameter required_binary_field".to_string()))
                                         .expect("Unable to create Bad Request response for missing multipart/related parameter required_binary_field due to schema"))
                                 };
-
 
                                 let result = api_impl.multipart_related_request_post(
                                             param_required_binary_field,
@@ -372,6 +422,10 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                                 // Application code returned an error. This should not happen, as the implementation should
                                                 // return a valid response.
                                                 *response.status_mut() = StatusCode::INTERNAL_SERVER_ERROR;
+                                                response.headers_mut().insert(
+                                                    CONTENT_TYPE,
+                                                    HeaderValue::from_static("text/plain"),
+                                                );
                                                 *response.body_mut() = body_from_str("An internal error occurred");
                                             },
                                         }
@@ -380,13 +434,29 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                             },
                             Err(e) => Ok(Response::builder()
                                                 .status(StatusCode::BAD_REQUEST)
+                                                .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                 .body(body_from_string(format!("Unable to read body: {}", e.into())))
                                                 .expect("Unable to create Bad Request response due to unable to read body")),
                         }
-            },
+}
 
-            // MultipartRequestPost - POST /multipart_request
-            hyper::Method::POST if path.matched(paths::ID_MULTIPART_REQUEST) => {
+#[allow(unused_variables)]
+async fn handle_multipart_request_post<T, C, ReqBody>(
+    mut api_impl: T,
+    uri: hyper::Uri,
+    headers: HeaderMap,
+    body: ReqBody,
+    context: C,
+    validation: bool,
+    multipart_form_size_limit: Option<u64>,
+) -> Result<Response<BoxBody<Bytes, Infallible>>, crate::ServiceError>
+where
+    T: Api<C> + Clone + Send + 'static,
+    C: Has<XSpanIdString>  + Send + Sync + 'static,
+    ReqBody: Body + Send + 'static,
+    ReqBody::Error: Into<Box<dyn Error + Send + Sync>> + Send,
+    ReqBody::Data: Send,
+{
                 // Handle body parameters (note that non-required body parameters will ignore garbage
                 // values, rather than causing a 400 response). Produce warning header and logs for
                 // any unused fields.
@@ -397,6 +467,7 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                     Some(boundary) => boundary.to_string(),
                                     None => return Ok(Response::builder()
                                                 .status(StatusCode::BAD_REQUEST)
+                                                .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                 .body(BoxBody::new("Couldn't find valid multipart body".to_string()))
                                                 .expect("Unable to create Bad Request response for incorrect boundary")),
                                 };
@@ -415,30 +486,35 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                     SaveResult::Partial(_, PartialReason::CountLimit) => {
                                         return Ok(Response::builder()
                                                         .status(StatusCode::BAD_REQUEST)
+                                                        .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                         .body(BoxBody::new("Unable to process message part due to excessive parts".to_string()))
                                                         .expect("Unable to create Bad Request response due to excessive parts"))
                                     },
                                     SaveResult::Partial(_, PartialReason::SizeLimit) => {
                                         return Ok(Response::builder()
                                                         .status(StatusCode::BAD_REQUEST)
+                                                        .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                         .body(BoxBody::new("Unable to process message part due to excessive data".to_string()))
                                                         .expect("Unable to create Bad Request response due to excessive data"))
                                     },
                                     SaveResult::Partial(_, PartialReason::Utf8Error(_)) => {
                                         return Ok(Response::builder()
                                                         .status(StatusCode::BAD_REQUEST)
+                                                        .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                         .body(BoxBody::new("Unable to process message part due to invalid data".to_string()))
                                                         .expect("Unable to create Bad Request response due to invalid data"))
                                     },
                                     SaveResult::Partial(_, PartialReason::IoError(_)) => {
                                         return Ok(Response::builder()
                                                         .status(StatusCode::INTERNAL_SERVER_ERROR)
+                                                        .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                         .body(BoxBody::new("Failed to process message part due an internal error".to_string()))
                                                         .expect("Unable to create Internal Server Error response due to an internal error"))
                                     },
                                     SaveResult::Error(e) => {
                                         return Ok(Response::builder()
                                                         .status(StatusCode::INTERNAL_SERVER_ERROR)
+                                                        .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                         .body(BoxBody::new("Failed to process all message parts due to an internal error".to_string()))
                                                         .expect("Unable to create Internal Server Error response due to an internal error"))
                                     },
@@ -455,6 +531,7 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                                 return Ok(
                                                     Response::builder()
                                                     .status(StatusCode::BAD_REQUEST)
+                                                    .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                     .body(BoxBody::new(format!("string_field data does not match API definition : {e}")))
                                                     .expect("Unable to create Bad Request due to missing required form parameter string_field"))
                                             }
@@ -465,6 +542,7 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                         return Ok(
                                             Response::builder()
                                             .status(StatusCode::BAD_REQUEST)
+                                            .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                             .body(BoxBody::new("Missing required form parameter string_field".to_string()))
                                             .expect("Unable to create Bad Request due to missing required form parameter string_field"))
                                     }
@@ -482,6 +560,7 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                                 return Ok(
                                                     Response::builder()
                                                     .status(StatusCode::BAD_REQUEST)
+                                                    .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                     .body(BoxBody::new(format!("optional_string_field data does not match API definition : {e}")))
                                                     .expect("Unable to create Bad Request due to missing required form parameter optional_string_field"))
                                             }
@@ -506,6 +585,7 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                                 return Ok(
                                                     Response::builder()
                                                     .status(StatusCode::BAD_REQUEST)
+                                                    .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                     .body(BoxBody::new(format!("object_field data does not match API definition : {e}")))
                                                     .expect("Unable to create Bad Request due to missing required form parameter object_field"))
                                             }
@@ -529,11 +609,11 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                         return Ok(
                                             Response::builder()
                                             .status(StatusCode::BAD_REQUEST)
+                                            .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                             .body(BoxBody::new("Missing required form parameter binary_field".to_string()))
                                             .expect("Unable to create Bad Request due to missing required form parameter binary_field"))
                                     }
                                 };
-
 
                                 let result = api_impl.multipart_request_post(
                                             param_string_field,
@@ -560,6 +640,10 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                                 // Application code returned an error. This should not happen, as the implementation should
                                                 // return a valid response.
                                                 *response.status_mut() = StatusCode::INTERNAL_SERVER_ERROR;
+                                                response.headers_mut().insert(
+                                                    CONTENT_TYPE,
+                                                    HeaderValue::from_static("text/plain"),
+                                                );
                                                 *response.body_mut() = body_from_str("An internal error occurred");
                                             },
                                         }
@@ -568,13 +652,29 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                             },
                             Err(e) => Ok(Response::builder()
                                                 .status(StatusCode::BAD_REQUEST)
+                                                .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                 .body(body_from_string(format!("Unable to read body: {}", e.into())))
                                                 .expect("Unable to create Bad Request response due to unable to read body")),
                         }
-            },
+}
 
-            // MultipleIdenticalMimeTypesPost - POST /multiple-identical-mime-types
-            hyper::Method::POST if path.matched(paths::ID_MULTIPLE_IDENTICAL_MIME_TYPES) => {
+#[allow(unused_variables)]
+async fn handle_multiple_identical_mime_types_post<T, C, ReqBody>(
+    mut api_impl: T,
+    uri: hyper::Uri,
+    headers: HeaderMap,
+    body: ReqBody,
+    context: C,
+    validation: bool,
+    multipart_form_size_limit: Option<u64>,
+) -> Result<Response<BoxBody<Bytes, Infallible>>, crate::ServiceError>
+where
+    T: Api<C> + Clone + Send + 'static,
+    C: Has<XSpanIdString>  + Send + Sync + 'static,
+    ReqBody: Body + Send + 'static,
+    ReqBody::Error: Into<Box<dyn Error + Send + Sync>> + Send,
+    ReqBody::Data: Send,
+{
                 // Handle body parameters (note that non-required body parameters will ignore garbage
                 // values, rather than causing a 400 response). Produce warning header and logs for
                 // any unused fields.
@@ -590,6 +690,7 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                     Err(e) => {
                                         return Ok(Response::builder()
                                                 .status(StatusCode::BAD_REQUEST)
+                                                .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                 .body(BoxBody::new(e.to_string()))
                                                 .expect("Unable to create Bad Request response due to unable to read content-type header for MultipleIdenticalMimeTypesPost"));
                                     }
@@ -602,6 +703,7 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                     Err(e) => {
                                         return Ok(Response::builder()
                                                 .status(StatusCode::BAD_REQUEST)
+                                                .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                 .body(BoxBody::new(format!("Could not read multipart body for MultipleIdenticalMimeTypesPost: {e}")))
                                                 .expect("Unable to create Bad Request response due to unable to read multipart body for MultipleIdenticalMimeTypesPost"));
                                     }
@@ -636,7 +738,6 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
 
                                 // Check that the required multipart chunks are present.
 
-
                                 let result = api_impl.multiple_identical_mime_types_post(
                                             param_binary1,
                                             param_binary2,
@@ -666,6 +767,10 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                                                 // Application code returned an error. This should not happen, as the implementation should
                                                 // return a valid response.
                                                 *response.status_mut() = StatusCode::INTERNAL_SERVER_ERROR;
+                                                response.headers_mut().insert(
+                                                    CONTENT_TYPE,
+                                                    HeaderValue::from_static("text/plain"),
+                                                );
                                                 *response.body_mut() = body_from_str("An internal error occurred");
                                             },
                                         }
@@ -674,26 +779,10 @@ impl<T, C, ReqBody> hyper::service::Service<(Request<ReqBody>, C)> for Service<T
                             },
                             Err(e) => Ok(Response::builder()
                                                 .status(StatusCode::BAD_REQUEST)
+                                                .header(CONTENT_TYPE, mime::TEXT_PLAIN.as_ref())
                                                 .body(body_from_string(format!("Unable to read body: {}", e.into())))
                                                 .expect("Unable to create Bad Request response due to unable to read body")),
                         }
-            },
-
-            _ if path.matched(paths::ID_MULTIPART_RELATED_REQUEST) => method_not_allowed(),
-            _ if path.matched(paths::ID_MULTIPART_REQUEST) => method_not_allowed(),
-            _ if path.matched(paths::ID_MULTIPLE_IDENTICAL_MIME_TYPES) => method_not_allowed(),
-                _ => Ok(Response::builder().status(StatusCode::NOT_FOUND)
-                        .body(BoxBody::new(http_body_util::Empty::new()))
-                        .expect("Unable to create Not Found response"))
-            }
-        }
-        Box::pin(run(
-            self.api_impl.clone(),
-            req,
-            self.validation,
-            self.multipart_form_size_limit
-        ))
-    }
 }
 
 /// Request parser for `Api`.

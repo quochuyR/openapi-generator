@@ -1,34 +1,36 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.*;
-import javax.annotation.Generated;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 /**
  * Model for testing model name same as property name
  */
 
 @Schema(name = "Name", description = "Model for testing model name same as property name")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class Name {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Integer name;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Integer snakeCase;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String property;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Integer _123number;
 
   public Name() {
@@ -51,6 +53,7 @@ public class Name {
     return name;
   }
 
+  @JsonProperty("name")
   public void setName(Integer name) {
     this.name = name;
   }
@@ -71,6 +74,7 @@ public class Name {
     return snakeCase;
   }
 
+  @JsonProperty("snake_case")
   public void setSnakeCase(@Nullable Integer snakeCase) {
     this.snakeCase = snakeCase;
   }
@@ -91,6 +95,7 @@ public class Name {
     return property;
   }
 
+  @JsonProperty("property")
   public void setProperty(@Nullable String property) {
     this.property = property;
   }
@@ -111,6 +116,7 @@ public class Name {
     return _123number;
   }
 
+  @JsonProperty("123Number")
   public void set123number(@Nullable Integer _123number) {
     this._123number = _123number;
   }
@@ -152,10 +158,7 @@ public class Name {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

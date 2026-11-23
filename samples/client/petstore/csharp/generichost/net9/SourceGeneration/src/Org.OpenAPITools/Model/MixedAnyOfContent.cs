@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -62,7 +61,7 @@ namespace Org.OpenAPITools.Model
         /// <summary>
         /// Gets or Sets String
         /// </summary>
-        public string? String { get { return this.StringOption; } set { this.StringOption = new(value); } }
+        public string? String { get { return this.StringOption.Value; } set { this.StringOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Bool
@@ -74,7 +73,7 @@ namespace Org.OpenAPITools.Model
         /// <summary>
         /// Gets or Sets Bool
         /// </summary>
-        public bool? Bool { get { return this.BoolOption; } set { this.BoolOption = new(value); } }
+        public bool? Bool { get { return this.BoolOption.Value; } set { this.BoolOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Int
@@ -86,7 +85,7 @@ namespace Org.OpenAPITools.Model
         /// <summary>
         /// Gets or Sets Int
         /// </summary>
-        public int? Int { get { return this.IntOption; } set { this.IntOption = new(value); } }
+        public int? Int { get { return this.IntOption.Value; } set { this.IntOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Decimal
@@ -98,7 +97,7 @@ namespace Org.OpenAPITools.Model
         /// <summary>
         /// Gets or Sets Decimal
         /// </summary>
-        public decimal? Decimal { get { return this.DecimalOption; } set { this.DecimalOption = new(value); } }
+        public decimal? Decimal { get { return this.DecimalOption.Value; } set { this.DecimalOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of MixedSubId
@@ -110,7 +109,7 @@ namespace Org.OpenAPITools.Model
         /// <summary>
         /// Gets or Sets MixedSubId
         /// </summary>
-        public MixedSubId? MixedSubId { get { return this.MixedSubIdOption; } set { this.MixedSubIdOption = new(value); } }
+        public MixedSubId? MixedSubId { get { return this.MixedSubIdOption.Value; } set { this.MixedSubIdOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -136,7 +135,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -145,8 +144,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="MixedAnyOfContent" />
     /// </summary>
-    public class MixedAnyOfContentJsonConverter : JsonConverter<MixedAnyOfContent>
+    public partial class MixedAnyOfContentJsonConverter : JsonConverter<MixedAnyOfContent>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MixedAnyOfContentJsonConverter" /> class.
+        /// </summary>
+        public MixedAnyOfContentJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="MixedAnyOfContent" />
         /// </summary>
@@ -159,10 +168,8 @@ namespace Org.OpenAPITools.Model
         {
             int currentDepth = utf8JsonReader.CurrentDepth;
 
-            if (utf8JsonReader.TokenType != JsonTokenType.StartObject && utf8JsonReader.TokenType != JsonTokenType.StartArray)
-                throw new JsonException();
-
             JsonTokenType startingTokenType = utf8JsonReader.TokenType;
+            bool isScalarToken = startingTokenType != JsonTokenType.StartObject && startingTokenType != JsonTokenType.StartArray;
 
             string? varString = default;
             bool? varBool = default;
@@ -170,35 +177,40 @@ namespace Org.OpenAPITools.Model
             decimal? varDecimal = default;
             MixedSubId? mixedSubId = default;
 
-            Utf8JsonReader utf8JsonReaderAnyOf = utf8JsonReader;
-            while (utf8JsonReaderAnyOf.Read())
+            if (isScalarToken)
             {
-                if (startingTokenType == JsonTokenType.StartObject && utf8JsonReaderAnyOf.TokenType == JsonTokenType.EndObject && currentDepth == utf8JsonReaderAnyOf.CurrentDepth)
-                    break;
-
-                if (startingTokenType == JsonTokenType.StartArray && utf8JsonReaderAnyOf.TokenType == JsonTokenType.EndArray && currentDepth == utf8JsonReaderAnyOf.CurrentDepth)
-                    break;
-
-                if (utf8JsonReaderAnyOf.TokenType == JsonTokenType.PropertyName && currentDepth == utf8JsonReaderAnyOf.CurrentDepth - 1)
-                {
-                    Utf8JsonReader utf8JsonReaderString = utf8JsonReader;
-                    ClientUtils.TryDeserialize<string?>(ref utf8JsonReaderString, jsonSerializerOptions, out varString);
-
-                    Utf8JsonReader utf8JsonReaderBool = utf8JsonReader;
-                    ClientUtils.TryDeserialize<bool?>(ref utf8JsonReaderBool, jsonSerializerOptions, out varBool);
-
-                    Utf8JsonReader utf8JsonReaderInt = utf8JsonReader;
-                    ClientUtils.TryDeserialize<int?>(ref utf8JsonReaderInt, jsonSerializerOptions, out varInt);
-
-                    Utf8JsonReader utf8JsonReaderDecimal = utf8JsonReader;
-                    ClientUtils.TryDeserialize<decimal?>(ref utf8JsonReaderDecimal, jsonSerializerOptions, out varDecimal);
-
-                    Utf8JsonReader utf8JsonReaderMixedSubId = utf8JsonReader;
-                    ClientUtils.TryDeserialize<MixedSubId?>(ref utf8JsonReaderMixedSubId, jsonSerializerOptions, out mixedSubId);
-                }
+                Utf8JsonReader utf8JsonReaderString = utf8JsonReader;
+                ClientUtils.TryDeserialize<string?>(ref utf8JsonReaderString, jsonSerializerOptions, out varString);
             }
 
-            while (utf8JsonReader.Read())
+            if (isScalarToken)
+            {
+                Utf8JsonReader utf8JsonReaderBool = utf8JsonReader;
+                ClientUtils.TryDeserialize<bool?>(ref utf8JsonReaderBool, jsonSerializerOptions, out varBool);
+            }
+
+            if (isScalarToken)
+            {
+                Utf8JsonReader utf8JsonReaderInt = utf8JsonReader;
+                ClientUtils.TryDeserialize<int?>(ref utf8JsonReaderInt, jsonSerializerOptions, out varInt);
+            }
+
+            if (isScalarToken)
+            {
+                Utf8JsonReader utf8JsonReaderDecimal = utf8JsonReader;
+                ClientUtils.TryDeserialize<decimal?>(ref utf8JsonReaderDecimal, jsonSerializerOptions, out varDecimal);
+            }
+
+            if (startingTokenType == JsonTokenType.StartObject)
+            {
+                Utf8JsonReader utf8JsonReaderMixedSubId = utf8JsonReader;
+                ClientUtils.TryDeserialize<MixedSubId?>(ref utf8JsonReaderMixedSubId, jsonSerializerOptions, out mixedSubId);
+            }
+
+            if (varString == null && varBool == null && varInt == null && varDecimal == null && mixedSubId == null)
+                throw new JsonException();
+
+            while (!isScalarToken && utf8JsonReader.Read())
             {
                 if (startingTokenType == JsonTokenType.StartObject && utf8JsonReader.TokenType == JsonTokenType.EndObject && currentDepth == utf8JsonReader.CurrentDepth)
                     break;
@@ -244,22 +256,33 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="mixedAnyOfContent"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, MixedAnyOfContent mixedAnyOfContent, JsonSerializerOptions jsonSerializerOptions)
         {
-            writer.WriteStartObject();
-
             if (mixedAnyOfContent.StringOption.IsSet && mixedAnyOfContent.StringOption.Value != null)
-                writer.WriteString("content", mixedAnyOfContent.StringOption.Value);
+            {
+                JsonSerializer.Serialize(writer, mixedAnyOfContent.StringOption.Value, jsonSerializerOptions);
+                return;
+            }
 
             if (mixedAnyOfContent.BoolOption.IsSet && mixedAnyOfContent.BoolOption.Value != null)
-                writer.WriteBoolean("content", mixedAnyOfContent.BoolOption.Value.Value);
+            {
+                JsonSerializer.Serialize(writer, mixedAnyOfContent.BoolOption.Value, jsonSerializerOptions);
+                return;
+            }
 
             if (mixedAnyOfContent.IntOption.IsSet && mixedAnyOfContent.IntOption.Value != null)
-                writer.WriteNumber("content", mixedAnyOfContent.IntOption.Value.Value);
+            {
+                JsonSerializer.Serialize(writer, mixedAnyOfContent.IntOption.Value, jsonSerializerOptions);
+                return;
+            }
 
             if (mixedAnyOfContent.DecimalOption.IsSet && mixedAnyOfContent.DecimalOption.Value != null)
-                writer.WriteNumber("content", mixedAnyOfContent.DecimalOption.Value.Value);
+            {
+                JsonSerializer.Serialize(writer, mixedAnyOfContent.DecimalOption.Value, jsonSerializerOptions);
+                return;
+            }
+
+            writer.WriteStartObject();
 
             if (mixedAnyOfContent.MixedSubIdOption.IsSet && mixedAnyOfContent.MixedSubIdOption.Value != null)
             {
@@ -277,17 +300,9 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="mixedAnyOfContent"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, MixedAnyOfContent mixedAnyOfContent, JsonSerializerOptions jsonSerializerOptions)
         {
 
         }
     }
-
-    /// <summary>
-    /// The MixedAnyOfContentSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(MixedAnyOfContent))]
-    public partial class MixedAnyOfContentSerializationContext : JsonSerializerContext { }
 }

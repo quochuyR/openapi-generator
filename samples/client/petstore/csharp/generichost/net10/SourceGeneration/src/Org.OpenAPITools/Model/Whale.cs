@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -66,7 +65,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets HasBaleen
         /// </summary>
         [JsonPropertyName("hasBaleen")]
-        public bool? HasBaleen { get { return this.HasBaleenOption; } set { this.HasBaleenOption = new(value); } }
+        public bool? HasBaleen { get { return this.HasBaleenOption.Value; } set { this.HasBaleenOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of HasTeeth
@@ -79,7 +78,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets HasTeeth
         /// </summary>
         [JsonPropertyName("hasTeeth")]
-        public bool? HasTeeth { get { return this.HasTeethOption; } set { this.HasTeethOption = new(value); } }
+        public bool? HasTeeth { get { return this.HasTeethOption.Value; } set { this.HasTeethOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -108,7 +107,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -117,8 +116,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="Whale" />
     /// </summary>
-    public class WhaleJsonConverter : JsonConverter<Whale>
+    public partial class WhaleJsonConverter : JsonConverter<Whale>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WhaleJsonConverter" /> class.
+        /// </summary>
+        public WhaleJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="Whale" />
         /// </summary>
@@ -171,16 +180,16 @@ namespace Org.OpenAPITools.Model
             }
 
             if (!className.IsSet)
-                throw new ArgumentException("Property is required for class Whale.", nameof(className));
+                throw new JsonException("Property is required for class Whale: className.");
 
             if (className.IsSet && className.Value == null)
-                throw new ArgumentNullException(nameof(className), "Property is not nullable for class Whale.");
+                throw new JsonException("Property is not nullable for class Whale: className.");
 
             if (hasBaleen.IsSet && hasBaleen.Value == null)
-                throw new ArgumentNullException(nameof(hasBaleen), "Property is not nullable for class Whale.");
+                throw new JsonException("Property is not nullable for class Whale: hasBaleen.");
 
             if (hasTeeth.IsSet && hasTeeth.Value == null)
-                throw new ArgumentNullException(nameof(hasTeeth), "Property is not nullable for class Whale.");
+                throw new JsonException("Property is not nullable for class Whale: hasTeeth.");
 
             return new Whale(className.Value!, hasBaleen, hasTeeth);
         }
@@ -191,7 +200,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="whale"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, Whale whale, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -206,11 +214,13 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="whale"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, Whale whale, JsonSerializerOptions jsonSerializerOptions)
         {
-            if (whale.ClassName == null)
-                throw new ArgumentNullException(nameof(whale.ClassName), "Property is required for class Whale.");
+            if (whale.HasBaleenOption.IsSet && whale.HasBaleen == null)
+                throw new JsonException("Cannot write null property Whale.HasBaleen to non-nullable JSON property 'hasBaleen'.");
+
+            if (whale.HasTeethOption.IsSet && whale.HasTeeth == null)
+                throw new JsonException("Cannot write null property Whale.HasTeeth to non-nullable JSON property 'hasTeeth'.");
 
             writer.WriteString("className", whale.ClassName);
 
@@ -221,11 +231,4 @@ namespace Org.OpenAPITools.Model
                 writer.WriteBoolean("hasTeeth", whale.HasTeethOption.Value!.Value);
         }
     }
-
-    /// <summary>
-    /// The WhaleSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(Whale))]
-    public partial class WhaleSerializationContext : JsonSerializerContext { }
 }

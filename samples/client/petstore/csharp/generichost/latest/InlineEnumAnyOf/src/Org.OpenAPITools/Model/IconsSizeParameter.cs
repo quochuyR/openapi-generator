@@ -54,7 +54,7 @@ namespace Org.OpenAPITools.Model
         /// <summary>
         /// Gets or Sets IconsSizeParameterAnyOf
         /// </summary>
-        public IconsSizeParameterAnyOf? IconsSizeParameterAnyOf { get { return this.IconsSizeParameterAnyOfOption; } set { this.IconsSizeParameterAnyOfOption = new(value); } }
+        public IconsSizeParameterAnyOf? IconsSizeParameterAnyOf { get { return this.IconsSizeParameterAnyOfOption.Value; } set { this.IconsSizeParameterAnyOfOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Int
@@ -66,7 +66,7 @@ namespace Org.OpenAPITools.Model
         /// <summary>
         /// Gets or Sets Int
         /// </summary>
-        public int? Int { get { return this.IntOption; } set { this.IntOption = new(value); } }
+        public int? Int { get { return this.IntOption.Value; } set { this.IntOption = new(value); } }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -85,7 +85,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -94,8 +94,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="IconsSizeParameter" />
     /// </summary>
-    public class IconsSizeParameterJsonConverter : JsonConverter<IconsSizeParameter>
+    public partial class IconsSizeParameterJsonConverter : JsonConverter<IconsSizeParameter>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IconsSizeParameterJsonConverter" /> class.
+        /// </summary>
+        public IconsSizeParameterJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="IconsSizeParameter" />
         /// </summary>
@@ -108,34 +118,28 @@ namespace Org.OpenAPITools.Model
         {
             int currentDepth = utf8JsonReader.CurrentDepth;
 
-            if (utf8JsonReader.TokenType != JsonTokenType.StartObject && utf8JsonReader.TokenType != JsonTokenType.StartArray)
-                throw new JsonException();
-
             JsonTokenType startingTokenType = utf8JsonReader.TokenType;
+            bool isScalarToken = startingTokenType != JsonTokenType.StartObject && startingTokenType != JsonTokenType.StartArray;
 
             IconsSizeParameterAnyOf? iconsSizeParameterAnyOf = default;
             int? varInt = default;
 
-            Utf8JsonReader utf8JsonReaderAnyOf = utf8JsonReader;
-            while (utf8JsonReaderAnyOf.Read())
+            if (isScalarToken)
             {
-                if (startingTokenType == JsonTokenType.StartObject && utf8JsonReaderAnyOf.TokenType == JsonTokenType.EndObject && currentDepth == utf8JsonReaderAnyOf.CurrentDepth)
-                    break;
-
-                if (startingTokenType == JsonTokenType.StartArray && utf8JsonReaderAnyOf.TokenType == JsonTokenType.EndArray && currentDepth == utf8JsonReaderAnyOf.CurrentDepth)
-                    break;
-
-                if (utf8JsonReaderAnyOf.TokenType == JsonTokenType.PropertyName && currentDepth == utf8JsonReaderAnyOf.CurrentDepth - 1)
-                {
-                    Utf8JsonReader utf8JsonReaderIconsSizeParameterAnyOf = utf8JsonReader;
-                    ClientUtils.TryDeserialize<IconsSizeParameterAnyOf?>(ref utf8JsonReaderIconsSizeParameterAnyOf, jsonSerializerOptions, out iconsSizeParameterAnyOf);
-
-                    Utf8JsonReader utf8JsonReaderInt = utf8JsonReader;
-                    ClientUtils.TryDeserialize<int?>(ref utf8JsonReaderInt, jsonSerializerOptions, out varInt);
-                }
+                Utf8JsonReader utf8JsonReaderIconsSizeParameterAnyOf = utf8JsonReader;
+                ClientUtils.TryDeserialize<IconsSizeParameterAnyOf?>(ref utf8JsonReaderIconsSizeParameterAnyOf, jsonSerializerOptions, out iconsSizeParameterAnyOf);
             }
 
-            while (utf8JsonReader.Read())
+            if (isScalarToken)
+            {
+                Utf8JsonReader utf8JsonReaderInt = utf8JsonReader;
+                ClientUtils.TryDeserialize<int?>(ref utf8JsonReaderInt, jsonSerializerOptions, out varInt);
+            }
+
+            if (iconsSizeParameterAnyOf == null && varInt == null)
+                throw new JsonException();
+
+            while (!isScalarToken && utf8JsonReader.Read())
             {
                 if (startingTokenType == JsonTokenType.StartObject && utf8JsonReader.TokenType == JsonTokenType.EndObject && currentDepth == utf8JsonReader.CurrentDepth)
                     break;
@@ -172,19 +176,21 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="iconsSizeParameter"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, IconsSizeParameter iconsSizeParameter, JsonSerializerOptions jsonSerializerOptions)
         {
-            writer.WriteStartObject();
-
             if (iconsSizeParameter.IconsSizeParameterAnyOfOption.IsSet && iconsSizeParameter.IconsSizeParameterAnyOfOption.Value != null)
             {
-                IconsSizeParameterAnyOfJsonConverter iconsSizeParameterAnyOfJsonConverter = (IconsSizeParameterAnyOfJsonConverter) jsonSerializerOptions.Converters.First(c => c.CanConvert(iconsSizeParameter.IconsSizeParameterAnyOfOption.Value.GetType()));
-                iconsSizeParameterAnyOfJsonConverter.Write(writer, iconsSizeParameter.IconsSizeParameterAnyOfOption.Value.Value, jsonSerializerOptions);
+                JsonSerializer.Serialize(writer, iconsSizeParameter.IconsSizeParameterAnyOfOption.Value, jsonSerializerOptions);
+                return;
             }
 
             if (iconsSizeParameter.IntOption.IsSet && iconsSizeParameter.IntOption.Value != null)
-                writer.WriteNumber("parameter", iconsSizeParameter.IntOption.Value.Value);
+            {
+                JsonSerializer.Serialize(writer, iconsSizeParameter.IntOption.Value, jsonSerializerOptions);
+                return;
+            }
+
+            writer.WriteStartObject();
 
             WriteProperties(writer, iconsSizeParameter, jsonSerializerOptions);
             writer.WriteEndObject();
@@ -196,7 +202,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="iconsSizeParameter"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, IconsSizeParameter iconsSizeParameter, JsonSerializerOptions jsonSerializerOptions)
         {
 

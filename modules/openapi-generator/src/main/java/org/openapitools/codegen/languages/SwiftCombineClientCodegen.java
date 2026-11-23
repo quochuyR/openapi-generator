@@ -46,8 +46,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.openapitools.codegen.utils.CamelizeOption.LOWERCASE_FIRST_LETTER;
+import static org.openapitools.codegen.utils.ModelUtils.isEnumSchema;
 import static org.openapitools.codegen.utils.StringUtils.camelize;
 
+/**
+ * <p>Mustache templates are located in {@code src/main/resources/swift-combine/}.
+ */
 public class SwiftCombineClientCodegen extends DefaultCodegen implements CodegenConfig {
     private final Logger LOGGER = LoggerFactory.getLogger(SwiftCombineClientCodegen.class);
 
@@ -394,7 +398,7 @@ public class SwiftCombineClientCodegen extends DefaultCodegen implements Codegen
 
     @Override
     public String toDefaultValue(Schema p) {
-        if (p.getEnum() != null && !p.getEnum().isEmpty()) {
+        if (isEnumSchema(p)) {
             if (p.getDefault() != null) {
                 return "." + toEnumVarName(escapeText(String.valueOf(p.getDefault())), p.getType());
             }
@@ -440,11 +444,6 @@ public class SwiftCombineClientCodegen extends DefaultCodegen implements Codegen
     @Override
     public String toModelDocFilename(String name) {
         return toModelName(name);
-    }
-
-    @Override
-    public String toApiDocFilename(String name) {
-        return toApiName(name);
     }
 
     @Override
@@ -780,10 +779,12 @@ public class SwiftCombineClientCodegen extends DefaultCodegen implements Codegen
 
     @Override
     public void postProcess() {
-        System.out.println("################################################################################");
-        System.out.println("# Thanks for using OpenAPI Generator.                                          #");
-        System.out.println("# swift combine generator is contributed by @dydus0x14 and @ptiz.          #");
-        System.out.println("################################################################################");
+        if (!isQuietMode()) {
+            System.out.println("################################################################################");
+            System.out.println("# Thanks for using OpenAPI Generator.                                          #");
+            System.out.println("# swift combine generator is contributed by @dydus0x14 and @ptiz.          #");
+            System.out.println("################################################################################");
+        }
     }
 
     @Override

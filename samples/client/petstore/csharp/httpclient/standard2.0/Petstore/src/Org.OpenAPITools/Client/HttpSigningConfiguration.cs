@@ -75,6 +75,7 @@ namespace Org.OpenAPITools.Client
         /// </summary>
         public int SignatureValidityPeriod { get; set; }
 
+
         private enum PrivateKeyType
         {
             None = 0,
@@ -137,39 +138,15 @@ namespace Org.OpenAPITools.Client
                 }
             }
 
-            var httpValues = HttpUtility.ParseQueryString(string.Empty);
+            // Build the pairs directly: HttpUtility.ParseQueryString is case-insensitive and would merge keys such as "tag" and "Tag".
+            var queryPairs = new List<string>();
             foreach (var parameter in requestOptions.QueryParameters)
             {
-#if (NETCOREAPP)
-                string framework = RuntimeInformation.FrameworkDescription;
-                string key = framework.StartsWith(".NET 9") ? parameter.Key : parameter.Key;
-                if (parameter.Value.Count > 1)
-                { // array
-                    foreach (var value in parameter.Value)
-                    {
-                        httpValues.Add(key + "[]", value);
-                    }
-                }
-                else
-                {
-                    httpValues.Add(key, parameter.Value[0]);
-                }
-#else
-                if (parameter.Value.Count > 1)
-                { // array
-                    foreach (var value in parameter.Value)
-                    {
-                        httpValues.Add(parameter.Key + "[]", value);
-                    }
-                }
-                else
-                {
-                    httpValues.Add(parameter.Key, parameter.Value[0]);
-                }
-#endif
+                foreach (var value in parameter.Value)
+                    queryPairs.Add(HttpUtility.UrlEncode(parameter.Key) + "=" + HttpUtility.UrlEncode(value));
             }
             var uriBuilder = new UriBuilder(string.Concat(basePath, path));
-            uriBuilder.Query = httpValues.ToString().Replace("+", "%20");
+            uriBuilder.Query = string.Join("&", queryPairs).Replace("+", "%20").Replace("%24", "$");
 
             var dateTime = DateTime.Now;
             string Digest = string.Empty;

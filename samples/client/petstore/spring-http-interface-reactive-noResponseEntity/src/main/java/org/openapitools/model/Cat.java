@@ -1,21 +1,18 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.annotation.Generated;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
 import org.openapitools.model.Animal;
 import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
 
 /**
  * Cat
@@ -30,9 +27,10 @@ import jakarta.annotation.Generated;
   @JsonSubTypes.Type(value = BigCat.class, name = "BigCat")
 })
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class Cat extends Animal {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Boolean declawed;
 
   public Cat() {
@@ -55,12 +53,12 @@ public class Cat extends Animal {
    * Get declawed
    * @return declawed
    */
-  
   @JsonProperty("declawed")
   public @Nullable Boolean getDeclawed() {
     return declawed;
   }
 
+  @JsonProperty("declawed")
   public void setDeclawed(@Nullable Boolean declawed) {
     this.declawed = declawed;
   }
@@ -108,10 +106,7 @@ public class Cat extends Animal {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

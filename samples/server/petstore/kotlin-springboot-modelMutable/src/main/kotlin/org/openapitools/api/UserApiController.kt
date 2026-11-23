@@ -38,7 +38,7 @@ class UserApiController(@Autowired(required = true) val service: UserApiService)
         operationId = "createUser",
         description = """This can only be done by the logged in user.""",
         responses = [
-            ApiResponse(responseCode = "200", description = "successful operation") ]
+            ApiResponse(responseCode = "default", description = "successful operation") ]
     )
     @RequestMapping(
         method = [RequestMethod.POST],
@@ -56,7 +56,7 @@ class UserApiController(@Autowired(required = true) val service: UserApiService)
         operationId = "createUsersWithArrayInput",
         description = """""",
         responses = [
-            ApiResponse(responseCode = "200", description = "successful operation") ]
+            ApiResponse(responseCode = "default", description = "successful operation") ]
     )
     @RequestMapping(
         method = [RequestMethod.POST],
@@ -64,7 +64,7 @@ class UserApiController(@Autowired(required = true) val service: UserApiService)
         value = [PATH_CREATE_USERS_WITH_ARRAY_INPUT]
     )
     fun createUsersWithArrayInput(
-        @Parameter(description = "List of user object", required = true) @Valid @RequestBody body: kotlin.collections.List<User>
+        @Parameter(description = "List of user object", required = true) @Valid @RequestBody body: kotlin.collections.List<@Valid User>
     ): ResponseEntity<Unit> {
         return ResponseEntity(service.createUsersWithArrayInput(body), HttpStatus.valueOf(200))
     }
@@ -74,7 +74,7 @@ class UserApiController(@Autowired(required = true) val service: UserApiService)
         operationId = "createUsersWithListInput",
         description = """""",
         responses = [
-            ApiResponse(responseCode = "200", description = "successful operation") ]
+            ApiResponse(responseCode = "default", description = "successful operation") ]
     )
     @RequestMapping(
         method = [RequestMethod.POST],
@@ -82,7 +82,7 @@ class UserApiController(@Autowired(required = true) val service: UserApiService)
         value = [PATH_CREATE_USERS_WITH_LIST_INPUT]
     )
     fun createUsersWithListInput(
-        @Parameter(description = "List of user object", required = true) @Valid @RequestBody body: kotlin.collections.List<User>
+        @Parameter(description = "List of user object", required = true) @Valid @RequestBody body: kotlin.collections.List<@Valid User>
     ): ResponseEntity<Unit> {
         return ResponseEntity(service.createUsersWithListInput(body), HttpStatus.valueOf(200))
     }
@@ -153,7 +153,7 @@ class UserApiController(@Autowired(required = true) val service: UserApiService)
         operationId = "logoutUser",
         description = """""",
         responses = [
-            ApiResponse(responseCode = "200", description = "successful operation") ]
+            ApiResponse(responseCode = "default", description = "successful operation") ]
     )
     @RequestMapping(
         method = [RequestMethod.GET],

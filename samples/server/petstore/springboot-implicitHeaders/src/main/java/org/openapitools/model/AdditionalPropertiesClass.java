@@ -1,63 +1,62 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.openapitools.jackson.nullable.JsonNullable;
-import org.springframework.lang.Nullable;
 import java.util.NoSuchElementException;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
+import java.util.Objects;
+import javax.annotation.Generated;
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-
-
-import java.util.*;
-import javax.annotation.Generated;
+import org.openapitools.jackson.nullable.JsonNullable;
+import org.springframework.lang.Nullable;
 
 /**
  * AdditionalPropertiesClass
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class AdditionalPropertiesClass {
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Map<String, String> mapString = new HashMap<>();
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Map<String, BigDecimal> mapNumber = new HashMap<>();
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Map<String, Integer> mapInteger = new HashMap<>();
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Map<String, Boolean> mapBoolean = new HashMap<>();
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Map<String, List<Integer>> mapArrayInteger = new HashMap<>();
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Map<String, List<Object>> mapArrayAnytype = new HashMap<>();
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Map<String, Map<String, String>> mapMapString = new HashMap<>();
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Map<String, Map<String, Object>> mapMapAnytype = new HashMap<>();
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Object anytype1;
 
   private JsonNullable<Object> anytype2 = JsonNullable.<Object>undefined();
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Object anytype3;
 
   public AdditionalPropertiesClass mapString(Map<String, String> mapString) {
@@ -78,12 +77,13 @@ public class AdditionalPropertiesClass {
    * @return mapString
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "map_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("map_string")
   public Map<String, String> getMapString() {
     return mapString;
   }
 
+  @JsonProperty("map_string")
   public void setMapString(Map<String, String> mapString) {
     this.mapString = mapString;
   }
@@ -105,13 +105,14 @@ public class AdditionalPropertiesClass {
    * Get mapNumber
    * @return mapNumber
    */
-  @Valid 
-  @ApiModelProperty(value = "")
+  
+  @Schema(name = "map_number", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("map_number")
   public Map<String, BigDecimal> getMapNumber() {
     return mapNumber;
   }
 
+  @JsonProperty("map_number")
   public void setMapNumber(Map<String, BigDecimal> mapNumber) {
     this.mapNumber = mapNumber;
   }
@@ -134,12 +135,13 @@ public class AdditionalPropertiesClass {
    * @return mapInteger
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "map_integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("map_integer")
   public Map<String, Integer> getMapInteger() {
     return mapInteger;
   }
 
+  @JsonProperty("map_integer")
   public void setMapInteger(Map<String, Integer> mapInteger) {
     this.mapInteger = mapInteger;
   }
@@ -162,12 +164,13 @@ public class AdditionalPropertiesClass {
    * @return mapBoolean
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "map_boolean", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("map_boolean")
   public Map<String, Boolean> getMapBoolean() {
     return mapBoolean;
   }
 
+  @JsonProperty("map_boolean")
   public void setMapBoolean(Map<String, Boolean> mapBoolean) {
     this.mapBoolean = mapBoolean;
   }
@@ -189,13 +192,14 @@ public class AdditionalPropertiesClass {
    * Get mapArrayInteger
    * @return mapArrayInteger
    */
-  @Valid 
-  @ApiModelProperty(value = "")
+  
+  @Schema(name = "map_array_integer", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("map_array_integer")
   public Map<String, List<Integer>> getMapArrayInteger() {
     return mapArrayInteger;
   }
 
+  @JsonProperty("map_array_integer")
   public void setMapArrayInteger(Map<String, List<Integer>> mapArrayInteger) {
     this.mapArrayInteger = mapArrayInteger;
   }
@@ -217,13 +221,14 @@ public class AdditionalPropertiesClass {
    * Get mapArrayAnytype
    * @return mapArrayAnytype
    */
-  @Valid 
-  @ApiModelProperty(value = "")
+  
+  @Schema(name = "map_array_anytype", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("map_array_anytype")
   public Map<String, List<Object>> getMapArrayAnytype() {
     return mapArrayAnytype;
   }
 
+  @JsonProperty("map_array_anytype")
   public void setMapArrayAnytype(Map<String, List<Object>> mapArrayAnytype) {
     this.mapArrayAnytype = mapArrayAnytype;
   }
@@ -245,13 +250,14 @@ public class AdditionalPropertiesClass {
    * Get mapMapString
    * @return mapMapString
    */
-  @Valid 
-  @ApiModelProperty(value = "")
+  
+  @Schema(name = "map_map_string", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("map_map_string")
   public Map<String, Map<String, String>> getMapMapString() {
     return mapMapString;
   }
 
+  @JsonProperty("map_map_string")
   public void setMapMapString(Map<String, Map<String, String>> mapMapString) {
     this.mapMapString = mapMapString;
   }
@@ -273,13 +279,14 @@ public class AdditionalPropertiesClass {
    * Get mapMapAnytype
    * @return mapMapAnytype
    */
-  @Valid 
-  @ApiModelProperty(value = "")
+  
+  @Schema(name = "map_map_anytype", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("map_map_anytype")
   public Map<String, Map<String, Object>> getMapMapAnytype() {
     return mapMapAnytype;
   }
 
+  @JsonProperty("map_map_anytype")
   public void setMapMapAnytype(Map<String, Map<String, Object>> mapMapAnytype) {
     this.mapMapAnytype = mapMapAnytype;
   }
@@ -294,12 +301,13 @@ public class AdditionalPropertiesClass {
    * @return anytype1
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "anytype_1", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("anytype_1")
   public @Nullable Object getAnytype1() {
     return anytype1;
   }
 
+  @JsonProperty("anytype_1")
   public void setAnytype1(@Nullable Object anytype1) {
     this.anytype1 = anytype1;
   }
@@ -314,7 +322,7 @@ public class AdditionalPropertiesClass {
    * @return anytype2
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "anytype_2", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("anytype_2")
   public JsonNullable<Object> getAnytype2() {
     return anytype2;
@@ -334,12 +342,13 @@ public class AdditionalPropertiesClass {
    * @return anytype3
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "anytype_3", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("anytype_3")
   public @Nullable Object getAnytype3() {
     return anytype3;
   }
 
+  @JsonProperty("anytype_3")
   public void setAnytype3(@Nullable Object anytype3) {
     this.anytype3 = anytype3;
   }
@@ -406,10 +415,7 @@ public class AdditionalPropertiesClass {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

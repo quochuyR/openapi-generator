@@ -1,41 +1,47 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import org.hibernate.validator.constraints.*;
 import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
 
 /**
  * TypeHolderExampleDto
  */
 
 @JsonTypeName("TypeHolderExample")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class TypeHolderExampleDto {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private String stringItem;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private BigDecimal numberItem;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Float floatItem;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Integer integerItem;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Boolean boolItem;
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Integer> arrayItem = new ArrayList<>();
 
   public TypeHolderExampleDto() {
@@ -51,12 +57,13 @@ public class TypeHolderExampleDto {
    * Get stringItem
    * @return stringItem
    */
-  @NotNull
+  @NotNull 
   @JsonProperty("string_item")
   public String getStringItem() {
     return stringItem;
   }
 
+  @JsonProperty("string_item")
   public void setStringItem(String stringItem) {
     this.stringItem = stringItem;
   }
@@ -70,12 +77,13 @@ public class TypeHolderExampleDto {
    * Get numberItem
    * @return numberItem
    */
-  @NotNull
+  @NotNull @Valid 
   @JsonProperty("number_item")
   public BigDecimal getNumberItem() {
     return numberItem;
   }
 
+  @JsonProperty("number_item")
   public void setNumberItem(BigDecimal numberItem) {
     this.numberItem = numberItem;
   }
@@ -89,12 +97,13 @@ public class TypeHolderExampleDto {
    * Get floatItem
    * @return floatItem
    */
-  @NotNull
+  @NotNull 
   @JsonProperty("float_item")
   public Float getFloatItem() {
     return floatItem;
   }
 
+  @JsonProperty("float_item")
   public void setFloatItem(Float floatItem) {
     this.floatItem = floatItem;
   }
@@ -108,12 +117,13 @@ public class TypeHolderExampleDto {
    * Get integerItem
    * @return integerItem
    */
-  @NotNull
+  @NotNull 
   @JsonProperty("integer_item")
   public Integer getIntegerItem() {
     return integerItem;
   }
 
+  @JsonProperty("integer_item")
   public void setIntegerItem(Integer integerItem) {
     this.integerItem = integerItem;
   }
@@ -127,12 +137,13 @@ public class TypeHolderExampleDto {
    * Get boolItem
    * @return boolItem
    */
-  @NotNull
+  @NotNull 
   @JsonProperty("bool_item")
   public Boolean getBoolItem() {
     return boolItem;
   }
 
+  @JsonProperty("bool_item")
   public void setBoolItem(Boolean boolItem) {
     this.boolItem = boolItem;
   }
@@ -154,12 +165,13 @@ public class TypeHolderExampleDto {
    * Get arrayItem
    * @return arrayItem
    */
-  @NotNull
+  @NotNull 
   @JsonProperty("array_item")
   public List<Integer> getArrayItem() {
     return arrayItem;
   }
 
+  @JsonProperty("array_item")
   public void setArrayItem(List<Integer> arrayItem) {
     this.arrayItem = arrayItem;
   }
@@ -205,10 +217,7 @@ public class TypeHolderExampleDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

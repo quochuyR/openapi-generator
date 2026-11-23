@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 
 @JsonTypeName("MapTest")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")    @XmlAccessorType(XmlAccessType.FIELD)
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")    @XmlAccessorType(XmlAccessType.FIELD)
      @XmlType(name = "MapTest", propOrder =
     { "mapMapOfString", "mapOfEnumString", "directMap", "indirectMap"
     })
@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
     @XmlRootElement(name="MapTest")
 
 public class MapTest  implements Serializable {
-  private @Valid Map<String, Map<String, String>> mapMapOfString = new HashMap<>();
+  private Map<String, Map<String, String>> mapMapOfString = new HashMap<>();
   @XmlType(name="InnerEnum")
 @XmlEnum(String.class)
 public enum InnerEnum {
@@ -84,9 +84,9 @@ public enum InnerEnum {
     }
 }
 
-  private @Valid Map<String, InnerEnum> mapOfEnumString = new HashMap<>();
-  private @Valid Map<String, Boolean> directMap = new HashMap<>();
-  private @Valid Map<String, Boolean> indirectMap = new HashMap<>();
+  private Map<String, InnerEnum> mapOfEnumString = new HashMap<>();
+  private Map<String, Boolean> directMap = new HashMap<>();
+  private Map<String, Boolean> indirectMap = new HashMap<>();
 
   protected MapTest(MapTestBuilder<?, ?> b) {
     this.mapMapOfString = b.mapMapOfString;
@@ -281,10 +281,7 @@ public enum InnerEnum {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 
 
@@ -332,4 +329,3 @@ public enum InnerEnum {
     }
   }
 }
-

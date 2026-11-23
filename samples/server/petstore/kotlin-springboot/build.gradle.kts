@@ -18,6 +18,8 @@ repositories {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
+    // emit type annotations such as List<@Valid Pet> so Bean Validation can see them at runtime
+    kotlinOptions.freeCompilerArgs += "-Xemit-jvm-type-annotations"
 }
 
 plugins {
@@ -40,7 +42,9 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.springframework.data:spring-data-commons")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("javax.validation:validation-api")
+
     implementation("javax.annotation:javax.annotation-api:1.3.2")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {

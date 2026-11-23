@@ -19,9 +19,9 @@ import org.openapitools.jackson.nullable.JsonNullable;
 
 @org.eclipse.microprofile.openapi.annotations.media.Schema(description="")
 @JsonTypeName("ArrayOfArrayOfNumberOnly")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class ArrayOfArrayOfNumberOnly  implements Serializable {
-  private @Valid List<List<BigDecimal>> arrayArrayNumber = new ArrayList<>();
+  private List<List<BigDecimal>> arrayArrayNumber = new ArrayList<>();
 
   protected ArrayOfArrayOfNumberOnly(ArrayOfArrayOfNumberOnlyBuilder<?, ?> b) {
     this.arrayArrayNumber = b.arrayArrayNumber;
@@ -40,7 +40,7 @@ public class ArrayOfArrayOfNumberOnly  implements Serializable {
   
   @org.eclipse.microprofile.openapi.annotations.media.Schema(description = "")
   @JsonProperty("ArrayArrayNumber")
-  @Valid public List<@Valid List<@Valid BigDecimal>> getArrayArrayNumber() {
+  public List<List<@Valid BigDecimal>> getArrayArrayNumber() {
     return arrayArrayNumber;
   }
 
@@ -98,10 +98,7 @@ public class ArrayOfArrayOfNumberOnly  implements Serializable {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 
 
@@ -134,4 +131,3 @@ public class ArrayOfArrayOfNumberOnly  implements Serializable {
     }
   }
 }
-

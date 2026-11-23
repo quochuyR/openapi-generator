@@ -9,18 +9,18 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import org.springframework.http.codec.multipart.Part;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 
 /**
  * A delegate to be called by the {@link FakeClassnameTestApiController}}.
  * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public interface FakeClassnameTestApiDelegate {
 
     default Optional<NativeWebRequest> getRequest() {
@@ -35,7 +35,7 @@ public interface FakeClassnameTestApiDelegate {
      * @return successful operation (status code 200)
      * @see FakeClassnameTestApi#testClassname
      */
-    default Mono<Client> testClassname(Mono<Client> client) {
+    default @Valid Mono<Client> testClassname(Mono<Client> client) {
         Mono<Void> result = Mono.empty();
 
 

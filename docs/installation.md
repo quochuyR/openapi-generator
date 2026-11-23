@@ -22,7 +22,7 @@ npm install @openapitools/openapi-generator-cli -g
 To install a specific version of the tool, pass the version during installation:
 <!-- RELEASE_VERSION -->
 ```bash
-openapi-generator-cli version-manager set 7.19.0
+openapi-generator-cli version-manager set 7.26.0
 ```
 <!-- /RELEASE_VERSION -->
 To install the tool as a dev dependency in your current project:
@@ -36,7 +36,7 @@ Then, **generate** a ruby client from a valid [petstore.yaml](https://raw.github
 npx @openapitools/openapi-generator-cli generate -i petstore.yaml -g ruby -o /tmp/test/
 ```
 
-> `npx` will execute a globally available `openapi-generator`, and if not found it will fall back to project-local commands. The result is that the above command will work regardless of which installation method you've chosen.
+> When `@openapitools/openapi-generator-cli` is installed in the current project, `npx` uses the local package. Otherwise, npm may fetch the package into its cache and prompt for confirmation. To run a globally installed CLI, invoke `openapi-generator-cli` directly.
 
 ## Homebrew
 
@@ -119,18 +119,18 @@ docker run --rm \
 <!-- RELEASE_VERSION -->
 If you're looking for the latest stable version, you can grab it directly from Maven.org (Java 11 runtime at a minimum):
 
-JAR location: `https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.19.0/openapi-generator-cli-7.19.0.jar`
+JAR location: `https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.26.0/openapi-generator-cli-7.26.0.jar`
 
 For **Mac/Linux** users:
 
 ```bash
-wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.19.0/openapi-generator-cli-7.19.0.jar -O openapi-generator-cli.jar
+wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.26.0/openapi-generator-cli-7.26.0.jar -O openapi-generator-cli.jar
 ```
 
 For **Windows** users, you will need to install [wget](http://gnuwin32.sourceforge.net/packages/wget.htm) or you can use Invoke-WebRequest in PowerShell (3.0+), e.g.
 
 ```powershell
-Invoke-WebRequest -OutFile openapi-generator-cli.jar https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.19.0/openapi-generator-cli-7.19.0.jar
+Invoke-WebRequest -OutFile openapi-generator-cli.jar https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.26.0/openapi-generator-cli-7.26.0.jar
 ```
 <!-- /RELEASE_VERSION -->
 
@@ -142,6 +142,14 @@ For Mac users, please make sure Java 11 is installed (Tips: run `java -version` 
 export JAVA_HOME=`/usr/libexec/java_home -v 1.11`
 export PATH=${JAVA_HOME}/bin:$PATH
 ```
+
+## JBang
+
+> **Platform(s)**: Linux, macOS, Windows
+
+Use [JBang](https://www.jbang.dev/) to retrieve and run the JAR file using Maven coordinates. 
+
+Run `jbang --java 11 org.openapitools:openapi-generator-cli:LATEST help` to show the usage.
 
 ## Bash Launcher Script
 

@@ -33,6 +33,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.*;
 
+/**
+ * <p>Mustache templates are located in {@code src/main/resources/typescript-rxjs/}.
+ */
 public class TypeScriptRxjsClientCodegen extends AbstractTypeScriptClientCodegen {
     private final Logger LOGGER = LoggerFactory.getLogger(AbstractTypeScriptClientCodegen.class);
 
@@ -189,6 +192,8 @@ public class TypeScriptRxjsClientCodegen extends AbstractTypeScriptClientCodegen
         // Files for building our lib
         supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
         supportingFiles.add(new SupportingFile("package.mustache", "", "package.json"));
+        // without it npm falls back to .gitignore, which excludes dist
+        supportingFiles.add(new SupportingFile("npmignore", "", ".npmignore"));
     }
 
     @Override

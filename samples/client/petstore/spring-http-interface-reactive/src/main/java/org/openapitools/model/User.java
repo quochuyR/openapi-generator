@@ -1,39 +1,44 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Generated;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 /**
  * User
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class User {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Long id;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String username;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String firstName;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String lastName;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String email;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String password;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String phone;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Integer userStatus;
 
   public User id(@Nullable Long id) {
@@ -45,12 +50,12 @@ public class User {
    * Get id
    * @return id
    */
-  
   @JsonProperty("id")
   public @Nullable Long getId() {
     return id;
   }
 
+  @JsonProperty("id")
   public void setId(@Nullable Long id) {
     this.id = id;
   }
@@ -64,12 +69,12 @@ public class User {
    * Get username
    * @return username
    */
-  
   @JsonProperty("username")
   public @Nullable String getUsername() {
     return username;
   }
 
+  @JsonProperty("username")
   public void setUsername(@Nullable String username) {
     this.username = username;
   }
@@ -83,12 +88,12 @@ public class User {
    * Get firstName
    * @return firstName
    */
-  
   @JsonProperty("firstName")
   public @Nullable String getFirstName() {
     return firstName;
   }
 
+  @JsonProperty("firstName")
   public void setFirstName(@Nullable String firstName) {
     this.firstName = firstName;
   }
@@ -102,12 +107,12 @@ public class User {
    * Get lastName
    * @return lastName
    */
-  
   @JsonProperty("lastName")
   public @Nullable String getLastName() {
     return lastName;
   }
 
+  @JsonProperty("lastName")
   public void setLastName(@Nullable String lastName) {
     this.lastName = lastName;
   }
@@ -121,12 +126,12 @@ public class User {
    * Get email
    * @return email
    */
-  
   @JsonProperty("email")
   public @Nullable String getEmail() {
     return email;
   }
 
+  @JsonProperty("email")
   public void setEmail(@Nullable String email) {
     this.email = email;
   }
@@ -140,12 +145,12 @@ public class User {
    * Get password
    * @return password
    */
-  
   @JsonProperty("password")
   public @Nullable String getPassword() {
     return password;
   }
 
+  @JsonProperty("password")
   public void setPassword(@Nullable String password) {
     this.password = password;
   }
@@ -159,12 +164,12 @@ public class User {
    * Get phone
    * @return phone
    */
-  
   @JsonProperty("phone")
   public @Nullable String getPhone() {
     return phone;
   }
 
+  @JsonProperty("phone")
   public void setPhone(@Nullable String phone) {
     this.phone = phone;
   }
@@ -178,12 +183,12 @@ public class User {
    * User Status
    * @return userStatus
    */
-  
   @JsonProperty("userStatus")
   public @Nullable Integer getUserStatus() {
     return userStatus;
   }
 
+  @JsonProperty("userStatus")
   public void setUserStatus(@Nullable Integer userStatus) {
     this.userStatus = userStatus;
   }
@@ -233,10 +238,7 @@ public class User {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

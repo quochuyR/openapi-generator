@@ -1,39 +1,44 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import org.hibernate.validator.constraints.*;
 import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
 
 /**
  * TypeHolderDefaultDto
  */
 
 @JsonTypeName("TypeHolderDefault")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class TypeHolderDefaultDto {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private String stringItem = "what";
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private BigDecimal numberItem = new BigDecimal("1.234");
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Integer integerItem = -2;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Boolean boolItem = true;
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Integer> arrayItem = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
 
   public TypeHolderDefaultDto() {
@@ -49,12 +54,13 @@ public class TypeHolderDefaultDto {
    * Get stringItem
    * @return stringItem
    */
-  @NotNull
+  @NotNull 
   @JsonProperty("string_item")
   public String getStringItem() {
     return stringItem;
   }
 
+  @JsonProperty("string_item")
   public void setStringItem(String stringItem) {
     this.stringItem = stringItem;
   }
@@ -68,12 +74,13 @@ public class TypeHolderDefaultDto {
    * Get numberItem
    * @return numberItem
    */
-  @NotNull
+  @NotNull @Valid 
   @JsonProperty("number_item")
   public BigDecimal getNumberItem() {
     return numberItem;
   }
 
+  @JsonProperty("number_item")
   public void setNumberItem(BigDecimal numberItem) {
     this.numberItem = numberItem;
   }
@@ -87,12 +94,13 @@ public class TypeHolderDefaultDto {
    * Get integerItem
    * @return integerItem
    */
-  @NotNull
+  @NotNull 
   @JsonProperty("integer_item")
   public Integer getIntegerItem() {
     return integerItem;
   }
 
+  @JsonProperty("integer_item")
   public void setIntegerItem(Integer integerItem) {
     this.integerItem = integerItem;
   }
@@ -106,12 +114,13 @@ public class TypeHolderDefaultDto {
    * Get boolItem
    * @return boolItem
    */
-  @NotNull
+  @NotNull 
   @JsonProperty("bool_item")
   public Boolean getBoolItem() {
     return boolItem;
   }
 
+  @JsonProperty("bool_item")
   public void setBoolItem(Boolean boolItem) {
     this.boolItem = boolItem;
   }
@@ -123,7 +132,7 @@ public class TypeHolderDefaultDto {
 
   public TypeHolderDefaultDto addArrayItemItem(Integer arrayItemItem) {
     if (this.arrayItem == null) {
-      this.arrayItem = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
+      this.arrayItem = new ArrayList<>();
     }
     this.arrayItem.add(arrayItemItem);
     return this;
@@ -133,12 +142,13 @@ public class TypeHolderDefaultDto {
    * Get arrayItem
    * @return arrayItem
    */
-  @NotNull
+  @NotNull 
   @JsonProperty("array_item")
   public List<Integer> getArrayItem() {
     return arrayItem;
   }
 
+  @JsonProperty("array_item")
   public void setArrayItem(List<Integer> arrayItem) {
     this.arrayItem = arrayItem;
   }
@@ -182,10 +192,7 @@ public class TypeHolderDefaultDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

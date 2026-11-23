@@ -1,37 +1,41 @@
 package org.openapitools.virtualan.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.*;
-import javax.annotation.Generated;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 /**
  * Capitalization
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class Capitalization {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String smallCamel;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String capitalCamel;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String smallSnake;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String capitalSnake;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String scAETHFlowPoints;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String ATT_NAME;
 
   public Capitalization smallCamel(@Nullable String smallCamel) {
@@ -50,6 +54,7 @@ public class Capitalization {
     return smallCamel;
   }
 
+  @JsonProperty("smallCamel")
   public void setSmallCamel(@Nullable String smallCamel) {
     this.smallCamel = smallCamel;
   }
@@ -70,6 +75,7 @@ public class Capitalization {
     return capitalCamel;
   }
 
+  @JsonProperty("CapitalCamel")
   public void setCapitalCamel(@Nullable String capitalCamel) {
     this.capitalCamel = capitalCamel;
   }
@@ -90,6 +96,7 @@ public class Capitalization {
     return smallSnake;
   }
 
+  @JsonProperty("small_Snake")
   public void setSmallSnake(@Nullable String smallSnake) {
     this.smallSnake = smallSnake;
   }
@@ -110,6 +117,7 @@ public class Capitalization {
     return capitalSnake;
   }
 
+  @JsonProperty("Capital_Snake")
   public void setCapitalSnake(@Nullable String capitalSnake) {
     this.capitalSnake = capitalSnake;
   }
@@ -130,6 +138,7 @@ public class Capitalization {
     return scAETHFlowPoints;
   }
 
+  @JsonProperty("SCA_ETH_Flow_Points")
   public void setScAETHFlowPoints(@Nullable String scAETHFlowPoints) {
     this.scAETHFlowPoints = scAETHFlowPoints;
   }
@@ -150,6 +159,7 @@ public class Capitalization {
     return ATT_NAME;
   }
 
+  @JsonProperty("ATT_NAME")
   public void setATTNAME(@Nullable String ATT_NAME) {
     this.ATT_NAME = ATT_NAME;
   }
@@ -195,10 +205,7 @@ public class Capitalization {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

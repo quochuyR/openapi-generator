@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -60,7 +59,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Code
         /// </summary>
         [JsonPropertyName("code")]
-        public int? Code { get { return this.CodeOption; } set { this.CodeOption = new(value); } }
+        public int? Code { get { return this.CodeOption.Value; } set { this.CodeOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Message
@@ -73,7 +72,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Message
         /// </summary>
         [JsonPropertyName("message")]
-        public string? Message { get { return this.MessageOption; } set { this.MessageOption = new(value); } }
+        public string? Message { get { return this.MessageOption.Value; } set { this.MessageOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Type
@@ -86,7 +85,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Type
         /// </summary>
         [JsonPropertyName("type")]
-        public string? Type { get { return this.TypeOption; } set { this.TypeOption = new(value); } }
+        public string? Type { get { return this.TypeOption.Value; } set { this.TypeOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -115,7 +114,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -124,8 +123,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="ApiResponse" />
     /// </summary>
-    public class ApiResponseJsonConverter : JsonConverter<ApiResponse>
+    public partial class ApiResponseJsonConverter : JsonConverter<ApiResponse>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ApiResponseJsonConverter" /> class.
+        /// </summary>
+        public ApiResponseJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="ApiResponse" />
         /// </summary>
@@ -178,13 +187,13 @@ namespace Org.OpenAPITools.Model
             }
 
             if (code.IsSet && code.Value == null)
-                throw new ArgumentNullException(nameof(code), "Property is not nullable for class ApiResponse.");
+                throw new JsonException("Property is not nullable for class ApiResponse: code.");
 
             if (message.IsSet && message.Value == null)
-                throw new ArgumentNullException(nameof(message), "Property is not nullable for class ApiResponse.");
+                throw new JsonException("Property is not nullable for class ApiResponse: message.");
 
             if (type.IsSet && type.Value == null)
-                throw new ArgumentNullException(nameof(type), "Property is not nullable for class ApiResponse.");
+                throw new JsonException("Property is not nullable for class ApiResponse: type.");
 
             return new ApiResponse(code, message, type);
         }
@@ -195,7 +204,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="apiResponse"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, ApiResponse apiResponse, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -210,14 +218,16 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="apiResponse"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, ApiResponse apiResponse, JsonSerializerOptions jsonSerializerOptions)
         {
+            if (apiResponse.CodeOption.IsSet && apiResponse.Code == null)
+                throw new JsonException("Cannot write null property ApiResponse.Code to non-nullable JSON property 'code'.");
+
             if (apiResponse.MessageOption.IsSet && apiResponse.Message == null)
-                throw new ArgumentNullException(nameof(apiResponse.Message), "Property is required for class ApiResponse.");
+                throw new JsonException("Cannot write null property ApiResponse.Message to non-nullable JSON property 'message'.");
 
             if (apiResponse.TypeOption.IsSet && apiResponse.Type == null)
-                throw new ArgumentNullException(nameof(apiResponse.Type), "Property is required for class ApiResponse.");
+                throw new JsonException("Cannot write null property ApiResponse.Type to non-nullable JSON property 'type'.");
 
             if (apiResponse.CodeOption.IsSet)
                 writer.WriteNumber("code", apiResponse.CodeOption.Value!.Value);
@@ -229,11 +239,4 @@ namespace Org.OpenAPITools.Model
                 writer.WriteString("type", apiResponse.Type);
         }
     }
-
-    /// <summary>
-    /// The ApiResponseSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(ApiResponse))]
-    public partial class ApiResponseSerializationContext : JsonSerializerContext { }
 }

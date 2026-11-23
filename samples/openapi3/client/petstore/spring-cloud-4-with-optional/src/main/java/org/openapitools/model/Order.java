@@ -1,34 +1,42 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.time.OffsetDateTime;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
+import com.fasterxml.jackson.annotation.Nulls;
+import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-
-
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.*;
-import jakarta.annotation.Generated;
+import java.util.Objects;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
 
 /**
  * An order for a pets from the pet store
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class Order {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private Long id;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private Long petId;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private Integer quantity;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private OffsetDateTime shipDate;
 
@@ -69,8 +77,12 @@ public class Order {
     }
   }
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private StatusEnum status;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private Boolean complete = false;
 
   public Order id(Long id) {
@@ -88,6 +100,7 @@ public class Order {
     return id;
   }
 
+  @JsonProperty("id")
   public void setId(Long id) {
     this.id = id;
   }
@@ -107,6 +120,7 @@ public class Order {
     return petId;
   }
 
+  @JsonProperty("petId")
   public void setPetId(Long petId) {
     this.petId = petId;
   }
@@ -126,6 +140,7 @@ public class Order {
     return quantity;
   }
 
+  @JsonProperty("quantity")
   public void setQuantity(Integer quantity) {
     this.quantity = quantity;
   }
@@ -145,6 +160,7 @@ public class Order {
     return shipDate;
   }
 
+  @JsonProperty("shipDate")
   public void setShipDate(OffsetDateTime shipDate) {
     this.shipDate = shipDate;
   }
@@ -164,6 +180,7 @@ public class Order {
     return status;
   }
 
+  @JsonProperty("status")
   public void setStatus(StatusEnum status) {
     this.status = status;
   }
@@ -183,6 +200,7 @@ public class Order {
     return complete;
   }
 
+  @JsonProperty("complete")
   public void setComplete(Boolean complete) {
     this.complete = complete;
   }
@@ -227,11 +245,8 @@ public class Order {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

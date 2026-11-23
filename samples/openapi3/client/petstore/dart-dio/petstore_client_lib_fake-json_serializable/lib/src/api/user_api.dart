@@ -57,7 +57,8 @@ class UserApi {
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(user);
+      _bodyData = jsonEncode(user);
+
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(
@@ -122,7 +123,8 @@ _bodyData=jsonEncode(user);
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(user);
+      _bodyData = jsonEncode(user);
+
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(
@@ -187,7 +189,8 @@ _bodyData=jsonEncode(user);
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(user);
+      _bodyData = jsonEncode(user);
+
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(
@@ -235,7 +238,7 @@ _bodyData=jsonEncode(user);
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/user/{username}'.replaceAll('{' r'username' '}', username.toString());
+    final _path = r'/user/{username}'.replaceAll('{' r'username' '}', Uri.encodeComponent(username.toString()),);
     final _options = Options(
       method: r'DELETE',
       headers: <String, dynamic>{
@@ -282,7 +285,7 @@ _bodyData=jsonEncode(user);
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/user/{username}'.replaceAll('{' r'username' '}', username.toString());
+    final _path = r'/user/{username}'.replaceAll('{' r'username' '}', Uri.encodeComponent(username.toString()),);
     final _options = Options(
       method: r'GET',
       headers: <String, dynamic>{
@@ -481,7 +484,7 @@ _responseData = rawData == null ? null : deserialize<String, String>(rawData, 'S
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/user/{username}'.replaceAll('{' r'username' '}', username.toString());
+    final _path = r'/user/{username}'.replaceAll('{' r'username' '}', Uri.encodeComponent(username.toString()),);
     final _options = Options(
       method: r'PUT',
       headers: <String, dynamic>{
@@ -498,7 +501,8 @@ _responseData = rawData == null ? null : deserialize<String, String>(rawData, 'S
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(user);
+      _bodyData = jsonEncode(user);
+
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(

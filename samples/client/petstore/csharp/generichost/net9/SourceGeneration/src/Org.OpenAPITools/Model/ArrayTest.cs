@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -60,7 +59,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets ArrayArrayOfInteger
         /// </summary>
         [JsonPropertyName("array_array_of_integer")]
-        public List<List<long>>? ArrayArrayOfInteger { get { return this.ArrayArrayOfIntegerOption; } set { this.ArrayArrayOfIntegerOption = new(value); } }
+        public List<List<long>>? ArrayArrayOfInteger { get { return this.ArrayArrayOfIntegerOption.Value; } set { this.ArrayArrayOfIntegerOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of ArrayArrayOfModel
@@ -73,7 +72,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets ArrayArrayOfModel
         /// </summary>
         [JsonPropertyName("array_array_of_model")]
-        public List<List<ReadOnlyFirst>>? ArrayArrayOfModel { get { return this.ArrayArrayOfModelOption; } set { this.ArrayArrayOfModelOption = new(value); } }
+        public List<List<ReadOnlyFirst>>? ArrayArrayOfModel { get { return this.ArrayArrayOfModelOption.Value; } set { this.ArrayArrayOfModelOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of ArrayOfString
@@ -86,7 +85,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets ArrayOfString
         /// </summary>
         [JsonPropertyName("array_of_string")]
-        public List<string>? ArrayOfString { get { return this.ArrayOfStringOption; } set { this.ArrayOfStringOption = new(value); } }
+        public List<string>? ArrayOfString { get { return this.ArrayOfStringOption.Value; } set { this.ArrayOfStringOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -115,7 +114,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -124,8 +123,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="ArrayTest" />
     /// </summary>
-    public class ArrayTestJsonConverter : JsonConverter<ArrayTest>
+    public partial class ArrayTestJsonConverter : JsonConverter<ArrayTest>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArrayTestJsonConverter" /> class.
+        /// </summary>
+        public ArrayTestJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="ArrayTest" />
         /// </summary>
@@ -178,13 +187,13 @@ namespace Org.OpenAPITools.Model
             }
 
             if (arrayArrayOfInteger.IsSet && arrayArrayOfInteger.Value == null)
-                throw new ArgumentNullException(nameof(arrayArrayOfInteger), "Property is not nullable for class ArrayTest.");
+                throw new JsonException("Property is not nullable for class ArrayTest: array_array_of_integer.");
 
             if (arrayArrayOfModel.IsSet && arrayArrayOfModel.Value == null)
-                throw new ArgumentNullException(nameof(arrayArrayOfModel), "Property is not nullable for class ArrayTest.");
+                throw new JsonException("Property is not nullable for class ArrayTest: array_array_of_model.");
 
             if (arrayOfString.IsSet && arrayOfString.Value == null)
-                throw new ArgumentNullException(nameof(arrayOfString), "Property is not nullable for class ArrayTest.");
+                throw new JsonException("Property is not nullable for class ArrayTest: array_of_string.");
 
             return new ArrayTest(arrayArrayOfInteger, arrayArrayOfModel, arrayOfString);
         }
@@ -195,7 +204,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="arrayTest"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, ArrayTest arrayTest, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -210,17 +218,16 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="arrayTest"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, ArrayTest arrayTest, JsonSerializerOptions jsonSerializerOptions)
         {
             if (arrayTest.ArrayArrayOfIntegerOption.IsSet && arrayTest.ArrayArrayOfInteger == null)
-                throw new ArgumentNullException(nameof(arrayTest.ArrayArrayOfInteger), "Property is required for class ArrayTest.");
+                throw new JsonException("Cannot write null property ArrayTest.ArrayArrayOfInteger to non-nullable JSON property 'array_array_of_integer'.");
 
             if (arrayTest.ArrayArrayOfModelOption.IsSet && arrayTest.ArrayArrayOfModel == null)
-                throw new ArgumentNullException(nameof(arrayTest.ArrayArrayOfModel), "Property is required for class ArrayTest.");
+                throw new JsonException("Cannot write null property ArrayTest.ArrayArrayOfModel to non-nullable JSON property 'array_array_of_model'.");
 
             if (arrayTest.ArrayOfStringOption.IsSet && arrayTest.ArrayOfString == null)
-                throw new ArgumentNullException(nameof(arrayTest.ArrayOfString), "Property is required for class ArrayTest.");
+                throw new JsonException("Cannot write null property ArrayTest.ArrayOfString to non-nullable JSON property 'array_of_string'.");
 
             if (arrayTest.ArrayArrayOfIntegerOption.IsSet)
             {
@@ -239,11 +246,4 @@ namespace Org.OpenAPITools.Model
             }
         }
     }
-
-    /// <summary>
-    /// The ArrayTestSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(ArrayTest))]
-    public partial class ArrayTestSerializationContext : JsonSerializerContext { }
 }

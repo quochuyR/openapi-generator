@@ -1,22 +1,23 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import tools.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import tools.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import tools.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import jakarta.xml.bind.annotation.*;
-
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.*;
-import jakarta.annotation.Generated;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
+import tools.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import tools.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import tools.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 /**
  * A User who is purchasing from the pet store
@@ -26,23 +27,39 @@ import jakarta.annotation.Generated;
 @JacksonXmlRootElement(localName = "User")
 @XmlRootElement(name = "User")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class User {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable Long id;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String username;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String firstName;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String lastName;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String email;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String password;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String phone;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable Integer userStatus;
 
   public User() {
@@ -81,6 +98,8 @@ public class User {
     return id;
   }
 
+  @JsonProperty("id")
+  @JacksonXmlProperty(localName = "id")
   public void setId(@Nullable Long id) {
     this.id = id;
   }
@@ -103,6 +122,8 @@ public class User {
     return username;
   }
 
+  @JsonProperty("username")
+  @JacksonXmlProperty(localName = "username")
   public void setUsername(@Nullable String username) {
     this.username = username;
   }
@@ -125,6 +146,8 @@ public class User {
     return firstName;
   }
 
+  @JsonProperty("firstName")
+  @JacksonXmlProperty(localName = "firstName")
   public void setFirstName(@Nullable String firstName) {
     this.firstName = firstName;
   }
@@ -147,6 +170,8 @@ public class User {
     return lastName;
   }
 
+  @JsonProperty("lastName")
+  @JacksonXmlProperty(localName = "lastName")
   public void setLastName(@Nullable String lastName) {
     this.lastName = lastName;
   }
@@ -169,6 +194,8 @@ public class User {
     return email;
   }
 
+  @JsonProperty("email")
+  @JacksonXmlProperty(localName = "email")
   public void setEmail(@Nullable String email) {
     this.email = email;
   }
@@ -191,6 +218,8 @@ public class User {
     return password;
   }
 
+  @JsonProperty("password")
+  @JacksonXmlProperty(localName = "password")
   public void setPassword(@Nullable String password) {
     this.password = password;
   }
@@ -213,6 +242,8 @@ public class User {
     return phone;
   }
 
+  @JsonProperty("phone")
+  @JacksonXmlProperty(localName = "phone")
   public void setPhone(@Nullable String phone) {
     this.phone = phone;
   }
@@ -235,6 +266,8 @@ public class User {
     return userStatus;
   }
 
+  @JsonProperty("userStatus")
+  @JacksonXmlProperty(localName = "userStatus")
   public void setUserStatus(@Nullable Integer userStatus) {
     this.userStatus = userStatus;
   }
@@ -284,10 +317,7 @@ public class User {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
   
   public static class Builder {

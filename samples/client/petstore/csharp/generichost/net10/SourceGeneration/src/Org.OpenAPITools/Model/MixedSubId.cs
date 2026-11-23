@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -56,7 +55,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Id
         /// </summary>
         [JsonPropertyName("id")]
-        public string? Id { get { return this.IdOption; } set { this.IdOption = new(value); } }
+        public string? Id { get { return this.IdOption.Value; } set { this.IdOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -83,7 +82,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -92,8 +91,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="MixedSubId" />
     /// </summary>
-    public class MixedSubIdJsonConverter : JsonConverter<MixedSubId>
+    public partial class MixedSubIdJsonConverter : JsonConverter<MixedSubId>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MixedSubIdJsonConverter" /> class.
+        /// </summary>
+        public MixedSubIdJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="MixedSubId" />
         /// </summary>
@@ -138,7 +147,7 @@ namespace Org.OpenAPITools.Model
             }
 
             if (id.IsSet && id.Value == null)
-                throw new ArgumentNullException(nameof(id), "Property is not nullable for class MixedSubId.");
+                throw new JsonException("Property is not nullable for class MixedSubId: id.");
 
             return new MixedSubId(id);
         }
@@ -149,7 +158,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="mixedSubId"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, MixedSubId mixedSubId, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -164,21 +172,13 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="mixedSubId"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, MixedSubId mixedSubId, JsonSerializerOptions jsonSerializerOptions)
         {
             if (mixedSubId.IdOption.IsSet && mixedSubId.Id == null)
-                throw new ArgumentNullException(nameof(mixedSubId.Id), "Property is required for class MixedSubId.");
+                throw new JsonException("Cannot write null property MixedSubId.Id to non-nullable JSON property 'id'.");
 
             if (mixedSubId.IdOption.IsSet)
                 writer.WriteString("id", mixedSubId.Id);
         }
     }
-
-    /// <summary>
-    /// The MixedSubIdSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(MixedSubId))]
-    public partial class MixedSubIdSerializationContext : JsonSerializerContext { }
 }

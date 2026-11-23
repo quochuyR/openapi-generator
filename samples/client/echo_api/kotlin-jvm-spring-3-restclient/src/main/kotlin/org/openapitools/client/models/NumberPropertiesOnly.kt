@@ -8,9 +8,17 @@
 
 @file:Suppress(
     "ArrayInDataClass",
+    "DuplicatedCode",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport"
+    "RemoveRedundantCallsOfConversionMethods",
+    "REDUNDANT_CALL_OF_CONVERSION_METHOD",
+    "RedundantUnitReturnType",
+    "RemoveEmptyClassBody",
+    "UnnecessaryVariable",
+    "UnusedImport",
+    "UnnecessaryVariable",
+    "unused"
 )
 
 package org.openapitools.client.models
@@ -20,22 +28,23 @@ import com.fasterxml.jackson.annotation.JsonEnumDefaultValue
 import com.fasterxml.jackson.annotation.JsonProperty
 
 /**
- * 
- *
- * @param number 
- * @param float 
- * @param double 
+ * @param number
+ * @param float
+ * @param double
  */
 
 
 data class NumberPropertiesOnly (
 
+    @param:JsonProperty("number")
     @get:JsonProperty("number")
     val number: java.math.BigDecimal? = null,
 
+    @param:JsonProperty("float")
     @get:JsonProperty("float")
     val float: kotlin.Float? = null,
 
+    @param:JsonProperty("double")
     @get:JsonProperty("double")
     val double: kotlin.Double? = null
 

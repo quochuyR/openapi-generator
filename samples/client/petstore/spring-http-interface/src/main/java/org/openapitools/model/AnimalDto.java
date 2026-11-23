@@ -1,21 +1,18 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
 import jakarta.annotation.Generated;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 /**
  * AnimalDto
@@ -32,11 +29,13 @@ import jakarta.annotation.Generated;
   @JsonSubTypes.Type(value = DogDto.class, name = "Dog")
 })
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class AnimalDto {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private String className;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private String color = "red";
 
   public AnimalDto() {
@@ -52,12 +51,12 @@ public class AnimalDto {
    * Get className
    * @return className
    */
-  @NotNull
   @JsonProperty("className")
   public String getClassName() {
     return className;
   }
 
+  @JsonProperty("className")
   public void setClassName(String className) {
     this.className = className;
   }
@@ -71,12 +70,12 @@ public class AnimalDto {
    * Get color
    * @return color
    */
-  
   @JsonProperty("color")
   public String getColor() {
     return color;
   }
 
+  @JsonProperty("color")
   public void setColor(String color) {
     this.color = color;
   }
@@ -114,10 +113,7 @@ public class AnimalDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

@@ -38,7 +38,7 @@ class UserApiController() {
         operationId = "createUser",
         description = """This can only be done by the logged in user.""",
         responses = [
-            ApiResponse(responseCode = "200", description = "successful operation") ],
+            ApiResponse(responseCode = "default", description = "successful operation") ],
         security = [ SecurityRequirement(name = "api_key") ]
     )
     @RequestMapping(
@@ -58,7 +58,7 @@ class UserApiController() {
         operationId = "createUsersWithArrayInput",
         description = """""",
         responses = [
-            ApiResponse(responseCode = "200", description = "successful operation") ],
+            ApiResponse(responseCode = "default", description = "successful operation") ],
         security = [ SecurityRequirement(name = "api_key") ]
     )
     @RequestMapping(
@@ -68,7 +68,7 @@ class UserApiController() {
         consumes = ["application/json"]
     )
     fun createUsersWithArrayInput(
-        @Parameter(description = "List of user object", required = true) @Valid @RequestBody user: kotlin.collections.List<User>
+        @Parameter(description = "List of user object", required = true) @Valid @RequestBody user: kotlin.collections.List<@Valid User>
     ): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.NOT_IMPLEMENTED)
     }
@@ -78,7 +78,7 @@ class UserApiController() {
         operationId = "createUsersWithListInput",
         description = """""",
         responses = [
-            ApiResponse(responseCode = "200", description = "successful operation") ],
+            ApiResponse(responseCode = "default", description = "successful operation") ],
         security = [ SecurityRequirement(name = "api_key") ]
     )
     @RequestMapping(
@@ -88,7 +88,7 @@ class UserApiController() {
         consumes = ["application/json"]
     )
     fun createUsersWithListInput(
-        @Parameter(description = "List of user object", required = true) @Valid @RequestBody user: kotlin.collections.List<User>
+        @Parameter(description = "List of user object", required = true) @Valid @RequestBody user: kotlin.collections.List<@Valid User>
     ): ResponseEntity<Unit> {
         return ResponseEntity(HttpStatus.NOT_IMPLEMENTED)
     }
@@ -160,7 +160,7 @@ class UserApiController() {
         operationId = "logoutUser",
         description = """""",
         responses = [
-            ApiResponse(responseCode = "200", description = "successful operation") ],
+            ApiResponse(responseCode = "default", description = "successful operation") ],
         security = [ SecurityRequirement(name = "api_key") ]
     )
     @RequestMapping(

@@ -1,21 +1,24 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
-import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
+import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
+import org.hibernate.validator.constraints.*;
+import org.springframework.lang.Nullable;
 
 /**
  * ParentWithNullableDto
@@ -30,7 +33,7 @@ import jakarta.annotation.Generated;
   @JsonSubTypes.Type(value = ChildWithNullableDto.class, name = "ChildWithNullable")
 })
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class ParentWithNullableDto {
 
   /**
@@ -66,6 +69,8 @@ public class ParentWithNullableDto {
     }
   }
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable TypeEnum type;
 
   private @Nullable String nullableProperty = null;
@@ -85,6 +90,7 @@ public class ParentWithNullableDto {
     return type;
   }
 
+  @JsonProperty("type")
   public void setType(@Nullable TypeEnum type) {
     this.type = type;
   }
@@ -104,6 +110,7 @@ public class ParentWithNullableDto {
     return nullableProperty;
   }
 
+  @JsonProperty("nullableProperty")
   public void setNullableProperty(@Nullable String nullableProperty) {
     this.nullableProperty = nullableProperty;
   }
@@ -141,10 +148,7 @@ public class ParentWithNullableDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

@@ -1,49 +1,51 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.annotation.Generated;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.openapitools.model.Category;
 import org.openapitools.model.Tag;
 import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
 
 /**
  * Pet
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class Pet {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Long id;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Category category;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private String name;
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Set<String> photoUrls = new LinkedHashSet<>();
 
-  
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Tag> tags = new ArrayList<>();
 
   /**
    * pet status in the store
+   * @deprecated deprecated
    */
+  @Deprecated
   public enum StatusEnum {
     AVAILABLE("available"),
     
@@ -78,6 +80,7 @@ public class Pet {
     }
   }
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   @Deprecated
   private @Nullable StatusEnum status;
 
@@ -102,12 +105,12 @@ public class Pet {
    * Get id
    * @return id
    */
-  
   @JsonProperty("id")
   public @Nullable Long getId() {
     return id;
   }
 
+  @JsonProperty("id")
   public void setId(@Nullable Long id) {
     this.id = id;
   }
@@ -121,12 +124,12 @@ public class Pet {
    * Get category
    * @return category
    */
-  
   @JsonProperty("category")
   public @Nullable Category getCategory() {
     return category;
   }
 
+  @JsonProperty("category")
   public void setCategory(@Nullable Category category) {
     this.category = category;
   }
@@ -140,12 +143,12 @@ public class Pet {
    * Get name
    * @return name
    */
-  @NotNull
   @JsonProperty("name")
   public String getName() {
     return name;
   }
 
+  @JsonProperty("name")
   public void setName(String name) {
     this.name = name;
   }
@@ -167,13 +170,13 @@ public class Pet {
    * Get photoUrls
    * @return photoUrls
    */
-  @NotNull
   @JsonProperty("photoUrls")
   public Set<String> getPhotoUrls() {
     return photoUrls;
   }
 
   @JsonDeserialize(as = LinkedHashSet.class)
+  @JsonProperty("photoUrls")
   public void setPhotoUrls(Set<String> photoUrls) {
     this.photoUrls = photoUrls;
   }
@@ -195,12 +198,12 @@ public class Pet {
    * Get tags
    * @return tags
    */
-  
   @JsonProperty("tags")
   public List<Tag> getTags() {
     return tags;
   }
 
+  @JsonProperty("tags")
   public void setTags(List<Tag> tags) {
     this.tags = tags;
   }
@@ -215,9 +218,8 @@ public class Pet {
    * @return status
    * @deprecated
    */
-  
-  @JsonProperty("status")
   @Deprecated
+  @JsonProperty("status")
   public @Nullable StatusEnum getStatus() {
     return status;
   }
@@ -226,6 +228,7 @@ public class Pet {
    * @deprecated
    */
   @Deprecated
+  @JsonProperty("status")
   public void setStatus(@Nullable StatusEnum status) {
     this.status = status;
   }
@@ -271,10 +274,7 @@ public class Pet {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

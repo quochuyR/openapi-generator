@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -78,7 +77,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets ArrayAndItemsNullableProp
         /// </summary>
         [JsonPropertyName("array_and_items_nullable_prop")]
-        public List<Object>? ArrayAndItemsNullableProp { get { return this.ArrayAndItemsNullablePropOption; } set { this.ArrayAndItemsNullablePropOption = new(value); } }
+        public List<Object>? ArrayAndItemsNullableProp { get { return this.ArrayAndItemsNullablePropOption.Value; } set { this.ArrayAndItemsNullablePropOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of ArrayItemsNullable
@@ -91,7 +90,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets ArrayItemsNullable
         /// </summary>
         [JsonPropertyName("array_items_nullable")]
-        public List<Object>? ArrayItemsNullable { get { return this.ArrayItemsNullableOption; } set { this.ArrayItemsNullableOption = new(value); } }
+        public List<Object>? ArrayItemsNullable { get { return this.ArrayItemsNullableOption.Value; } set { this.ArrayItemsNullableOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of ArrayNullableProp
@@ -104,7 +103,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets ArrayNullableProp
         /// </summary>
         [JsonPropertyName("array_nullable_prop")]
-        public List<Object>? ArrayNullableProp { get { return this.ArrayNullablePropOption; } set { this.ArrayNullablePropOption = new(value); } }
+        public List<Object>? ArrayNullableProp { get { return this.ArrayNullablePropOption.Value; } set { this.ArrayNullablePropOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of BooleanProp
@@ -117,7 +116,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets BooleanProp
         /// </summary>
         [JsonPropertyName("boolean_prop")]
-        public bool? BooleanProp { get { return this.BooleanPropOption; } set { this.BooleanPropOption = new(value); } }
+        public bool? BooleanProp { get { return this.BooleanPropOption.Value; } set { this.BooleanPropOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of DateProp
@@ -130,7 +129,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets DateProp
         /// </summary>
         [JsonPropertyName("date_prop")]
-        public DateOnly? DateProp { get { return this.DatePropOption; } set { this.DatePropOption = new(value); } }
+        public DateOnly? DateProp { get { return this.DatePropOption.Value; } set { this.DatePropOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of DatetimeProp
@@ -143,7 +142,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets DatetimeProp
         /// </summary>
         [JsonPropertyName("datetime_prop")]
-        public DateTime? DatetimeProp { get { return this.DatetimePropOption; } set { this.DatetimePropOption = new(value); } }
+        public DateTime? DatetimeProp { get { return this.DatetimePropOption.Value; } set { this.DatetimePropOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of IntegerProp
@@ -156,7 +155,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets IntegerProp
         /// </summary>
         [JsonPropertyName("integer_prop")]
-        public int? IntegerProp { get { return this.IntegerPropOption; } set { this.IntegerPropOption = new(value); } }
+        public int? IntegerProp { get { return this.IntegerPropOption.Value; } set { this.IntegerPropOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of NumberProp
@@ -169,7 +168,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets NumberProp
         /// </summary>
         [JsonPropertyName("number_prop")]
-        public decimal? NumberProp { get { return this.NumberPropOption; } set { this.NumberPropOption = new(value); } }
+        public decimal? NumberProp { get { return this.NumberPropOption.Value; } set { this.NumberPropOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of ObjectAndItemsNullableProp
@@ -182,7 +181,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets ObjectAndItemsNullableProp
         /// </summary>
         [JsonPropertyName("object_and_items_nullable_prop")]
-        public Dictionary<string, Object>? ObjectAndItemsNullableProp { get { return this.ObjectAndItemsNullablePropOption; } set { this.ObjectAndItemsNullablePropOption = new(value); } }
+        public Dictionary<string, Object>? ObjectAndItemsNullableProp { get { return this.ObjectAndItemsNullablePropOption.Value; } set { this.ObjectAndItemsNullablePropOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of ObjectItemsNullable
@@ -195,7 +194,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets ObjectItemsNullable
         /// </summary>
         [JsonPropertyName("object_items_nullable")]
-        public Dictionary<string, Object>? ObjectItemsNullable { get { return this.ObjectItemsNullableOption; } set { this.ObjectItemsNullableOption = new(value); } }
+        public Dictionary<string, Object>? ObjectItemsNullable { get { return this.ObjectItemsNullableOption.Value; } set { this.ObjectItemsNullableOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of ObjectNullableProp
@@ -208,7 +207,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets ObjectNullableProp
         /// </summary>
         [JsonPropertyName("object_nullable_prop")]
-        public Dictionary<string, Object>? ObjectNullableProp { get { return this.ObjectNullablePropOption; } set { this.ObjectNullablePropOption = new(value); } }
+        public Dictionary<string, Object>? ObjectNullableProp { get { return this.ObjectNullablePropOption.Value; } set { this.ObjectNullablePropOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of StringProp
@@ -221,7 +220,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets StringProp
         /// </summary>
         [JsonPropertyName("string_prop")]
-        public string? StringProp { get { return this.StringPropOption; } set { this.StringPropOption = new(value); } }
+        public string? StringProp { get { return this.StringPropOption.Value; } set { this.StringPropOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -259,7 +258,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -268,17 +267,17 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="NullableClass" />
     /// </summary>
-    public class NullableClassJsonConverter : JsonConverter<NullableClass>
+    public partial class NullableClassJsonConverter : JsonConverter<NullableClass>
     {
-        /// <summary>
-        /// The format to use to serialize DateProp
-        /// </summary>
-        public static string DatePropFormat { get; set; } = "yyyy'-'MM'-'dd";
+        partial void OnCreated();
 
         /// <summary>
-        /// The format to use to serialize DatetimeProp
+        /// Initializes a new instance of the <see cref="NullableClassJsonConverter" /> class.
         /// </summary>
-        public static string DatetimePropFormat { get; set; } = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffffK";
+        public NullableClassJsonConverter()
+        {
+            OnCreated();
+        }
 
         /// <summary>
         /// Deserializes json to <see cref="NullableClass" />
@@ -368,10 +367,10 @@ namespace Org.OpenAPITools.Model
             }
 
             if (arrayItemsNullable.IsSet && arrayItemsNullable.Value == null)
-                throw new ArgumentNullException(nameof(arrayItemsNullable), "Property is not nullable for class NullableClass.");
+                throw new JsonException("Property is not nullable for class NullableClass: array_items_nullable.");
 
             if (objectItemsNullable.IsSet && objectItemsNullable.Value == null)
-                throw new ArgumentNullException(nameof(objectItemsNullable), "Property is not nullable for class NullableClass.");
+                throw new JsonException("Property is not nullable for class NullableClass: object_items_nullable.");
 
             return new NullableClass(arrayAndItemsNullableProp, arrayItemsNullable, arrayNullableProp, booleanProp, dateProp, datetimeProp, integerProp, numberProp, objectAndItemsNullableProp, objectItemsNullable, objectNullableProp, stringProp);
         }
@@ -382,7 +381,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="nullableClass"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, NullableClass nullableClass, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -397,14 +395,13 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="nullableClass"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, NullableClass nullableClass, JsonSerializerOptions jsonSerializerOptions)
         {
             if (nullableClass.ArrayItemsNullableOption.IsSet && nullableClass.ArrayItemsNullable == null)
-                throw new ArgumentNullException(nameof(nullableClass.ArrayItemsNullable), "Property is required for class NullableClass.");
+                throw new JsonException("Cannot write null property NullableClass.ArrayItemsNullable to non-nullable JSON property 'array_items_nullable'.");
 
             if (nullableClass.ObjectItemsNullableOption.IsSet && nullableClass.ObjectItemsNullable == null)
-                throw new ArgumentNullException(nameof(nullableClass.ObjectItemsNullable), "Property is required for class NullableClass.");
+                throw new JsonException("Cannot write null property NullableClass.ObjectItemsNullable to non-nullable JSON property 'object_items_nullable'.");
 
             if (nullableClass.ArrayAndItemsNullablePropOption.IsSet)
                 if (nullableClass.ArrayAndItemsNullablePropOption.Value != null)
@@ -435,13 +432,19 @@ namespace Org.OpenAPITools.Model
 
             if (nullableClass.DatePropOption.IsSet)
                 if (nullableClass.DatePropOption.Value != null)
-                    writer.WriteString("date_prop", nullableClass.DatePropOption.Value!.Value.ToString(DatePropFormat));
+                    {
+                            writer.WritePropertyName("date_prop");
+                                JsonSerializer.Serialize(writer, nullableClass.DatePropOption.Value!.Value, jsonSerializerOptions);
+                            }
                 else
                     writer.WriteNull("date_prop");
 
             if (nullableClass.DatetimePropOption.IsSet)
                 if (nullableClass.DatetimePropOption.Value != null)
-                    writer.WriteString("datetime_prop", nullableClass.DatetimePropOption.Value!.Value.ToString(DatetimePropFormat));
+                    {
+                            writer.WritePropertyName("datetime_prop");
+                                JsonSerializer.Serialize(writer, nullableClass.DatetimePropOption.Value!.Value, jsonSerializerOptions);
+                            }
                 else
                     writer.WriteNull("datetime_prop");
 
@@ -485,11 +488,4 @@ namespace Org.OpenAPITools.Model
                     writer.WriteNull("string_prop");
         }
     }
-
-    /// <summary>
-    /// The NullableClassSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(NullableClass))]
-    public partial class NullableClassSerializationContext : JsonSerializerContext { }
 }

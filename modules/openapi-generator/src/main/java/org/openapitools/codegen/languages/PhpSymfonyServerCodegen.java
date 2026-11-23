@@ -32,10 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.*;
 
 import static org.openapitools.codegen.utils.StringUtils.camelize;
 
+/**
+ * <p>Mustache templates are located in {@code src/main/resources/php-symfony/}.
+ */
 public class PhpSymfonyServerCodegen extends AbstractPhpCodegen implements CodegenConfig {
     @SuppressWarnings("hiding")
     private final Logger LOGGER = LoggerFactory.getLogger(PhpSymfonyServerCodegen.class);
@@ -197,6 +201,10 @@ public class PhpSymfonyServerCodegen extends AbstractPhpCodegen implements Codeg
         typeMapping.put("array", "array");
         typeMapping.put("list", "array");
         typeMapping.put("object", "array");
+        // schema without `type` (AnyType). It must be a type that is both type-hintable and understood by the JMS
+        // serializer (`@Type("mixed")` is not): without a mapping the literal "AnyType" ended up in the generated
+        // `@Type(...)`, `Assert\Type(...)` and, with an empty type hint, as an invalid `getFoo():` return type.
+        typeMapping.put("AnyType", "array");
         typeMapping.put("binary", "string");
         typeMapping.put("ByteArray", "string");
         typeMapping.put("UUID", "string");
@@ -389,6 +397,11 @@ public class PhpSymfonyServerCodegen extends AbstractPhpCodegen implements Codeg
             // Loop through all input parameters to determine, whether we have to import something to
             // make the input type available.
             for (CodegenParameter param : op.allParams) {
+                // Enum-by-reference query params (e.g. OAS 3.1 dotted keys): normalize dataType and
+                // sync this operation's imports (normalizeEnumRefParameterDataType →
+                // syncEnumRefOperationImports). refreshAggregatedImportsForOperations runs once after
+                // this inner loop to rebuild bundle-level Api imports for Mustache.
+                normalizeEnumRefParameterDataType(op, param);
                 // Determine if the parameter type is supported as a type hint and make it available
                 // to the templating engine
                 String typeHint = getTypeHint(param.dataType, false);
@@ -404,6 +417,16 @@ public class PhpSymfonyServerCodegen extends AbstractPhpCodegen implements Codeg
                 param.vendorExtensions.put("x-comment-type", prependSlashToDataTypeOnlyIfNecessary(param.dataType));
                 if (param.isContainer) {
                     param.vendorExtensions.put("x-comment-type", prependSlashToDataTypeOnlyIfNecessary(param.dataType) + "[]");
+                }
+
+                // Enum $ref parameters: dataType is the short PHP model class name only; getTypeHint(dataType) is empty.
+                // Build FQCN body so getTypeHint matches isModelClass and yields the same short name as file-level imports.
+                if (param.isEnumRef && StringUtils.isNotEmpty(param.dataType)) {
+                    String fqcnBody = modelPackage() + "\\" + param.dataType;
+                    String enumTypeHint = getTypeHint(fqcnBody, false);
+                    if (StringUtils.isNotEmpty(enumTypeHint)) {
+                        param.vendorExtensions.put("x-parameter-type", enumTypeHint);
+                    }
                 }
             }
 
@@ -441,7 +464,140 @@ public class PhpSymfonyServerCodegen extends AbstractPhpCodegen implements Codeg
 
         operations.put("authMethods", authMethods);
 
+        refreshAggregatedImportsForOperations(objs);
+
         return objs;
+    }
+
+    /**
+     * Normalizes {@link CodegenParameter#getDataType()} for enum-by-reference parameters only
+     * ({@code param.isEnumRef}).
+     * <p><b>Why:</b> Templates concatenate {@code modelPackage} + {@code dataType} for FQCN strings (e.g. validation /
+     * deserialization). The API interface uses short names plus {@code use} imports, so {@code dataType} must be the
+     * <em>short</em> PHP class name. Upstream parsing (OpenAPI 3.1 dotted keys, {@code components.parameters} {@code $ref},
+     * or flattening) can leave {@code dataType} as a bogus single token (no {@code \}), a full FQCN, or a leading
+     * {@code \}.
+     * <p><b>Execution (this method):</b>
+     * <ol>
+     *   <li>Exit if not enum ref or empty {@code dataType}.</li>
+     *   <li>Strip a leading {@code \} from the working copy.</li>
+     *   <li>If the copy contains {@code \}: if it starts with {@code modelPackage + "\\"}, keep the suffix as short name;
+     *       else if it looks like a model FQCN under another path, take {@link #extractSimpleName(String)}.</li>
+     *   <li>If there is no {@code \}: optionally strip a bogus {@code modelPackage} with all separators removed
+     *       (flat prefix) from the start, then {@link #toModelName(String)} so dotted logical names become the real
+     *       generated model class name.</li>
+     *   <li>Always finish with {@link #syncEnumRefOperationImports(CodegenOperation, CodegenParameter, String)} so
+     *       {@link CodegenOperation#imports} matches the normalized short name.</li>
+     * </ol>
+     * <p><b>Downstream in {@link #postProcessOperationsWithModels}:</b> after this call, {@link #getTypeHint(String, Boolean)}
+     * and {@code x-parameter-type} use {@code modelPackage + "\\" + dataType} for enum refs so the hint matches imports.
+     * <p><b>Aggregated imports:</b> {@link OperationsMap#setImports} is built before this hook; callers must invoke
+     * {@link #refreshAggregatedImportsForOperations(OperationsMap)} once all operations/parameters are processed.
+     */
+    private void normalizeEnumRefParameterDataType(CodegenOperation op, CodegenParameter param) {
+        if (!param.isEnumRef || StringUtils.isEmpty(param.dataType)) {
+            return;
+        }
+        String dt = param.dataType;
+        if (dt.startsWith("\\")) {
+            dt = dt.substring(1);
+        }
+        final String mp = modelPackage();
+        if (dt.contains("\\")) {
+            if (dt.startsWith(mp + "\\")) {
+                param.dataType = dt.substring(mp.length() + 1);
+            } else if (isModelClass(dt)) {
+                param.dataType = extractSimpleName(dt);
+            }
+        } else {
+            // No backslashes: flattened invoker+model+class token, dotted logical name, or already-short class name
+            String flatPrefix = mp.replace("\\", "");
+            if (StringUtils.isNotEmpty(flatPrefix)
+                    && dt.startsWith(flatPrefix)
+                    && dt.length() > flatPrefix.length()) {
+                dt = dt.substring(flatPrefix.length());
+            }
+            param.dataType = toModelName(dt);
+        }
+        syncEnumRefOperationImports(op, param, mp);
+    }
+
+    /**
+     * Repairs {@link CodegenOperation#imports} for one enum-ref parameter after {@link #normalizeEnumRefParameterDataType}.
+     * <p><b>Step 1 — remove bogus entries:</b> {@code DefaultGenerator} may add a single token that is the
+     * {@code modelPackage} string with all {@code \} removed, prefixed to the class name (still without {@code \}).
+     * Such values are not valid PHP imports and break {@code api.mustache} {@code use} lines; drop any import string
+     * that has no backslash, starts with that flat prefix, and is longer than the prefix alone.
+     * <p><b>Step 2 — add the short model name:</b> if {@code param.dataType} is non-empty and {@link #needToImport(String)}
+     * is true, add it so the operation contributes the correct short classname to the union used for template imports.
+     */
+    private void syncEnumRefOperationImports(CodegenOperation op, CodegenParameter param, String modelPackage) {
+        if (op == null || op.imports == null || StringUtils.isEmpty(modelPackage)) {
+            return;
+        }
+        String flatPrefix = modelPackage.replace("\\", "");
+        if (StringUtils.isEmpty(flatPrefix)) {
+            return;
+        }
+        op.imports.removeIf(s ->
+                s != null
+                        && !s.contains("\\")
+                        && s.startsWith(flatPrefix)
+                        && s.length() > flatPrefix.length());
+        if (StringUtils.isNotEmpty(param.dataType) && needToImport(param.dataType)) {
+            op.imports.add(param.dataType);
+        }
+    }
+
+    /**
+     * Recomputes the bundle-level import list exposed to Mustache ({@link OperationsMap#setImports},
+     * {@code hasImport}) from the per-operation {@link CodegenOperation#imports} sets.
+     * <p><b>When:</b> call once at the end of {@link #postProcessOperationsWithModels}, after every
+     * {@link CodegenOperation} has had its parameters processed (including {@link #normalizeEnumRefParameterDataType} /
+     * {@link #syncEnumRefOperationImports}).
+     * <p><b>Execution:</b>
+     * <ol>
+     *   <li>Union all strings in {@code op.imports} across operations into a sorted {@link TreeSet} (stable, de-duplicated).</li>
+     *   <li>For each symbol, resolve {@link #importMapping()} or {@link #toModelImportMap(String)} into
+     *       {@code fullQualifiedImport → shortClassName} pairs (same shape as {@code DefaultGenerator#processOperations}).</li>
+     *   <li>Build {@code {import, classname}} rows sorted by {@code classname} for the template partial that emits
+     *       {@code use Full\\Qualified;}</li>
+     *   <li>Replace {@code operationsMap} imports and set {@code hasImport}.</li>
+     * </ol>
+     */
+    private void refreshAggregatedImportsForOperations(OperationsMap operationsMap) {
+        OperationMap operationMap = operationsMap.getOperations();
+        if (operationMap == null) {
+            return;
+        }
+        List<CodegenOperation> operationList = operationMap.getOperation();
+        if (operationList == null) {
+            return;
+        }
+        Set<String> allImports = new TreeSet<>();
+        for (CodegenOperation op : operationList) {
+            if (op.imports != null) {
+                allImports.addAll(op.imports);
+            }
+        }
+        Map<String, String> mapped = new LinkedHashMap<>();
+        for (String nextImport : allImports) {
+            String mapping = importMapping().get(nextImport);
+            if (mapping != null) {
+                mapped.put(mapping, nextImport);
+            } else {
+                mapped.putAll(toModelImportMap(nextImport));
+            }
+        }
+        Set<Map<String, String>> importObjects = new TreeSet<>(Comparator.comparing(o -> o.get("classname")));
+        for (Map.Entry<String, String> e : mapped.entrySet()) {
+            Map<String, String> row = new LinkedHashMap<>();
+            row.put("import", e.getKey());
+            row.put("classname", e.getValue());
+            importObjects.add(row);
+        }
+        operationsMap.setImports(new ArrayList<>(importObjects));
+        operationsMap.put("hasImport", !importObjects.isEmpty());
     }
 
     private boolean isApplicationJsonOrApplicationXml(CodegenOperation op) {
@@ -463,21 +619,94 @@ public class PhpSymfonyServerCodegen extends AbstractPhpCodegen implements Codeg
         ModelMap models = objs.getModels().get(0);
         CodegenModel model = models.getModel();
 
+        fixPhpEnumBackingType(model);
+
         // Simplify model var type
         for (CodegenProperty var : model.vars) {
             if (var.dataType != null) {
                 // Determine if the parameter type is supported as a type hint and make it available
                 // to the templating engine
-                var.vendorExtensions.put("x-parameter-type", getTypeHintNullable(var.dataType));
+                putTypeHintIfNotEmpty(var, "x-parameter-type", getTypeHintNullable(var.dataType));
                 var.vendorExtensions.put("x-comment-type", getTypeHintNullableForComments(var.dataType));
                 if (var.isContainer) {
-                    var.vendorExtensions.put("x-parameter-type", getTypeHintNullable(var.dataType + "[]"));
+                    putTypeHintIfNotEmpty(var, "x-parameter-type", getTypeHintNullable(var.dataType + "[]"));
                     var.vendorExtensions.put("x-comment-type", getTypeHintNullableForComments(var.dataType + "[]"));
                 }
             }
         }
 
         return objs;
+    }
+
+    /**
+     * Only expose {@code x-parameter-type} when PHP can actually type-hint the property. The templates guard the
+     * {@code : returnType} part with {@code {{#vendorExtensions.x-parameter-type}}}, but Mustache treats an empty
+     * string as truthy, so an empty value rendered a dangling {@code getFoo():} (parse error).
+     */
+    private void putTypeHintIfNotEmpty(CodegenProperty var, String key, String typeHint) {
+        if (StringUtils.isEmpty(typeHint)) {
+            var.vendorExtensions.remove(key);
+        } else {
+            var.vendorExtensions.put(key, typeHint);
+        }
+    }
+
+    /**
+     * PHP backed enums can only be backed by {@code int} or {@code string}, but {@code type: number} (without
+     * {@code format}) maps to {@code float}, which produced {@code enum Foo: float} (fatal error).
+     * Integral values are int-backed; any fractional value makes the enum string-backed (values are quoted).
+     */
+    private void fixPhpEnumBackingType(CodegenModel model) {
+        if (!model.isEnum || !"float".equals(model.dataType) || model.allowableValues == null) {
+            return;
+        }
+        Object enumVarsObj = model.allowableValues.get("enumVars");
+        if (!(enumVarsObj instanceof List)) {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> enumVars = (List<Map<String, Object>>) enumVarsObj;
+
+        // Decide integrality numerically (not lexically) so that "1.0" / "1e3" count as integral.
+        boolean allIntegral = true;
+        for (Map<String, Object> enumVar : enumVars) {
+            if (toIntegralString(enumVar.get("value")) == null) {
+                allIntegral = false;
+                break;
+            }
+        }
+
+        if (allIntegral) {
+            model.dataType = "int";
+            // PHP rejects `case X = 1.0;` / `case X = 1e3;` in an int-backed enum, so emit plain integer literals.
+            for (Map<String, Object> enumVar : enumVars) {
+                enumVar.put("value", toIntegralString(enumVar.get("value")));
+            }
+        } else {
+            model.dataType = "string";
+            for (Map<String, Object> enumVar : enumVars) {
+                enumVar.put("value", "'" + escapeTextInSingleQuotes(String.valueOf(enumVar.get("value"))) + "'");
+            }
+        }
+    }
+
+    /**
+     * @return the plain integer representation (e.g. {@code 1.0 -> "1"}, {@code 1e3 -> "1000"}) when the value is
+     * numerically integral, otherwise {@code null}.
+     */
+    private static String toIntegralString(Object value) {
+        if (value == null) {
+            return null;
+        }
+        try {
+            BigDecimal number = new BigDecimal(String.valueOf(value).trim());
+            if (number.signum() == 0) {
+                return "0";
+            }
+            return number.stripTrailingZeros().scale() <= 0 ? number.toBigIntegerExact().toString() : null;
+        } catch (NumberFormatException | ArithmeticException e) {
+            return null;
+        }
     }
 
     public String prependSlashToDataTypeOnlyIfNecessary(String dataType) {

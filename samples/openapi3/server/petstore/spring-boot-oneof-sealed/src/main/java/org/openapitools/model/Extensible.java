@@ -1,31 +1,32 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.*;
-import javax.annotation.Generated;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 /**
  * Extensible
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public final class Extensible {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String atSchemaLocation;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String atBaseType;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private String atType;
 
   public Extensible() {
@@ -55,6 +56,7 @@ public final class Extensible {
     return atSchemaLocation;
   }
 
+  @JsonProperty("@schemaLocation")
   public void setAtSchemaLocation(@Nullable String atSchemaLocation) {
     this.atSchemaLocation = atSchemaLocation;
   }
@@ -75,6 +77,7 @@ public final class Extensible {
     return atBaseType;
   }
 
+  @JsonProperty("@baseType")
   public void setAtBaseType(@Nullable String atBaseType) {
     this.atBaseType = atBaseType;
   }
@@ -95,6 +98,7 @@ public final class Extensible {
     return atType;
   }
 
+  @JsonProperty("@type")
   public void setAtType(String atType) {
     this.atType = atType;
   }
@@ -134,10 +138,7 @@ public final class Extensible {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
   
   public static class Builder {

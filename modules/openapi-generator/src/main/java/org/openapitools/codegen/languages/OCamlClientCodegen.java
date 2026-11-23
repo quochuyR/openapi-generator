@@ -28,6 +28,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openapitools.codegen.*;
 import org.openapitools.codegen.meta.features.*;
+import org.openapitools.codegen.model.EnumVarMap;
 import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.model.OperationMap;
@@ -41,9 +42,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
+import static org.openapitools.codegen.model.EnumVarMap.ENUM_VALUES;
+import static org.openapitools.codegen.utils.ModelUtils.*;
 import static org.openapitools.codegen.utils.StringUtils.escape;
 import static org.openapitools.codegen.utils.StringUtils.underscore;
 
+/**
+ * <p>Mustache templates are located in {@code src/main/resources/ocaml/}.
+ */
 public class OCamlClientCodegen extends DefaultCodegen implements CodegenConfig {
     private final Logger LOGGER = LoggerFactory.getLogger(OCamlClientCodegen.class);
     public static final String PACKAGE_NAME = "packageName";
@@ -216,11 +222,11 @@ public class OCamlClientCodegen extends DefaultCodegen implements CodegenConfig 
                     enrichPropertiesWithEnumDefaultValues(cm.getParentVars());
                 }
 
-                if (!cm.oneOf.isEmpty()) {
+                if (hasOneOf(cm)) {
                     // Add a boolean if it is a `oneOf`, because Mustache does not let us check if a list is non-empty
                     cm.getVendorExtensions().put("x-ocaml-isOneOf", true);
                 }
-                if (!cm.anyOf.isEmpty()) {
+                if (hasAnyOf(cm)) {
                     // Add a boolean if it is a `anyOf`, because Mustache does not let us check if a list is non-empty
                     cm.getVendorExtensions().put("x-ocaml-isAnyOf", true);
                 }
@@ -384,7 +390,7 @@ public class OCamlClientCodegen extends DefaultCodegen implements CodegenConfig 
     }
 
     private boolean isEnumSchema(Schema schema) {
-        return schema != null && schema.getEnum() != null && !schema.getEnum().isEmpty();
+        return schema != null && ModelUtils.isEnumSchema(schema);
     }
 
     private void collectEnumSchemas(String parentName, String sName, Schema schema) {
@@ -723,11 +729,6 @@ public class OCamlClientCodegen extends DefaultCodegen implements CodegenConfig 
     }
 
     @Override
-    public String toApiDocFilename(String name) {
-        return toApiName(name);
-    }
-
-    @Override
     public String getTypeDeclaration(Schema p) {
         if (ModelUtils.isArraySchema(p)) {
             Schema inner = ModelUtils.getSchemaItems(p);
@@ -743,15 +744,15 @@ public class OCamlClientCodegen extends DefaultCodegen implements CodegenConfig 
                 LOGGER.warn("{}(map property) does not have a proper inner type defined. Default to string", p.getName());
                 inner = new StringSchema().description("TODO default missing map inner type to string");
             }
-            String prefix = inner.getEnum() != null ? "Enums." : "";
+            String prefix = isEnum(inner) ? "Enums." : "";
             return "(string * " + prefix + getTypeDeclaration(inner) + ") list";
-        } else if (p.getEnum() != null) {
+        } else if (isEnum(p)) {
             Set<String> h = hashEnum(p);
             return enumUniqNames.get(h);
         }
 
         Schema referencedSchema = ModelUtils.getReferencedSchema(openAPI, p);
-        if (referencedSchema != null && referencedSchema.getEnum() != null) {
+        if (referencedSchema != null && isEnum(referencedSchema)) {
             Set<String> h = hashEnum(referencedSchema);
             return "Enums." + enumUniqNames.get(h);
         }
@@ -801,17 +802,17 @@ public class OCamlClientCodegen extends DefaultCodegen implements CodegenConfig 
 
     private Map<String, Object> allowableValues(String valueString) {
         Map<String, Object> result = new HashMap<>();
-        result.put("values", buildEnumValues(valueString));
+        result.put(ENUM_VALUES, buildEnumValues(valueString));
         return result;
     }
 
-    private List<Map<String, Object>> buildEnumValues(String valueString) {
-        List<Map<String, Object>> result = new ArrayList<>();
+    private List<EnumVarMap> buildEnumValues(String valueString) {
+        List<EnumVarMap> result = new ArrayList<>();
 
         for (String v : valueString.split(",")) {
-            Map<String, Object> m = new HashMap<>();
+            EnumVarMap m = new EnumVarMap();
             String value = v.isEmpty() ? "empty" : v;
-            m.put("name", value);
+            m.setEnumName(value);
             m.put("camlEnumValueName", ocamlizeEnumValue(value));
             result.add(m);
         }
@@ -928,7 +929,7 @@ public class OCamlClientCodegen extends DefaultCodegen implements CodegenConfig 
     @Override
     public String toDefaultValue(Schema p) {
         if (p.getDefault() != null) {
-            if (p.getEnum() != null) {
+            if (isEnum(p)) {
                 return ocamlizeEnumValue(p.getDefault().toString());
             }
             return p.getDefault().toString();

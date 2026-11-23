@@ -1,31 +1,40 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import java.math.BigDecimal;
-import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
+import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.math.BigDecimal;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
+import org.hibernate.validator.constraints.*;
+import org.springframework.lang.Nullable;
 
 /**
  * OuterCompositeDto
  */
 
 @JsonTypeName("OuterComposite")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class OuterCompositeDto {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable BigDecimal myNumber;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable String myString;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable Boolean myBoolean;
 
   public OuterCompositeDto myNumber(@Nullable BigDecimal myNumber) {
@@ -37,12 +46,13 @@ public class OuterCompositeDto {
    * Get myNumber
    * @return myNumber
    */
-  
+  @Valid 
   @JsonProperty("my_number")
   public @Nullable BigDecimal getMyNumber() {
     return myNumber;
   }
 
+  @JsonProperty("my_number")
   public void setMyNumber(@Nullable BigDecimal myNumber) {
     this.myNumber = myNumber;
   }
@@ -62,6 +72,7 @@ public class OuterCompositeDto {
     return myString;
   }
 
+  @JsonProperty("my_string")
   public void setMyString(@Nullable String myString) {
     this.myString = myString;
   }
@@ -81,6 +92,7 @@ public class OuterCompositeDto {
     return myBoolean;
   }
 
+  @JsonProperty("my_boolean")
   public void setMyBoolean(@Nullable Boolean myBoolean) {
     this.myBoolean = myBoolean;
   }
@@ -120,10 +132,7 @@ public class OuterCompositeDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

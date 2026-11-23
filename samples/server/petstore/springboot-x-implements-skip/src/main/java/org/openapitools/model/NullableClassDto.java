@@ -1,43 +1,37 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
-import java.util.NoSuchElementException;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
 
-
-import java.util.*;
-import javax.annotation.Generated;
-
-import java.util.Map;
-import java.util.HashMap;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 /**
  * NullableClassDto
  */
 
 @JsonTypeName("NullableClass")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class NullableClassDto {
 
   private JsonNullable<Integer> integerProp = JsonNullable.<Integer>undefined();
@@ -54,22 +48,18 @@ public class NullableClassDto {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private JsonNullable<OffsetDateTime> datetimeProp = JsonNullable.<OffsetDateTime>undefined();
 
-  @Valid
   private JsonNullable<List<Object>> arrayNullableProp = JsonNullable.<List<Object>>undefined();
 
-  @Valid
   private JsonNullable<List<Object>> arrayAndItemsNullableProp = JsonNullable.<List<Object>>undefined();
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<Object> arrayItemsNullable = new ArrayList<>();
 
-  @Valid
   private JsonNullable<Map<String, Object>> objectNullableProp = JsonNullable.<Map<String, Object>>undefined();
 
-  @Valid
   private JsonNullable<Map<String, Object>> objectAndItemsNullableProp = JsonNullable.<Map<String, Object>>undefined();
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Map<String, Object> objectItemsNullable = new HashMap<>();
 
   public NullableClassDto integerProp(Integer integerProp) {
@@ -82,7 +72,7 @@ public class NullableClassDto {
    * @return integerProp
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "integer_prop", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("integer_prop")
   public JsonNullable<Integer> getIntegerProp() {
     return integerProp;
@@ -102,7 +92,7 @@ public class NullableClassDto {
    * @return numberProp
    */
   @Valid 
-  @ApiModelProperty(value = "")
+  @Schema(name = "number_prop", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("number_prop")
   public JsonNullable<BigDecimal> getNumberProp() {
     return numberProp;
@@ -122,7 +112,7 @@ public class NullableClassDto {
    * @return booleanProp
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "boolean_prop", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("boolean_prop")
   public JsonNullable<Boolean> getBooleanProp() {
     return booleanProp;
@@ -142,7 +132,7 @@ public class NullableClassDto {
    * @return stringProp
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "string_prop", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("string_prop")
   public JsonNullable<String> getStringProp() {
     return stringProp;
@@ -162,7 +152,7 @@ public class NullableClassDto {
    * @return dateProp
    */
   @Valid 
-  @ApiModelProperty(value = "")
+  @Schema(name = "date_prop", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("date_prop")
   public JsonNullable<LocalDate> getDateProp() {
     return dateProp;
@@ -182,7 +172,7 @@ public class NullableClassDto {
    * @return datetimeProp
    */
   @Valid 
-  @ApiModelProperty(value = "")
+  @Schema(name = "datetime_prop", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("datetime_prop")
   public JsonNullable<OffsetDateTime> getDatetimeProp() {
     return datetimeProp;
@@ -198,7 +188,7 @@ public class NullableClassDto {
   }
 
   public NullableClassDto addArrayNullablePropItem(Object arrayNullablePropItem) {
-    if (this.arrayNullableProp == null || !this.arrayNullableProp.isPresent()) {
+    if (this.arrayNullableProp == null || !this.arrayNullableProp.isPresent() || this.arrayNullableProp.get() == null) {
       this.arrayNullableProp = JsonNullable.of(new ArrayList<>());
     }
     this.arrayNullableProp.get().add(arrayNullablePropItem);
@@ -210,7 +200,7 @@ public class NullableClassDto {
    * @return arrayNullableProp
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "array_nullable_prop", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("array_nullable_prop")
   public JsonNullable<List<Object>> getArrayNullableProp() {
     return arrayNullableProp;
@@ -226,7 +216,7 @@ public class NullableClassDto {
   }
 
   public NullableClassDto addArrayAndItemsNullablePropItem(Object arrayAndItemsNullablePropItem) {
-    if (this.arrayAndItemsNullableProp == null || !this.arrayAndItemsNullableProp.isPresent()) {
+    if (this.arrayAndItemsNullableProp == null || !this.arrayAndItemsNullableProp.isPresent() || this.arrayAndItemsNullableProp.get() == null) {
       this.arrayAndItemsNullableProp = JsonNullable.of(new ArrayList<>());
     }
     this.arrayAndItemsNullableProp.get().add(arrayAndItemsNullablePropItem);
@@ -238,7 +228,7 @@ public class NullableClassDto {
    * @return arrayAndItemsNullableProp
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "array_and_items_nullable_prop", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("array_and_items_nullable_prop")
   public JsonNullable<List<Object>> getArrayAndItemsNullableProp() {
     return arrayAndItemsNullableProp;
@@ -266,12 +256,13 @@ public class NullableClassDto {
    * @return arrayItemsNullable
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "array_items_nullable", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("array_items_nullable")
   public List<Object> getArrayItemsNullable() {
     return arrayItemsNullable;
   }
 
+  @JsonProperty("array_items_nullable")
   public void setArrayItemsNullable(List<Object> arrayItemsNullable) {
     this.arrayItemsNullable = arrayItemsNullable;
   }
@@ -282,7 +273,7 @@ public class NullableClassDto {
   }
 
   public NullableClassDto putObjectNullablePropItem(String key, Object objectNullablePropItem) {
-    if (this.objectNullableProp == null || !this.objectNullableProp.isPresent()) {
+    if (this.objectNullableProp == null || !this.objectNullableProp.isPresent() || this.objectNullableProp.get() == null) {
       this.objectNullableProp = JsonNullable.of(new HashMap<>());
     }
     this.objectNullableProp.get().put(key, objectNullablePropItem);
@@ -294,7 +285,7 @@ public class NullableClassDto {
    * @return objectNullableProp
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "object_nullable_prop", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("object_nullable_prop")
   public JsonNullable<Map<String, Object>> getObjectNullableProp() {
     return objectNullableProp;
@@ -310,7 +301,7 @@ public class NullableClassDto {
   }
 
   public NullableClassDto putObjectAndItemsNullablePropItem(String key, Object objectAndItemsNullablePropItem) {
-    if (this.objectAndItemsNullableProp == null || !this.objectAndItemsNullableProp.isPresent()) {
+    if (this.objectAndItemsNullableProp == null || !this.objectAndItemsNullableProp.isPresent() || this.objectAndItemsNullableProp.get() == null) {
       this.objectAndItemsNullableProp = JsonNullable.of(new HashMap<>());
     }
     this.objectAndItemsNullableProp.get().put(key, objectAndItemsNullablePropItem);
@@ -322,7 +313,7 @@ public class NullableClassDto {
    * @return objectAndItemsNullableProp
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "object_and_items_nullable_prop", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("object_and_items_nullable_prop")
   public JsonNullable<Map<String, Object>> getObjectAndItemsNullableProp() {
     return objectAndItemsNullableProp;
@@ -350,12 +341,13 @@ public class NullableClassDto {
    * @return objectItemsNullable
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "object_items_nullable", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("object_items_nullable")
   public Map<String, Object> getObjectItemsNullable() {
     return objectItemsNullable;
   }
 
+  @JsonProperty("object_items_nullable")
   public void setObjectItemsNullable(Map<String, Object> objectItemsNullable) {
     this.objectItemsNullable = objectItemsNullable;
   }
@@ -464,10 +456,7 @@ public class NullableClassDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

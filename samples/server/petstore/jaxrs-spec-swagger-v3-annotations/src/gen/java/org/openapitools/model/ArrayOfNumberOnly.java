@@ -20,9 +20,9 @@ import org.openapitools.jackson.nullable.JsonNullable;
 
 @Schema(description="")
 @JsonTypeName("ArrayOfNumberOnly")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class ArrayOfNumberOnly  implements Serializable {
-  private @Valid List<BigDecimal> arrayNumber = new ArrayList<>();
+  private List<BigDecimal> arrayNumber = new ArrayList<>();
 
   protected ArrayOfNumberOnly(ArrayOfNumberOnlyBuilder<?, ?> b) {
     this.arrayNumber = b.arrayNumber;
@@ -41,7 +41,7 @@ public class ArrayOfNumberOnly  implements Serializable {
   
   @Schema(description = "")
   @JsonProperty("ArrayNumber")
-  @Valid public List<@Valid BigDecimal> getArrayNumber() {
+  public List<@Valid BigDecimal> getArrayNumber() {
     return arrayNumber;
   }
 
@@ -99,10 +99,7 @@ public class ArrayOfNumberOnly  implements Serializable {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 
 
@@ -135,4 +132,3 @@ public class ArrayOfNumberOnly  implements Serializable {
     }
   }
 }
-

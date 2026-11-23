@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -62,7 +61,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets DateTime
         /// </summary>
         [JsonPropertyName("dateTime")]
-        public DateTime? DateTime { get { return this.DateTimeOption; } set { this.DateTimeOption = new(value); } }
+        public DateTime? DateTime { get { return this.DateTimeOption.Value; } set { this.DateTimeOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Map
@@ -75,7 +74,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Map
         /// </summary>
         [JsonPropertyName("map")]
-        public Dictionary<string, Animal>? Map { get { return this.MapOption; } set { this.MapOption = new(value); } }
+        public Dictionary<string, Animal>? Map { get { return this.MapOption.Value; } set { this.MapOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Uuid
@@ -88,7 +87,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Uuid
         /// </summary>
         [JsonPropertyName("uuid")]
-        public Guid? Uuid { get { return this.UuidOption; } set { this.UuidOption = new(value); } }
+        public Guid? Uuid { get { return this.UuidOption.Value; } set { this.UuidOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of UuidWithPattern
@@ -101,7 +100,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets UuidWithPattern
         /// </summary>
         [JsonPropertyName("uuid_with_pattern")]
-        public Guid? UuidWithPattern { get { return this.UuidWithPatternOption; } set { this.UuidWithPatternOption = new(value); } }
+        public Guid? UuidWithPattern { get { return this.UuidWithPatternOption.Value; } set { this.UuidWithPatternOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -131,7 +130,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             // UuidWithPattern (Guid) pattern
             Regex regexUuidWithPattern = new Regex(@"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", RegexOptions.CultureInvariant);
@@ -147,12 +146,17 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="MixedPropertiesAndAdditionalPropertiesClass" />
     /// </summary>
-    public class MixedPropertiesAndAdditionalPropertiesClassJsonConverter : JsonConverter<MixedPropertiesAndAdditionalPropertiesClass>
+    public partial class MixedPropertiesAndAdditionalPropertiesClassJsonConverter : JsonConverter<MixedPropertiesAndAdditionalPropertiesClass>
     {
+        partial void OnCreated();
+
         /// <summary>
-        /// The format to use to serialize DateTime
+        /// Initializes a new instance of the <see cref="MixedPropertiesAndAdditionalPropertiesClassJsonConverter" /> class.
         /// </summary>
-        public static string DateTimeFormat { get; set; } = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffffK";
+        public MixedPropertiesAndAdditionalPropertiesClassJsonConverter()
+        {
+            OnCreated();
+        }
 
         /// <summary>
         /// Deserializes json to <see cref="MixedPropertiesAndAdditionalPropertiesClass" />
@@ -210,16 +214,16 @@ namespace Org.OpenAPITools.Model
             }
 
             if (dateTime.IsSet && dateTime.Value == null)
-                throw new ArgumentNullException(nameof(dateTime), "Property is not nullable for class MixedPropertiesAndAdditionalPropertiesClass.");
+                throw new JsonException("Property is not nullable for class MixedPropertiesAndAdditionalPropertiesClass: dateTime.");
 
             if (map.IsSet && map.Value == null)
-                throw new ArgumentNullException(nameof(map), "Property is not nullable for class MixedPropertiesAndAdditionalPropertiesClass.");
+                throw new JsonException("Property is not nullable for class MixedPropertiesAndAdditionalPropertiesClass: map.");
 
             if (uuid.IsSet && uuid.Value == null)
-                throw new ArgumentNullException(nameof(uuid), "Property is not nullable for class MixedPropertiesAndAdditionalPropertiesClass.");
+                throw new JsonException("Property is not nullable for class MixedPropertiesAndAdditionalPropertiesClass: uuid.");
 
             if (uuidWithPattern.IsSet && uuidWithPattern.Value == null)
-                throw new ArgumentNullException(nameof(uuidWithPattern), "Property is not nullable for class MixedPropertiesAndAdditionalPropertiesClass.");
+                throw new JsonException("Property is not nullable for class MixedPropertiesAndAdditionalPropertiesClass: uuid_with_pattern.");
 
             return new MixedPropertiesAndAdditionalPropertiesClass(dateTime, map, uuid, uuidWithPattern);
         }
@@ -230,7 +234,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="mixedPropertiesAndAdditionalPropertiesClass"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, MixedPropertiesAndAdditionalPropertiesClass mixedPropertiesAndAdditionalPropertiesClass, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -245,14 +248,25 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="mixedPropertiesAndAdditionalPropertiesClass"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, MixedPropertiesAndAdditionalPropertiesClass mixedPropertiesAndAdditionalPropertiesClass, JsonSerializerOptions jsonSerializerOptions)
         {
+            if (mixedPropertiesAndAdditionalPropertiesClass.DateTimeOption.IsSet && mixedPropertiesAndAdditionalPropertiesClass.DateTime == null)
+                throw new JsonException("Cannot write null property MixedPropertiesAndAdditionalPropertiesClass.DateTime to non-nullable JSON property 'dateTime'.");
+
             if (mixedPropertiesAndAdditionalPropertiesClass.MapOption.IsSet && mixedPropertiesAndAdditionalPropertiesClass.Map == null)
-                throw new ArgumentNullException(nameof(mixedPropertiesAndAdditionalPropertiesClass.Map), "Property is required for class MixedPropertiesAndAdditionalPropertiesClass.");
+                throw new JsonException("Cannot write null property MixedPropertiesAndAdditionalPropertiesClass.Map to non-nullable JSON property 'map'.");
+
+            if (mixedPropertiesAndAdditionalPropertiesClass.UuidOption.IsSet && mixedPropertiesAndAdditionalPropertiesClass.Uuid == null)
+                throw new JsonException("Cannot write null property MixedPropertiesAndAdditionalPropertiesClass.Uuid to non-nullable JSON property 'uuid'.");
+
+            if (mixedPropertiesAndAdditionalPropertiesClass.UuidWithPatternOption.IsSet && mixedPropertiesAndAdditionalPropertiesClass.UuidWithPattern == null)
+                throw new JsonException("Cannot write null property MixedPropertiesAndAdditionalPropertiesClass.UuidWithPattern to non-nullable JSON property 'uuid_with_pattern'.");
 
             if (mixedPropertiesAndAdditionalPropertiesClass.DateTimeOption.IsSet)
-                writer.WriteString("dateTime", mixedPropertiesAndAdditionalPropertiesClass.DateTimeOption.Value!.Value.ToString(DateTimeFormat));
+                {
+                            writer.WritePropertyName("dateTime");
+                                JsonSerializer.Serialize(writer, mixedPropertiesAndAdditionalPropertiesClass.DateTimeOption.Value!.Value, jsonSerializerOptions);
+                            }
 
             if (mixedPropertiesAndAdditionalPropertiesClass.MapOption.IsSet)
             {
@@ -266,11 +280,4 @@ namespace Org.OpenAPITools.Model
                 writer.WriteString("uuid_with_pattern", mixedPropertiesAndAdditionalPropertiesClass.UuidWithPatternOption.Value!.Value);
         }
     }
-
-    /// <summary>
-    /// The MixedPropertiesAndAdditionalPropertiesClassSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(MixedPropertiesAndAdditionalPropertiesClass))]
-    public partial class MixedPropertiesAndAdditionalPropertiesClassSerializationContext : JsonSerializerContext { }
 }

@@ -20,18 +20,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 
 /**
  * A delegate to be called by the {@link FakeApiController}}.
  * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public interface FakeApiDelegate {
 
     default Optional<NativeWebRequest> getRequest() {
@@ -59,7 +59,7 @@ public interface FakeApiDelegate {
      * @return Output boolean (status code 200)
      * @see FakeApi#fakeOuterBooleanSerialize
      */
-    default ResponseEntity<Boolean> fakeOuterBooleanSerialize(Boolean body) {
+    default @Valid ResponseEntity<Boolean> fakeOuterBooleanSerialize(Boolean body) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
@@ -72,11 +72,11 @@ public interface FakeApiDelegate {
      * @return Output composite (status code 200)
      * @see FakeApi#fakeOuterCompositeSerialize
      */
-    default ResponseEntity<OuterComposite> fakeOuterCompositeSerialize(OuterComposite outerComposite) {
+    default @Valid ResponseEntity<OuterComposite> fakeOuterCompositeSerialize(OuterComposite outerComposite) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("*/*"))) {
-                    String exampleString = "{ \"my_string\" : \"my_string\", \"my_number\" : 0.8008281904610115, \"my_boolean\" : true }";
+                    String exampleString = "{ \"my_number\" : 0.8008281904610115, \"my_string\" : \"my_string\", \"my_boolean\" : true }";
                     ApiUtil.setExampleResponse(request, "*/*", exampleString);
                     break;
                 }
@@ -94,7 +94,7 @@ public interface FakeApiDelegate {
      * @return Output number (status code 200)
      * @see FakeApi#fakeOuterNumberSerialize
      */
-    default ResponseEntity<BigDecimal> fakeOuterNumberSerialize(BigDecimal body) {
+    default @Valid ResponseEntity<BigDecimal> fakeOuterNumberSerialize(BigDecimal body) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
@@ -107,7 +107,7 @@ public interface FakeApiDelegate {
      * @return Output string (status code 200)
      * @see FakeApi#fakeOuterStringSerialize
      */
-    default ResponseEntity<String> fakeOuterStringSerialize(String body) {
+    default @Valid ResponseEntity<String> fakeOuterStringSerialize(String body) {
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
 
     }
@@ -119,11 +119,11 @@ public interface FakeApiDelegate {
      * @return successful operation (status code 200)
      * @see FakeApi#responseObjectDifferentNames
      */
-    default ResponseEntity<ResponseObjectWithDifferentFieldNames> responseObjectDifferentNames(Long petId) {
+    default @Valid ResponseEntity<ResponseObjectWithDifferentFieldNames> responseObjectDifferentNames(Long petId) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"UPPER_CASE_PROPERTY_SNAKE\" : \"UPPER_CASE_PROPERTY_SNAKE\", \"lower-case-property-dashes\" : \"lower-case-property-dashes\", \"property name with spaces\" : \"property name with spaces\", \"normalPropertyName\" : \"normalPropertyName\" }";
+                    String exampleString = "{ \"normalPropertyName\" : \"normalPropertyName\", \"UPPER_CASE_PROPERTY_SNAKE\" : \"UPPER_CASE_PROPERTY_SNAKE\", \"lower-case-property-dashes\" : \"lower-case-property-dashes\", \"property name with spaces\" : \"property name with spaces\" }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -168,7 +168,7 @@ public interface FakeApiDelegate {
      * @return successful operation (status code 200)
      * @see FakeApi#testClientModel
      */
-    default ResponseEntity<Client> testClientModel(Client client) {
+    default @Valid ResponseEntity<Client> testClientModel(Client client) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
@@ -340,7 +340,7 @@ public interface FakeApiDelegate {
      * @return Success (status code 200)
      * @see FakeApi#testWithResultExample
      */
-    default ResponseEntity<Integer> testWithResultExample() {
+    default @Valid ResponseEntity<Integer> testWithResultExample() {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
@@ -364,7 +364,7 @@ public interface FakeApiDelegate {
      * @return successful operation (status code 200)
      * @see FakeApi#uploadFileWithRequiredFile
      */
-    default ResponseEntity<ModelApiResponse> uploadFileWithRequiredFile(Long petId,
+    default @Valid ResponseEntity<ModelApiResponse> uploadFileWithRequiredFile(Long petId,
         MultipartFile requiredFile,
         String additionalMetadata) {
         getRequest().ifPresent(request -> {

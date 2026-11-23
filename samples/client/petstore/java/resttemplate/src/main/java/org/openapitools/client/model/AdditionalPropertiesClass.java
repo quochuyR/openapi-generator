@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * AdditionalPropertiesClass
@@ -32,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   AdditionalPropertiesClass.JSON_PROPERTY_MAP_PROPERTY,
   AdditionalPropertiesClass.JSON_PROPERTY_MAP_OF_MAP_PROPERTY
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class AdditionalPropertiesClass {
   public static final String JSON_PROPERTY_MAP_PROPERTY = "map_property";
   @javax.annotation.Nullable
@@ -48,7 +49,7 @@ public class AdditionalPropertiesClass {
   /**
    * Constructor with all args parameters
    */
-  public AdditionalPropertiesClass(@JsonProperty(JSON_PROPERTY_MAP_PROPERTY) Map<String, String> mapProperty, @JsonProperty(JSON_PROPERTY_MAP_OF_MAP_PROPERTY) Map<String, Map<String, String>> mapOfMapProperty) {
+  public AdditionalPropertiesClass(@JsonProperty(JSON_PROPERTY_MAP_PROPERTY) @javax.annotation.Nullable Map<String, String> mapProperty, @JsonProperty(JSON_PROPERTY_MAP_OF_MAP_PROPERTY) @javax.annotation.Nullable Map<String, Map<String, String>> mapOfMapProperty) {
     this.mapProperty = mapProperty;
     this.mapOfMapProperty = mapOfMapProperty;
   }
@@ -153,10 +154,7 @@ public class AdditionalPropertiesClass {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 
   public static class Builder {

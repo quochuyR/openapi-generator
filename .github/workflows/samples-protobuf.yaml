@@ -5,11 +5,13 @@ on:
       - .github/workflows/samples-protobuf.yaml
       - samples/config/petstore/protobuf-schema/**
       - samples/config/petstore/protobuf-schema-config/**
+      - samples/config/petstore/protobuf-schema-config-complex/**
   pull_request:
     paths:
       - .github/workflows/samples-protobuf.yaml
       - samples/config/petstore/protobuf-schema/**
       - samples/config/petstore/protobuf-schema-config/**
+      - samples/config/petstore/protobuf-schema-config-complex/**
 jobs:
   build:
     name: Build Protobuf Client
@@ -22,7 +24,7 @@ jobs:
           - 'samples/config/petstore/protobuf-schema-config/'
           - 'samples/config/petstore/protobuf-schema-config-complex/'
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Install Protocol Buffers Compiler
         run: |
           sudo apt-get update

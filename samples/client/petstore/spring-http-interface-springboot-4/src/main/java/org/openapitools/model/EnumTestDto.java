@@ -1,26 +1,29 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.Nulls;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
+import org.hibernate.validator.constraints.*;
 import org.openapitools.model.OuterEnumDto;
 import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
 
 /**
  * EnumTestDto
  */
 
 @JsonTypeName("Enum_Test")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class EnumTestDto {
 
   /**
@@ -60,6 +63,8 @@ public class EnumTestDto {
     }
   }
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable EnumStringEnum enumString;
 
   /**
@@ -99,6 +104,7 @@ public class EnumTestDto {
     }
   }
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private EnumStringRequiredEnum enumStringRequired;
 
   /**
@@ -136,6 +142,8 @@ public class EnumTestDto {
     }
   }
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable EnumIntegerEnum enumInteger;
 
   /**
@@ -173,8 +181,12 @@ public class EnumTestDto {
     }
   }
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable EnumNumberEnum enumNumber;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable OuterEnumDto outerEnum;
 
   public EnumTestDto() {
@@ -196,6 +208,7 @@ public class EnumTestDto {
     return enumString;
   }
 
+  @JsonProperty("enum_string")
   public void setEnumString(@Nullable EnumStringEnum enumString) {
     this.enumString = enumString;
   }
@@ -209,12 +222,13 @@ public class EnumTestDto {
    * Get enumStringRequired
    * @return enumStringRequired
    */
-  @NotNull
+  @NotNull 
   @JsonProperty("enum_string_required")
   public EnumStringRequiredEnum getEnumStringRequired() {
     return enumStringRequired;
   }
 
+  @JsonProperty("enum_string_required")
   public void setEnumStringRequired(EnumStringRequiredEnum enumStringRequired) {
     this.enumStringRequired = enumStringRequired;
   }
@@ -234,6 +248,7 @@ public class EnumTestDto {
     return enumInteger;
   }
 
+  @JsonProperty("enum_integer")
   public void setEnumInteger(@Nullable EnumIntegerEnum enumInteger) {
     this.enumInteger = enumInteger;
   }
@@ -253,6 +268,7 @@ public class EnumTestDto {
     return enumNumber;
   }
 
+  @JsonProperty("enum_number")
   public void setEnumNumber(@Nullable EnumNumberEnum enumNumber) {
     this.enumNumber = enumNumber;
   }
@@ -266,12 +282,13 @@ public class EnumTestDto {
    * Get outerEnum
    * @return outerEnum
    */
-  
+  @Valid 
   @JsonProperty("outerEnum")
   public @Nullable OuterEnumDto getOuterEnum() {
     return outerEnum;
   }
 
+  @JsonProperty("outerEnum")
   public void setOuterEnum(@Nullable OuterEnumDto outerEnum) {
     this.outerEnum = outerEnum;
   }
@@ -315,10 +332,7 @@ public class EnumTestDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

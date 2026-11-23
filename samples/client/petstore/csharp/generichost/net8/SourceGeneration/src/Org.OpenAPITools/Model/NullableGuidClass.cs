@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -57,7 +56,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /* <example>72f98069-206d-4f12-9f12-3d1e525a8e84</example> */
         [JsonPropertyName("uuid")]
-        public Guid? Uuid { get { return this.UuidOption; } set { this.UuidOption = new(value); } }
+        public Guid? Uuid { get { return this.UuidOption.Value; } set { this.UuidOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -84,7 +83,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -93,8 +92,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="NullableGuidClass" />
     /// </summary>
-    public class NullableGuidClassJsonConverter : JsonConverter<NullableGuidClass>
+    public partial class NullableGuidClassJsonConverter : JsonConverter<NullableGuidClass>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NullableGuidClassJsonConverter" /> class.
+        /// </summary>
+        public NullableGuidClassJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="NullableGuidClass" />
         /// </summary>
@@ -147,7 +156,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="nullableGuidClass"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, NullableGuidClass nullableGuidClass, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -162,7 +170,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="nullableGuidClass"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, NullableGuidClass nullableGuidClass, JsonSerializerOptions jsonSerializerOptions)
         {
             if (nullableGuidClass.UuidOption.IsSet)
@@ -172,11 +179,4 @@ namespace Org.OpenAPITools.Model
                     writer.WriteNull("uuid");
         }
     }
-
-    /// <summary>
-    /// The NullableGuidClassSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(NullableGuidClass))]
-    public partial class NullableGuidClassSerializationContext : JsonSerializerContext { }
 }

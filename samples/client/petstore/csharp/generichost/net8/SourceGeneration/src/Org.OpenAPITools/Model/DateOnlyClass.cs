@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -57,7 +56,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /* <example>Fri Jul 21 00:00:00 UTC 2017</example> */
         [JsonPropertyName("dateOnlyProperty")]
-        public DateOnly? DateOnlyProperty { get { return this.DateOnlyPropertyOption; } set { this.DateOnlyPropertyOption = new(value); } }
+        public DateOnly? DateOnlyProperty { get { return this.DateOnlyPropertyOption.Value; } set { this.DateOnlyPropertyOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -84,7 +83,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -93,12 +92,17 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="DateOnlyClass" />
     /// </summary>
-    public class DateOnlyClassJsonConverter : JsonConverter<DateOnlyClass>
+    public partial class DateOnlyClassJsonConverter : JsonConverter<DateOnlyClass>
     {
+        partial void OnCreated();
+
         /// <summary>
-        /// The format to use to serialize DateOnlyProperty
+        /// Initializes a new instance of the <see cref="DateOnlyClassJsonConverter" /> class.
         /// </summary>
-        public static string DateOnlyPropertyFormat { get; set; } = "yyyy'-'MM'-'dd";
+        public DateOnlyClassJsonConverter()
+        {
+            OnCreated();
+        }
 
         /// <summary>
         /// Deserializes json to <see cref="DateOnlyClass" />
@@ -144,7 +148,7 @@ namespace Org.OpenAPITools.Model
             }
 
             if (dateOnlyProperty.IsSet && dateOnlyProperty.Value == null)
-                throw new ArgumentNullException(nameof(dateOnlyProperty), "Property is not nullable for class DateOnlyClass.");
+                throw new JsonException("Property is not nullable for class DateOnlyClass: dateOnlyProperty.");
 
             return new DateOnlyClass(dateOnlyProperty);
         }
@@ -155,7 +159,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="dateOnlyClass"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, DateOnlyClass dateOnlyClass, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -170,18 +173,16 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="dateOnlyClass"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, DateOnlyClass dateOnlyClass, JsonSerializerOptions jsonSerializerOptions)
         {
+            if (dateOnlyClass.DateOnlyPropertyOption.IsSet && dateOnlyClass.DateOnlyProperty == null)
+                throw new JsonException("Cannot write null property DateOnlyClass.DateOnlyProperty to non-nullable JSON property 'dateOnlyProperty'.");
+
             if (dateOnlyClass.DateOnlyPropertyOption.IsSet)
-                writer.WriteString("dateOnlyProperty", dateOnlyClass.DateOnlyPropertyOption.Value!.Value.ToString(DateOnlyPropertyFormat));
+                {
+                            writer.WritePropertyName("dateOnlyProperty");
+                                JsonSerializer.Serialize(writer, dateOnlyClass.DateOnlyPropertyOption.Value!.Value, jsonSerializerOptions);
+                            }
         }
     }
-
-    /// <summary>
-    /// The DateOnlyClassSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(DateOnlyClass))]
-    public partial class DateOnlyClassSerializationContext : JsonSerializerContext { }
 }

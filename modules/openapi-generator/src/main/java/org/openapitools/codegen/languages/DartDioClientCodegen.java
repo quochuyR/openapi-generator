@@ -36,6 +36,7 @@ import org.openapitools.codegen.model.ModelMap;
 import org.openapitools.codegen.model.ModelsMap;
 import org.openapitools.codegen.model.OperationMap;
 import org.openapitools.codegen.model.OperationsMap;
+import org.openapitools.codegen.model.WebhooksMap;
 import org.openapitools.codegen.templating.CommonTemplateContentLocator;
 import org.openapitools.codegen.templating.GeneratorTemplateContentLocator;
 import org.openapitools.codegen.templating.MustacheEngineAdapter;
@@ -51,6 +52,9 @@ import java.util.stream.Collectors;
 
 import static org.openapitools.codegen.utils.StringUtils.underscore;
 
+/**
+ * <p>Mustache templates are located in {@code src/main/resources/dart/libraries/dio/}.
+ */
 public class DartDioClientCodegen extends AbstractDartCodegen {
 
     private final Logger LOGGER = LoggerFactory.getLogger(DartDioClientCodegen.class);
@@ -65,6 +69,7 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
     public static final String EQUALITY_CHECK_METHOD_EQUATABLE = "equatable";
     public static final String SERIALIZATION_LIBRARY_BUILT_VALUE = "built_value";
     public static final String SERIALIZATION_LIBRARY_JSON_SERIALIZABLE = "json_serializable";
+    public static final String SERIALIZATION_LIBRARY_FREEZED = "freezed";
     public static final String SERIALIZATION_LIBRARY_DEFAULT = SERIALIZATION_LIBRARY_BUILT_VALUE;
 
     private static final String DIO_IMPORT = "package:dio/dio.dart";
@@ -111,6 +116,7 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
 
         supportedLibraries.put(SERIALIZATION_LIBRARY_BUILT_VALUE, "[DEFAULT] built_value");
         supportedLibraries.put(SERIALIZATION_LIBRARY_JSON_SERIALIZABLE, "[BETA] json_serializable");
+        supportedLibraries.put(SERIALIZATION_LIBRARY_FREEZED, "[BETA] freezed (requires Dart 3.8+)");
         final CliOption serializationLibrary = CliOption.newString(CodegenConstants.SERIALIZATION_LIBRARY, "Specify serialization library");
         serializationLibrary.setEnum(supportedLibraries);
         serializationLibrary.setDefault(SERIALIZATION_LIBRARY_DEFAULT);
@@ -220,6 +226,18 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
         supportingFiles.add(new SupportingFile("auth/oauth.mustache", authFolder, "oauth.dart"));
         supportingFiles.add(new SupportingFile("auth/auth.mustache", authFolder, "auth.dart"));
 
+        if (useOptional && SERIALIZATION_LIBRARY_FREEZED.equals(library)) {
+            LOGGER.warn("useOptional and patchOnly are not yet supported with serializationLibrary=freezed and will be ignored.");
+            setUseOptional(false);
+            setPatchOnly(false);
+            additionalProperties.put(USE_OPTIONAL, false);
+            additionalProperties.put(PATCH_ONLY, false);
+        }
+
+        if (useOptional) {
+            supportingFiles.add(new SupportingFile("optional.mustache", srcFolder, "optional.dart"));
+        }
+
         configureSerializationLibrary(srcFolder);
         configureEqualityCheckMethod(srcFolder);
         configureDateLibrary(srcFolder);
@@ -230,6 +248,10 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
             case SERIALIZATION_LIBRARY_JSON_SERIALIZABLE:
                 additionalProperties.put("useJsonSerializable", "true");
                 configureSerializationLibraryJsonSerializable(srcFolder);
+                break;
+            case SERIALIZATION_LIBRARY_FREEZED:
+                additionalProperties.put("useFreezed", "true");
+                configureSerializationLibraryFreezed(srcFolder);
                 break;
             default:
             case SERIALIZATION_LIBRARY_BUILT_VALUE:
@@ -286,6 +308,18 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
     private void configureSerializationLibraryJsonSerializable(String srcFolder) {
         supportingFiles.add(new SupportingFile("serialization/json_serializable/build.yaml.mustache", "" /* main project dir */, "build.yaml"));
         supportingFiles.add(new SupportingFile("serialization/json_serializable/deserialize.mustache", srcFolder,
+                "deserialize.dart"));
+
+        // most of these are defined in AbstractDartCodegen, we are overriding
+        // just the binary / file handling
+        languageSpecificPrimitives.add("Object");
+        imports.put("Uint8List", "dart:typed_data");
+        imports.put("MultipartFile", DIO_IMPORT);
+    }
+
+    private void configureSerializationLibraryFreezed(String srcFolder) {
+        supportingFiles.add(new SupportingFile("serialization/freezed/build.yaml.mustache", "" /* main project dir */, "build.yaml"));
+        supportingFiles.add(new SupportingFile("serialization/freezed/deserialize.mustache", srcFolder,
                 "deserialize.dart"));
 
         // most of these are defined in AbstractDartCodegen, we are overriding
@@ -365,7 +399,37 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
         objs = super.postProcessModels(objs);
         List<ModelMap> models = objs.getModels();
         ProcessUtils.addIndexToProperties(models, 1);
+        if (SERIALIZATION_LIBRARY_FREEZED.equals(library)) {
+            for (ModelMap modelMap : models) {
+                for (CodegenProperty property : modelMap.getModel().vars) {
+                    setFreezedEnumDefault(property);
+                }
+            }
+        }
         return objs;
+    }
+
+    /**
+     * The default value of an inline enum property is the raw enum value (e.g. 'value_one'),
+     * which cannot be used in a freezed @Default annotation. Resolve it to the matching enum
+     * constant (e.g. MyEnum.valueOne) instead.
+     */
+    @SuppressWarnings("unchecked")
+    private void setFreezedEnumDefault(CodegenProperty property) {
+        if (!property.isEnum || property.isContainer || property.defaultValue == null
+                || property.allowableValues == null) {
+            return;
+        }
+        List<Map<String, Object>> enumVars = (List<Map<String, Object>>) property.allowableValues.get("enumVars");
+        if (enumVars == null) {
+            return;
+        }
+        for (Map<String, Object> enumVar : enumVars) {
+            if (property.defaultValue.equals(enumVar.get("value"))) {
+                property.vendorExtensions.put("x-freezed-enum-default", property.enumName + "." + enumVar.get("name"));
+                return;
+            }
+        }
     }
 
     /// Gets all ancestors of a given model, and puts it in accumulator
@@ -613,6 +677,18 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
                 CodegenModel cm = mo.getModel();
                 cm.imports = rewriteImports(cm.imports, true);
                 cm.vendorExtensions.put("x-has-vars", !cm.vars.isEmpty());
+
+                // Check if this model's classname has an import mapping.
+                // If so, mark it so that supporting file templates (serializers, barrel)
+                // can use the mapped import path instead of the default model/ path.
+                if (importMapping().containsKey(cm.classname)) {
+                    cm.vendorExtensions.put("x-is-import-mapped", true);
+                    cm.vendorExtensions.put("x-import-path", importMapping().get(cm.classname));
+                } else {
+                    cm.vendorExtensions.put("x-is-import-mapped", false);
+                    cm.vendorExtensions.put("x-import-path",
+                            "package:" + pubName + "/" + sourceFolder + "/" + modelPackage() + "/" + cm.classFilename + ".dart");
+                }
             }
         }
 
@@ -641,7 +717,131 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
                             items.getAdditionalProperties().dataType
                     ));
                 }
+
+                // Recursively register builder factories for every nested
+                // container reachable from this property. Without this step,
+                // shapes like Map<String, List<X>> (e.g. an OpenAPI object
+                // with `additionalProperties: { type: array, items: ...}`)
+                // never get a `BuiltList<X>` factory registered, and
+                // built_value throws "No builder factory for BuiltList<X>"
+                // at deserialization time.
+                registerNestedBuilderFactories(property);
             }
+        }
+    }
+
+    /**
+     * Walk the CodegenProperty tree and register a built_value
+     * BuilderFactory for every container node, including the top one.
+     * Handles arbitrary nesting like {@code Map<String, List<X>>},
+     * {@code List<Map<String, X>>}, {@code List<List<X>>}, etc.
+     */
+    private void registerNestedBuilderFactories(CodegenProperty prop) {
+        if (prop == null || !prop.isContainer || prop.items == null) {
+            return;
+        }
+        // Recurse first so deeper containers are registered too.
+        registerNestedBuilderFactories(prop.items);
+
+        if (prop.items.isContainer) {
+            // Truly nested container (e.g. Map<String, List<X>>):
+            // must use composite form because the simple constructor
+            // cannot express the nested FullType.
+            BuilderFactoryExpr expr = renderBuilderFactory(prop);
+            if (expr != null) {
+                addBuiltValueSerializer(BuiltValueSerializer.composite(
+                        expr.fullTypeArgs,
+                        expr.builderInstantiation));
+            }
+        } else {
+            // Leaf container (e.g. List<X>, Map<String, X>): use the
+            // same simple constructor the rest of the codegen uses so
+            // the Set deduplicates correctly.
+            addBuiltValueSerializer(new BuiltValueSerializer(
+                    prop.isArray,
+                    prop.getUniqueItems(),
+                    prop.isMap,
+                    prop.items.isNullable,
+                    prop.items.dataType));
+        }
+    }
+
+    /**
+     * Render the FullType argument list and the matching Builder
+     * instantiation for a container CodegenProperty.
+     *
+     * @return null if {@code prop} is not a container we can render.
+     */
+    private BuilderFactoryExpr renderBuilderFactory(CodegenProperty prop) {
+        if (prop == null || !prop.isContainer || prop.items == null) {
+            return null;
+        }
+        String innerFullType = renderInnerFullType(prop.items);
+        String innerDart = renderDartType(prop.items);
+
+        if (prop.isArray) {
+            String collection = prop.getUniqueItems() ? "BuiltSet" : "BuiltList";
+            String builder = prop.getUniqueItems() ? "SetBuilder" : "ListBuilder";
+            return new BuilderFactoryExpr(
+                    collection + ", [FullType(" + innerFullType + ")]",
+                    builder + "<" + innerDart + ">");
+        }
+        if (prop.isMap) {
+            return new BuilderFactoryExpr(
+                    "BuiltMap, [FullType(String), FullType(" + innerFullType + ")]",
+                    "MapBuilder<String, " + innerDart + ">");
+        }
+        return null;
+    }
+
+    /**
+     * What goes inside {@code FullType(...)} for this property:
+     * a leaf type name like {@code "Foo"}, or a nested expression like
+     * {@code "BuiltList, [FullType(Foo)]"}.
+     */
+    private String renderInnerFullType(CodegenProperty prop) {
+        if (prop == null) return "dynamic";
+        if (!prop.isContainer || prop.items == null) {
+            return prop.dataType;
+        }
+        String inner = renderInnerFullType(prop.items);
+        if (prop.isArray) {
+            String collection = prop.getUniqueItems() ? "BuiltSet" : "BuiltList";
+            return collection + ", [FullType(" + inner + ")]";
+        }
+        if (prop.isMap) {
+            return "BuiltMap, [FullType(String), FullType(" + inner + ")]";
+        }
+        return prop.dataType;
+    }
+
+    /**
+     * Render the Dart type literal (e.g. {@code BuiltMap<String, BuiltList<Foo>>})
+     * used inside the {@code () => XBuilder<...>()} lambda.
+     */
+    private String renderDartType(CodegenProperty prop) {
+        if (prop == null) return "dynamic";
+        if (!prop.isContainer || prop.items == null) {
+            return prop.dataType;
+        }
+        String inner = renderDartType(prop.items);
+        if (prop.isArray) {
+            String collection = prop.getUniqueItems() ? "BuiltSet" : "BuiltList";
+            return collection + "<" + inner + ">";
+        }
+        if (prop.isMap) {
+            return "BuiltMap<String, " + inner + ">";
+        }
+        return prop.dataType;
+    }
+
+    private static final class BuilderFactoryExpr {
+        final String fullTypeArgs;
+        final String builderInstantiation;
+
+        BuilderFactoryExpr(String fullTypeArgs, String builderInstantiation) {
+            this.fullTypeArgs = fullTypeArgs;
+            this.builderInstantiation = builderInstantiation;
         }
     }
 
@@ -649,8 +849,25 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
     public OperationsMap postProcessOperationsWithModels(OperationsMap objs, List<ModelMap> allModels) {
         super.postProcessOperationsWithModels(objs, allModels);
         OperationMap operations = objs.getOperations();
-        List<CodegenOperation> operationList = operations.getOperation();
+        processImports(operations.getOperation(), imports -> objs.put("imports", imports));
+        return objs;
+    }
 
+    @Override
+    public WebhooksMap postProcessWebhooksWithModels(WebhooksMap objs, List<ModelMap> allModels) {
+        super.postProcessWebhooksWithModels(objs, allModels);
+        OperationMap operations = objs.getWebhooks();
+        processImports(operations.getOperation(), imports -> objs.put("imports", imports));
+        return objs;
+    }
+
+    /**
+     * Processes imports for operations or webhooks, applying the same logic to both.
+     *
+     * @param operationList the list of CodegenOperation to process
+     * @param setImports the handler to apply the processed imports
+     */
+    private void processImports(List<CodegenOperation> operationList, java.util.function.Consumer<List<String>> setImports) {
         Set<String> resultImports = new HashSet<>();
 
         for (CodegenOperation op : operationList) {
@@ -684,10 +901,10 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
                 op.imports.remove("Uint8List");
             }
 
-            if (SERIALIZATION_LIBRARY_JSON_SERIALIZABLE.equals(library)) {
+            if (SERIALIZATION_LIBRARY_JSON_SERIALIZABLE.equals(library) || SERIALIZATION_LIBRARY_FREEZED.equals(library)) {
                 // built_value serialization uses Uint8List for all MultipartFile types
-                // in json_serialization, MultipartFile is used as the file parameter type, but
-                // MultipartFile isn't readable, instead we convert this to a Uin8List
+                // in json_serialization/freezed, MultipartFile is used as the file parameter type, but
+                // MultipartFile isn't readable, instead we convert this to a Uint8List
                 if (op.isResponseFile) {
                     op.imports.add("Uint8List");
                     op.returnType = "Uint8List";
@@ -729,9 +946,7 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
             }
         }
         // for some reason "import" structure is changed ..
-        objs.put("imports", resultImports.stream().sorted().collect(Collectors.toList()));
-
-        return objs;
+        setImports.accept(resultImports.stream().sorted().collect(Collectors.toList()));
     }
 
     private void addBuiltValueSerializerImport(String type) {
@@ -798,12 +1013,45 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
 
         @Getter final String dataType;
 
+        // When non-null, the serializer is rendered verbatim from these
+        // pre-computed strings instead of being dispatched through the
+        // isArray/isMap branches in serializers.mustache. Used for
+        // arbitrarily nested container types where dataType alone can't
+        // express the FullType expression (e.g. Map<String, List<X>>).
+        @Getter final String fullTypeArgs;
+
+        @Getter final String builderInstantiation;
+
         private BuiltValueSerializer(boolean isArray, boolean uniqueItems, boolean isMap, boolean isNullable, String dataType) {
             this.isArray = isArray;
             this.uniqueItems = uniqueItems;
             this.isMap = isMap;
             this.isNullable = isNullable;
             this.dataType = dataType;
+            this.fullTypeArgs = null;
+            this.builderInstantiation = null;
+        }
+
+        private BuiltValueSerializer(String fullTypeArgs, String builderInstantiation) {
+            this.isArray = false;
+            this.uniqueItems = false;
+            this.isMap = false;
+            this.isNullable = false;
+            this.dataType = "";
+            this.fullTypeArgs = fullTypeArgs;
+            this.builderInstantiation = builderInstantiation;
+        }
+
+        /**
+         * Build a serializer for a nested-container BuilderFactory whose
+         * type signature can't be expressed by the simple
+         * (isArray, isMap, dataType) form. {@code fullTypeArgs} is the
+         * argument list for {@code FullType(...)} (without the wrapping
+         * call) and {@code builderInstantiation} is the inside of
+         * {@code () => ...()}.
+         */
+        public static BuiltValueSerializer composite(String fullTypeArgs, String builderInstantiation) {
+            return new BuiltValueSerializer(fullTypeArgs, builderInstantiation);
         }
 
         public boolean isArray() {
@@ -823,11 +1071,18 @@ public class DartDioClientCodegen extends AbstractDartCodegen {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             BuiltValueSerializer that = (BuiltValueSerializer) o;
+            if (fullTypeArgs != null || that.fullTypeArgs != null) {
+                return Objects.equals(fullTypeArgs, that.fullTypeArgs)
+                        && Objects.equals(builderInstantiation, that.builderInstantiation);
+            }
             return isArray == that.isArray && uniqueItems == that.uniqueItems && isMap == that.isMap && isNullable == that.isNullable && dataType.equals(that.dataType);
         }
 
         @Override
         public int hashCode() {
+            if (fullTypeArgs != null) {
+                return Objects.hash(fullTypeArgs, builderInstantiation);
+            }
             return Objects.hash(isArray, uniqueItems, isMap, isNullable, dataType);
         }
     }

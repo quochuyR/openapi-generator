@@ -39,6 +39,7 @@ import org.openapitools.jackson.nullable.JsonNullable;
 import java.util.NoSuchElementException;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * NullableClass
@@ -57,7 +58,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   NullableClass.JSON_PROPERTY_OBJECT_AND_ITEMS_NULLABLE_PROP,
   NullableClass.JSON_PROPERTY_OBJECT_ITEMS_NULLABLE
 })
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class NullableClass {
   public static final String JSON_PROPERTY_INTEGER_PROP = "integer_prop";
   @jakarta.annotation.Nullable
@@ -121,7 +122,7 @@ public class NullableClass {
    * @return integerProp
    */
   @jakarta.annotation.Nullable
-  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "", nullable = true)
   @JsonIgnore
 
   public Integer getIntegerProp() {
@@ -155,7 +156,7 @@ public class NullableClass {
    * @return numberProp
    */
   @jakarta.annotation.Nullable
-  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "", nullable = true)
   @JsonIgnore
 
   public BigDecimal getNumberProp() {
@@ -189,7 +190,7 @@ public class NullableClass {
    * @return booleanProp
    */
   @jakarta.annotation.Nullable
-  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "", nullable = true)
   @JsonIgnore
 
   public Boolean getBooleanProp() {
@@ -223,7 +224,7 @@ public class NullableClass {
    * @return stringProp
    */
   @jakarta.annotation.Nullable
-  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "", nullable = true)
   @JsonIgnore
 
   public String getStringProp() {
@@ -257,7 +258,7 @@ public class NullableClass {
    * @return dateProp
    */
   @jakarta.annotation.Nullable
-  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "", nullable = true)
   @JsonIgnore
 
   public LocalDate getDateProp() {
@@ -291,7 +292,7 @@ public class NullableClass {
    * @return datetimeProp
    */
   @jakarta.annotation.Nullable
-  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "", nullable = true)
   @JsonIgnore
 
   public OffsetDateTime getDatetimeProp() {
@@ -321,7 +322,7 @@ public class NullableClass {
   }
 
   public NullableClass addArrayNullablePropItem(Object arrayNullablePropItem) {
-    if (this.arrayNullableProp == null || !this.arrayNullableProp.isPresent()) {
+    if (this.arrayNullableProp == null || !this.arrayNullableProp.isPresent() || this.arrayNullableProp.get() == null) {
       this.arrayNullableProp = JsonNullable.<List<Object>>of(new ArrayList<>());
     }
     try {
@@ -337,7 +338,7 @@ public class NullableClass {
    * @return arrayNullableProp
    */
   @jakarta.annotation.Nullable
-  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "", nullable = true)
   @JsonIgnore
 
   public List<Object> getArrayNullableProp() {
@@ -367,7 +368,7 @@ public class NullableClass {
   }
 
   public NullableClass addArrayAndItemsNullablePropItem(Object arrayAndItemsNullablePropItem) {
-    if (this.arrayAndItemsNullableProp == null || !this.arrayAndItemsNullableProp.isPresent()) {
+    if (this.arrayAndItemsNullableProp == null || !this.arrayAndItemsNullableProp.isPresent() || this.arrayAndItemsNullableProp.get() == null) {
       this.arrayAndItemsNullableProp = JsonNullable.<List<Object>>of(new ArrayList<>());
     }
     try {
@@ -383,7 +384,7 @@ public class NullableClass {
    * @return arrayAndItemsNullableProp
    */
   @jakarta.annotation.Nullable
-  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "", nullable = true)
   @JsonIgnore
 
   public List<Object> getArrayAndItemsNullableProp() {
@@ -447,7 +448,7 @@ public class NullableClass {
   }
 
   public NullableClass putObjectNullablePropItem(String key, Object objectNullablePropItem) {
-    if (this.objectNullableProp == null || !this.objectNullableProp.isPresent()) {
+    if (this.objectNullableProp == null || !this.objectNullableProp.isPresent() || this.objectNullableProp.get() == null) {
       this.objectNullableProp = JsonNullable.<Map<String, Object>>of(new HashMap<>());
     }
     try {
@@ -463,7 +464,7 @@ public class NullableClass {
    * @return objectNullableProp
    */
   @jakarta.annotation.Nullable
-  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "", nullable = true)
   @JsonIgnore
 
   public Map<String, Object> getObjectNullableProp() {
@@ -493,7 +494,7 @@ public class NullableClass {
   }
 
   public NullableClass putObjectAndItemsNullablePropItem(String key, Object objectAndItemsNullablePropItem) {
-    if (this.objectAndItemsNullableProp == null || !this.objectAndItemsNullableProp.isPresent()) {
+    if (this.objectAndItemsNullableProp == null || !this.objectAndItemsNullableProp.isPresent() || this.objectAndItemsNullableProp.get() == null) {
       this.objectAndItemsNullableProp = JsonNullable.<Map<String, Object>>of(new HashMap<>());
     }
     try {
@@ -509,7 +510,7 @@ public class NullableClass {
    * @return objectAndItemsNullableProp
    */
   @jakarta.annotation.Nullable
-  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "")
+  @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "", nullable = true)
   @JsonIgnore
 
   public Map<String, Object> getObjectAndItemsNullableProp() {
@@ -676,10 +677,7 @@ public class NullableClass {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 
 }

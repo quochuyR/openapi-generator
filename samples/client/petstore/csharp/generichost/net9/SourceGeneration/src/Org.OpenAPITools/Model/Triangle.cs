@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -36,7 +35,7 @@ namespace Org.OpenAPITools.Model
         /// Initializes a new instance of the <see cref="Triangle" /> class.
         /// </summary>
         /// <param name="equilateralTriangle"></param>
-        public Triangle(EquilateralTriangle equilateralTriangle)
+        internal Triangle(EquilateralTriangle equilateralTriangle)
         {
             EquilateralTriangle = equilateralTriangle;
             OnCreated();
@@ -46,7 +45,7 @@ namespace Org.OpenAPITools.Model
         /// Initializes a new instance of the <see cref="Triangle" /> class.
         /// </summary>
         /// <param name="isoscelesTriangle"></param>
-        public Triangle(IsoscelesTriangle isoscelesTriangle)
+        internal Triangle(IsoscelesTriangle isoscelesTriangle)
         {
             IsoscelesTriangle = isoscelesTriangle;
             OnCreated();
@@ -56,7 +55,7 @@ namespace Org.OpenAPITools.Model
         /// Initializes a new instance of the <see cref="Triangle" /> class.
         /// </summary>
         /// <param name="scaleneTriangle"></param>
-        public Triangle(ScaleneTriangle scaleneTriangle)
+        internal Triangle(ScaleneTriangle scaleneTriangle)
         {
             ScaleneTriangle = scaleneTriangle;
             OnCreated();
@@ -103,7 +102,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             return this.BaseValidate(validationContext);
         }
@@ -113,7 +112,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        protected IEnumerable<ValidationResult> BaseValidate(ValidationContext validationContext)
+        protected IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> BaseValidate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -122,8 +121,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="Triangle" />
     /// </summary>
-    public class TriangleJsonConverter : JsonConverter<Triangle>
+    public partial class TriangleJsonConverter : JsonConverter<Triangle>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TriangleJsonConverter" /> class.
+        /// </summary>
+        public TriangleJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="Triangle" />
         /// </summary>
@@ -162,7 +171,7 @@ namespace Org.OpenAPITools.Model
                     utf8JsonReaderDiscriminator.Read();
                     if (localVarJsonPropertyName?.Equals("triangleType") ?? false)
                     {
-                        string? discriminator = utf8JsonReaderDiscriminator.GetString();
+                        string? discriminator = ClientUtils.GetDiscriminatorValue(utf8JsonReaderDiscriminator, "triangleType");
                         if (discriminator?.Equals("EquilateralTriangle") ?? false)
                         {
                             Utf8JsonReader utf8JsonReaderEquilateralTriangle = utf8JsonReader;
@@ -207,10 +216,10 @@ namespace Org.OpenAPITools.Model
             }
 
             if (!triangleType.IsSet)
-                throw new ArgumentException("Property is required for class Triangle.", nameof(triangleType));
+                throw new JsonException("Property is required for class Triangle: triangleType.");
 
             if (triangleType.IsSet && triangleType.Value == null)
-                throw new ArgumentNullException(nameof(triangleType), "Property is not nullable for class Triangle.");
+                throw new JsonException("Property is not nullable for class Triangle: triangleType.");
 
             if (equilateralTriangle != null)
                 return new Triangle(equilateralTriangle);
@@ -230,7 +239,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="triangle"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, Triangle triangle, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -263,17 +271,9 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="triangle"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, Triangle triangle, JsonSerializerOptions jsonSerializerOptions)
         {
 
         }
     }
-
-    /// <summary>
-    /// The TriangleSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(Triangle))]
-    public partial class TriangleSerializationContext : JsonSerializerContext { }
 }

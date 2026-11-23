@@ -1,29 +1,28 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import org.hibernate.validator.constraints.*;
 import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
 
 /**
  * NullableMapPropertyDto
  */
 
 @JsonTypeName("NullableMapProperty")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class NullableMapPropertyDto {
 
-  
   private @Nullable Map<String, String> languageValues;
 
   public NullableMapPropertyDto languageValues(@Nullable Map<String, String> languageValues) {
@@ -49,6 +48,7 @@ public class NullableMapPropertyDto {
     return languageValues;
   }
 
+  @JsonProperty("languageValues")
   public void setLanguageValues(@Nullable Map<String, String> languageValues) {
     this.languageValues = languageValues;
   }
@@ -84,10 +84,7 @@ public class NullableMapPropertyDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

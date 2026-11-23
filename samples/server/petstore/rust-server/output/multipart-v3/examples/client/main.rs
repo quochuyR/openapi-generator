@@ -35,11 +35,11 @@ fn main() {
     let matches = Command::new("client")
         .arg(Arg::new("operation")
             .help("Sets the operation to run")
-            .value_parser([
+            .value_parser(Vec::<&str>::from([
                 "MultipartRelatedRequestPost",
                 "MultipartRequestPost",
                 "MultipleIdenticalMimeTypesPost",
-            ])
+            ]))
             .required(true)
             .index(1))
         .arg(Arg::new("https")
@@ -51,6 +51,7 @@ fn main() {
             .help("Hostname to contact"))
         .arg(Arg::new("port")
             .long("port")
+            .value_parser(clap::value_parser!(u16))
             .default_value("8080")
             .help("Port to contact"))
         .get_matches();

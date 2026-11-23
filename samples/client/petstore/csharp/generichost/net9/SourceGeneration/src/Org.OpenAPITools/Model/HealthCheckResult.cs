@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -56,7 +55,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets NullableMessage
         /// </summary>
         [JsonPropertyName("NullableMessage")]
-        public string? NullableMessage { get { return this.NullableMessageOption; } set { this.NullableMessageOption = new(value); } }
+        public string? NullableMessage { get { return this.NullableMessageOption.Value; } set { this.NullableMessageOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -83,7 +82,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -92,8 +91,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="HealthCheckResult" />
     /// </summary>
-    public class HealthCheckResultJsonConverter : JsonConverter<HealthCheckResult>
+    public partial class HealthCheckResultJsonConverter : JsonConverter<HealthCheckResult>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HealthCheckResultJsonConverter" /> class.
+        /// </summary>
+        public HealthCheckResultJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="HealthCheckResult" />
         /// </summary>
@@ -146,7 +155,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="healthCheckResult"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, HealthCheckResult healthCheckResult, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -161,7 +169,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="healthCheckResult"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, HealthCheckResult healthCheckResult, JsonSerializerOptions jsonSerializerOptions)
         {
             if (healthCheckResult.NullableMessageOption.IsSet)
@@ -171,11 +178,4 @@ namespace Org.OpenAPITools.Model
                     writer.WriteNull("NullableMessage");
         }
     }
-
-    /// <summary>
-    /// The HealthCheckResultSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(HealthCheckResult))]
-    public partial class HealthCheckResultSerializationContext : JsonSerializerContext { }
 }

@@ -49,11 +49,11 @@ export class BaseService {
             }
 
             return Object.keys(value as Record<string, any>).reduce(
-                (hp, k) => hp.append(`${key}[${k}]`, value[k]),
+                (hp, k) => this.addToHttpParamsDeepObject(hp, `${key}[${k}]`, value[k]),
                 httpParams,
             );
         } else if (paramStyle === QueryParamStyle.Json) {
-            return httpParams.append(key, JSON.stringify(value));
+            return httpParams.append(key, JSON.stringify(value, (_, v) => v instanceof Set ? Array.from(v) : v));
         } else {
             // Form-style, SpaceDelimited or PipeDelimited
 
@@ -62,15 +62,16 @@ export class BaseService {
                 return httpParams.append(key, value.toString());
             } else if (value instanceof Date) {
                 return httpParams.append(key, value.toISOString());
-            } else if (Array.isArray(value)) {
-                // Otherwise, if it's an array, add each element.
+            } else if (Array.isArray(value) || value instanceof Set) {
+                // Otherwise, if it's an array or set, add each element.
+                const array = Array.isArray(value) ? value : Array.from(value);
                 if (paramStyle === QueryParamStyle.Form) {
-                    return httpParams.set(key, value, {explode: explode, delimiter: ','});
+                    return httpParams.set(key, array, {explode: explode, delimiter: ','});
                 } else if (paramStyle === QueryParamStyle.SpaceDelimited) {
-                    return httpParams.set(key, value, {explode: explode, delimiter: ' '});
+                    return httpParams.set(key, array, {explode: explode, delimiter: ' '});
                 } else {
                     // PipeDelimited
-                    return httpParams.set(key, value, {explode: explode, delimiter: '|'});
+                    return httpParams.set(key, array, {explode: explode, delimiter: '|'});
                 }
             } else {
                 // Otherwise, if it's an object, add each field.
@@ -91,5 +92,29 @@ export class BaseService {
                 }
             }
         }
+    }
+
+    /**
+     * Nested deepObject values are an extension to OpenAPI's flat-object serialization.
+     * Object properties use bracket notation; array and set elements use numeric indices.
+     */
+    private addToHttpParamsDeepObject(httpParams: OpenApiHttpParams, key: string, value: any): OpenApiHttpParams {
+        if (value === null || value === undefined) {
+            return httpParams;
+        } else if (value instanceof Date) {
+            return httpParams.append(key, value.toISOString());
+        } else if (Array.isArray(value) || value instanceof Set) {
+            const array = Array.isArray(value) ? value : Array.from(value);
+            return array.reduce(
+                (hp, item, index) => this.addToHttpParamsDeepObject(hp, `${key}[${index}]`, item),
+                httpParams,
+            );
+        } else if (typeof value === 'object') {
+            return Object.keys(value).reduce(
+                (hp, k) => this.addToHttpParamsDeepObject(hp, `${key}[${k}]`, value[k]),
+                httpParams,
+            );
+        }
+        return httpParams.append(key, value.toString());
     }
 }

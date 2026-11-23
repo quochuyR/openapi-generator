@@ -33,7 +33,7 @@ namespace Org.OpenAPITools.Model
         /// Initializes a new instance of the <see cref="Quadrilateral" /> class.
         /// </summary>
         /// <param name="simpleQuadrilateral"></param>
-        public Quadrilateral(SimpleQuadrilateral simpleQuadrilateral)
+        internal Quadrilateral(SimpleQuadrilateral simpleQuadrilateral)
         {
             SimpleQuadrilateral = simpleQuadrilateral;
             OnCreated();
@@ -43,7 +43,7 @@ namespace Org.OpenAPITools.Model
         /// Initializes a new instance of the <see cref="Quadrilateral" /> class.
         /// </summary>
         /// <param name="complexQuadrilateral"></param>
-        public Quadrilateral(ComplexQuadrilateral complexQuadrilateral)
+        internal Quadrilateral(ComplexQuadrilateral complexQuadrilateral)
         {
             ComplexQuadrilateral = complexQuadrilateral;
             OnCreated();
@@ -85,7 +85,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             return this.BaseValidate(validationContext);
         }
@@ -95,7 +95,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        protected IEnumerable<ValidationResult> BaseValidate(ValidationContext validationContext)
+        protected IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> BaseValidate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -104,8 +104,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="Quadrilateral" />
     /// </summary>
-    public class QuadrilateralJsonConverter : JsonConverter<Quadrilateral>
+    public partial class QuadrilateralJsonConverter : JsonConverter<Quadrilateral>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuadrilateralJsonConverter" /> class.
+        /// </summary>
+        public QuadrilateralJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="Quadrilateral" />
         /// </summary>
@@ -143,7 +153,7 @@ namespace Org.OpenAPITools.Model
                     utf8JsonReaderDiscriminator.Read();
                     if (localVarJsonPropertyName.Equals("quadrilateralType"))
                     {
-                        string discriminator = utf8JsonReaderDiscriminator.GetString();
+                        string discriminator = ClientUtils.GetDiscriminatorValue(utf8JsonReaderDiscriminator, "quadrilateralType");
                         if (discriminator.Equals("ComplexQuadrilateral"))
                         {
                             Utf8JsonReader utf8JsonReaderComplexQuadrilateral = utf8JsonReader;
@@ -183,10 +193,10 @@ namespace Org.OpenAPITools.Model
             }
 
             if (!quadrilateralType.IsSet)
-                throw new ArgumentException("Property is required for class Quadrilateral.", nameof(quadrilateralType));
+                throw new JsonException("Property is required for class Quadrilateral: quadrilateralType.");
 
             if (quadrilateralType.IsSet && quadrilateralType.Value == null)
-                throw new ArgumentNullException(nameof(quadrilateralType), "Property is not nullable for class Quadrilateral.");
+                throw new JsonException("Property is not nullable for class Quadrilateral: quadrilateralType.");
 
             if (complexQuadrilateral != null)
                 return new Quadrilateral(complexQuadrilateral);
@@ -203,7 +213,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="quadrilateral"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, Quadrilateral quadrilateral, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -230,7 +239,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="quadrilateral"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, Quadrilateral quadrilateral, JsonSerializerOptions jsonSerializerOptions)
         {
 

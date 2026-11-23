@@ -1,22 +1,33 @@
+{{^useJackson3}}
 import java.io.IOException;
+{{/useJackson3}}
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
+{{^useJackson3}}
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+{{/useJackson3}}
+{{#useJackson3}}
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.SerializationContext;
+{{/useJackson3}}
+import {{jacksonPackage}}.core.JsonGenerator;
+import {{jacksonPackage}}.core.JsonParser;
+import {{jacksonPackage}}.databind.DeserializationContext;
+import {{jacksonPackage}}.databind.JsonNode;
+import {{jacksonPackage}}.databind.annotation.JsonDeserialize;
+import {{jacksonPackage}}.databind.annotation.JsonSerialize;
+import {{jacksonPackage}}.databind.deser.std.StdDeserializer;
+import {{jacksonPackage}}.databind.ser.std.StdSerializer;
+{{#supportUrlQuery}}
 import {{invokerPackage}}.ApiClient;
+{{/supportUrlQuery}}
 import {{invokerPackage}}.JSON;
 
 {{>additionalModelTypeAnnotations}}{{>generatedAnnotation}}{{>xmlAnnotation}}
@@ -35,8 +46,13 @@ public class {{classname}} extends AbstractOpenApiSchema{{#vendorExtensions.x-im
         }
 
         @Override
-        public void serialize({{classname}} value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+        public void serialize({{classname}} value, JsonGenerator jgen, {{^useJackson3}}SerializerProvider provider{{/useJackson3}}{{#useJackson3}}SerializationContext serializationContext{{/useJackson3}}) throws {{^useJackson3}}IOException, JsonProcessingException{{/useJackson3}}{{#useJackson3}}JacksonException{{/useJackson3}} {
+{{^useJackson3}}
             jgen.writeObject(value.getActualInstance());
+{{/useJackson3}}
+{{#useJackson3}}
+            serializationContext.writeValue(jgen, value.getActualInstance());
+{{/useJackson3}}
         }
     }
 
@@ -50,8 +66,8 @@ public class {{classname}} extends AbstractOpenApiSchema{{#vendorExtensions.x-im
         }
 
         @Override
-        public {{classname}} deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            JsonNode tree = jp.readValueAsTree();
+        public {{classname}} deserialize(JsonParser jp, DeserializationContext ctxt) throws {{^useJackson3}}IOException, JsonProcessingException{{/useJackson3}}{{#useJackson3}}JacksonException{{/useJackson3}} {
+            JsonNode tree = ctxt.readTree(jp);
 
             Object deserialized = null;
             {{#discriminator}}
@@ -60,16 +76,42 @@ public class {{classname}} extends AbstractOpenApiSchema{{#vendorExtensions.x-im
                 // When the OAS schema includes a discriminator, use the discriminator value to
                 // discriminate the anyOf schemas.
                 // Get the discriminator mapping value to get the class.
+{{^useJackson3}}
                 deserialized = tree.traverse(jp.getCodec()).readValueAs(cls);
+{{/useJackson3}}
+{{#useJackson3}}
+                deserialized = ctxt.readTreeAsValue(tree, ctxt.constructType(cls));
+{{/useJackson3}}
                 {{classname}} ret = new {{classname}}();
                 ret.setActualInstance(deserialized);
                 return ret;
             }
             {{/discriminator}}
+            {{#composedSchemas}}
             {{#anyOf}}
-            // deserialize {{{.}}}
+            // deserialize {{{dataType}}}
             try {
-                deserialized = tree.traverse(jp.getCodec()).readValueAs({{{.}}}.class);
+                {{#isArray}}
+                if (!tree.isArray()) {
+                    throw new IllegalArgumentException("not a JSON array");
+                }
+                {{/isArray}}
+                {{#isContainer}}
+{{^useJackson3}}
+                deserialized = tree.traverse(jp.getCodec()).readValueAs(new {{jacksonPackage}}.core.type.TypeReference<{{{dataType}}}>() {});
+{{/useJackson3}}
+{{#useJackson3}}
+                deserialized = ctxt.readTreeAsValue(tree, ctxt.getTypeFactory().constructType(new {{jacksonPackage}}.core.type.TypeReference<{{{dataType}}}>() {}));
+{{/useJackson3}}
+                {{/isContainer}}
+                {{^isContainer}}
+{{^useJackson3}}
+                deserialized = tree.traverse(jp.getCodec()).readValueAs({{{dataType}}}.class);
+{{/useJackson3}}
+{{#useJackson3}}
+                deserialized = ctxt.readTreeAsValue(tree, {{{dataType}}}.class);
+{{/useJackson3}}
+                {{/isContainer}}
                 {{classname}} ret = new {{classname}}();
                 ret.setActualInstance(deserialized);
                 return ret;
@@ -79,19 +121,35 @@ public class {{classname}} extends AbstractOpenApiSchema{{#vendorExtensions.x-im
             }
 
             {{/anyOf}}
+            {{/composedSchemas}}
+{{^useJackson3}}
             throw new IOException("Failed deserialization for {{classname}}: no match found");
+{{/useJackson3}}
+{{#useJackson3}}
+            throw DatabindException.from(jp, "Failed deserialization for {{classname}}: no match found");
+{{/useJackson3}}
         }
 
         /**
          * Handle deserialization of the 'null' value.
          */
         @Override
+{{^useJackson3}}
         public {{classname}} getNullValue(DeserializationContext ctxt) throws JsonMappingException {
+{{/useJackson3}}
+{{#useJackson3}}
+        public {{classname}} getNullValue(DeserializationContext ctxt) {
+{{/useJackson3}}
         {{#isNullable}}
             return null;
         {{/isNullable}}
         {{^isNullable}}
+{{^useJackson3}}
             throw new JsonMappingException(ctxt.getParser(), "{{classname}} cannot be null");
+{{/useJackson3}}
+{{#useJackson3}}
+            throw DatabindException.from(ctxt.getParser(), "{{classname}} cannot be null");
+{{/useJackson3}}
         {{/isNullable}}
         }
     }
@@ -118,17 +176,23 @@ public class {{classname}} extends AbstractOpenApiSchema{{#vendorExtensions.x-im
         return Objects.hash(getActualInstance(), isNullable(), getSchemaType(), additionalProperties);
     }
     {{/additionalPropertiesType}}
+    {{#composedSchemas}}
     {{#anyOf}}
-    public {{classname}}({{{.}}} o) {
-        super("anyOf", {{#isNullable}}Boolean.TRUE{{/isNullable}}{{^isNullable}}Boolean.FALSE{{/isNullable}});
+    {{^vendorExtensions.x-duplicated-data-type}}
+    public {{classname}}({{{dataType}}} o) {
+        this();
         setActualInstance(o);
     }
 
+    {{/vendorExtensions.x-duplicated-data-type}}
     {{/anyOf}}
+    {{/composedSchemas}}
     static {
+        {{#composedSchemas}}
         {{#anyOf}}
-        schemas.put("{{{.}}}", {{{.}}}.class);
+        schemas.put("{{{dataType}}}", {{#isContainer}}{{{baseType}}}{{/isContainer}}{{^isContainer}}{{{dataType}}}{{/isContainer}}.class);
         {{/anyOf}}
+        {{/composedSchemas}}
         JSON.registerDescendants({{classname}}.class, Collections.unmodifiableMap(schemas));
         {{#discriminator}}
         // Initialize and register the discriminator mappings.
@@ -149,7 +213,7 @@ public class {{classname}} extends AbstractOpenApiSchema{{#vendorExtensions.x-im
     /**
      * Set the instance that matches the anyOf child schema, check
      * the instance parameter is valid against the anyOf child schemas:
-     * {{#anyOf}}{{{.}}}{{^-last}}, {{/-last}}{{/anyOf}}
+     * {{#anyOf}}{{.}}{{^-last}}, {{/-last}}{{/anyOf}}
      *
      * It could be an instance of the 'anyOf' schemas.
      * The anyOf child schemas may themselves be a composed schema (allOf, anyOf, anyOf).
@@ -163,40 +227,48 @@ public class {{classname}} extends AbstractOpenApiSchema{{#vendorExtensions.x-im
         }
 
         {{/isNullable}}
+        {{#composedSchemas}}
         {{#anyOf}}
-        if (JSON.isInstanceOf({{{.}}}.class, instance, new HashSet<Class<?>>())) {
+        {{^vendorExtensions.x-duplicated-data-type}}
+        if (JSON.isInstanceOf({{#isContainer}}{{{baseType}}}{{/isContainer}}{{^isContainer}}{{{dataType}}}{{/isContainer}}.class, instance, new HashSet<Class<?>>())) {
             super.setActualInstance(instance);
             return;
         }
 
+        {{/vendorExtensions.x-duplicated-data-type}}
         {{/anyOf}}
+        {{/composedSchemas}}
         throw new RuntimeException("Invalid instance type. Must be {{#anyOf}}{{{.}}}{{^-last}}, {{/-last}}{{/anyOf}}");
     }
 
     /**
      * Get the actual instance, which can be the following:
-     * {{#anyOf}}{{{.}}}{{^-last}}, {{/-last}}{{/anyOf}}
+     * {{#anyOf}}{{.}}{{^-last}}, {{/-last}}{{/anyOf}}
      *
-     * @return The actual instance ({{#anyOf}}{{{.}}}{{^-last}}, {{/-last}}{{/anyOf}})
+     * @return The actual instance ({{#anyOf}}{{.}}{{^-last}}, {{/-last}}{{/anyOf}})
      */
     @Override
     public Object getActualInstance() {
         return super.getActualInstance();
     }
 
+    {{#composedSchemas}}
     {{#anyOf}}
+    {{^vendorExtensions.x-duplicated-data-type-ignoring-erasure}}
     /**
-     * Get the actual instance of `{{{.}}}`. If the actual instance is not `{{{.}}}`,
+     * Get the actual instance of `{{dataType}}`. If the actual instance is not `{{dataType}}`,
      * the ClassCastException will be thrown.
      *
-     * @return The actual instance of `{{{.}}}`
-     * @throws ClassCastException if the instance is not `{{{.}}}`
+     * @return The actual instance of `{{dataType}}`
+     * @throws ClassCastException if the instance is not `{{dataType}}`
      */
-    public {{{.}}} get{{{.}}}() throws ClassCastException {
-        return ({{{.}}})super.getActualInstance();
+    public {{{dataType}}} get{{#sanitizeDataType}}{{{dataType}}}{{/sanitizeDataType}}() throws ClassCastException {
+        return ({{{dataType}}})super.getActualInstance();
     }
 
+    {{/vendorExtensions.x-duplicated-data-type-ignoring-erasure}}
     {{/anyOf}}
+    {{/composedSchemas}}
 
 {{#supportUrlQuery}}
 

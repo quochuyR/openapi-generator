@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -235,6 +234,9 @@ namespace Org.OpenAPITools.Model
         /// <returns></returns>
         public override OuterEnumTest? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+            if (reader.TokenType == JsonTokenType.Null)
+                return null;
+
             string? rawValue = reader.GetString();
 
             OuterEnumTest? result = rawValue == null
@@ -255,15 +257,10 @@ namespace Org.OpenAPITools.Model
         /// <param name="options"></param>
         public override void Write(Utf8JsonWriter writer, OuterEnumTest? outerEnumTest, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(outerEnumTest.HasValue ? OuterEnumTestValueConverter.ToJsonValue(outerEnumTest.Value).ToString() : "null");
+            if (outerEnumTest.HasValue)
+                writer.WriteStringValue(OuterEnumTestValueConverter.ToJsonValue(outerEnumTest.Value).ToString());
+            else
+                writer.WriteNullValue();
         }
     }
-
-
-    /// <summary>
-    /// The OuterEnumTestSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(OuterEnumTest))]
-    public partial class OuterEnumTestSerializationContext : JsonSerializerContext { }
 }

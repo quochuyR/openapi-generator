@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -76,7 +75,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -85,8 +84,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="BasquePig" />
     /// </summary>
-    public class BasquePigJsonConverter : JsonConverter<BasquePig>
+    public partial class BasquePigJsonConverter : JsonConverter<BasquePig>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BasquePigJsonConverter" /> class.
+        /// </summary>
+        public BasquePigJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="BasquePig" />
         /// </summary>
@@ -131,10 +140,10 @@ namespace Org.OpenAPITools.Model
             }
 
             if (!className.IsSet)
-                throw new ArgumentException("Property is required for class BasquePig.", nameof(className));
+                throw new JsonException("Property is required for class BasquePig: className.");
 
             if (className.IsSet && className.Value == null)
-                throw new ArgumentNullException(nameof(className), "Property is not nullable for class BasquePig.");
+                throw new JsonException("Property is not nullable for class BasquePig: className.");
 
             return new BasquePig(className.Value!);
         }
@@ -145,7 +154,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="basquePig"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, BasquePig basquePig, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -160,20 +168,9 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="basquePig"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, BasquePig basquePig, JsonSerializerOptions jsonSerializerOptions)
         {
-            if (basquePig.ClassName == null)
-                throw new ArgumentNullException(nameof(basquePig.ClassName), "Property is required for class BasquePig.");
-
             writer.WriteString("className", basquePig.ClassName);
         }
     }
-
-    /// <summary>
-    /// The BasquePigSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(BasquePig))]
-    public partial class BasquePigSerializationContext : JsonSerializerContext { }
 }

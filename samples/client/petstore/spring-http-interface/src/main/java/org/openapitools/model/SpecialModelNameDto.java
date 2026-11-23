@@ -1,27 +1,25 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
 import jakarta.annotation.Generated;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 /**
  * SpecialModelNameDto
  */
 
 @JsonTypeName("_special_model.name_")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class SpecialModelNameDto {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Long $specialPropertyName;
 
   public SpecialModelNameDto $specialPropertyName(@Nullable Long $specialPropertyName) {
@@ -33,12 +31,12 @@ public class SpecialModelNameDto {
    * Get $specialPropertyName
    * @return $specialPropertyName
    */
-  
   @JsonProperty("$special[property.name]")
   public @Nullable Long get$SpecialPropertyName() {
     return $specialPropertyName;
   }
 
+  @JsonProperty("$special[property.name]")
   public void set$SpecialPropertyName(@Nullable Long $specialPropertyName) {
     this.$specialPropertyName = $specialPropertyName;
   }
@@ -74,10 +72,7 @@ public class SpecialModelNameDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

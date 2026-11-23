@@ -55,7 +55,7 @@ import {{packageName}}.infrastructure.Serializer
     {{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}companion object {
         @JvmStatic
         {{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}val defaultBasePath: String by lazy {
-            System.getProperties().getProperty(ApiClient.baseUrlKey, "{{{basePath}}}")
+            System.getProperties().getProperty(ApiClient.BASE_URL_KEY, "{{{basePath}}}")
         }
     }
 
@@ -209,17 +209,18 @@ import {{packageName}}.infrastructure.Serializer
 {{/hasQueryParams}}{{#hasQueryParams}}mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
             .apply {
                 {{#queryParams}}
+                {{^vendorExtensions.x-kotlin-explode-form-object}}
                 {{^required}}
                 if ({{{paramName}}} != null) {
                     {{#isModel}}
                     {{#vars}}
                     if ({{{paramName}}}.{{name}} != null) {
-                        put("{{#isDeepObject}}{{{paramName}}}[{{/isDeepObject}}{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}{{#isDeepObject}}]{{/isDeepObject}}", {{#isContainer}}toMultiValue({{{paramName}}}.{{name}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString({{{paramName}}}.{{name}}){{/isDateTime}}{{#isDate}}parseDateToQueryString({{{paramName}}}.{{name}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.{{name}}.value{{/isString}}{{^isString}}{{{paramName}}}.{{name}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.{{name}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
+                        put("{{#isDeepObject}}{{#lambda.escapeDollar}}{{{vendorExtensions.x-kotlin-param-base-name}}}{{/lambda.escapeDollar}}[{{/isDeepObject}}{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}{{#isDeepObject}}]{{/isDeepObject}}", {{#isContainer}}toMultiValue({{{paramName}}}.{{name}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}.{{name}}){{/isDateTime}}{{#isDate}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}.{{name}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.{{name}}.value{{/isString}}{{^isString}}{{{paramName}}}.{{name}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.{{name}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
                     }
                     {{/vars}}
                     {{/isModel}}
                     {{^isModel}}
-                    put("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{#isContainer}}toMultiValue({{{paramName}}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString({{{paramName}}}){{/isDateTime}}{{#isDate}}parseDateToQueryString({{{paramName}}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.value{{/isString}}{{^isString}}{{{paramName}}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
+                    put("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{#isContainer}}toMultiValue({{{paramName}}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}){{/isDateTime}}{{#isDate}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.value{{/isString}}{{^isString}}{{{paramName}}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
                     {{/isModel}}
                 }
                 {{/required}}
@@ -229,12 +230,12 @@ import {{packageName}}.infrastructure.Serializer
                     {{#isModel}}
                     {{#vars}}
                     if ({{{paramName}}}.{{name}} != null) {
-                        put("{{#isDeepObject}}{{{paramName}}}[{{/isDeepObject}}{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}{{#isDeepObject}}]{{/isDeepObject}}", {{#isContainer}}toMultiValue({{{paramName}}}.{{name}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString({{{paramName}}}.{{name}}){{/isDateTime}}{{#isDate}}parseDateToQueryString({{{paramName}}}.{{name}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.{{name}}.value{{/isString}}{{^isString}}{{{paramName}}}.{{name}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.{{name}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
+                        put("{{#isDeepObject}}{{#lambda.escapeDollar}}{{{vendorExtensions.x-kotlin-param-base-name}}}{{/lambda.escapeDollar}}[{{/isDeepObject}}{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}{{#isDeepObject}}]{{/isDeepObject}}", {{#isContainer}}toMultiValue({{{paramName}}}.{{name}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}.{{name}}){{/isDateTime}}{{#isDate}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}.{{name}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.{{name}}.value{{/isString}}{{^isString}}{{{paramName}}}.{{name}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.{{name}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
                     }
                     {{/vars}}
                     {{/isModel}}
                     {{^isModel}}
-                    put("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{#isContainer}}toMultiValue({{{paramName}}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString({{{paramName}}}){{/isDateTime}}{{#isDate}}parseDateToQueryString({{{paramName}}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.value{{/isString}}{{^isString}}{{{paramName}}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
+                    put("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{#isContainer}}toMultiValue({{{paramName}}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}){{/isDateTime}}{{#isDate}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.value{{/isString}}{{^isString}}{{{paramName}}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
                     {{/isModel}}
                 }
                 {{/isNullable}}
@@ -242,25 +243,41 @@ import {{packageName}}.infrastructure.Serializer
                 {{#isModel}}
                 {{#vars}}
                 if ({{{paramName}}}.{{name}} != null) {
-                    put("{{#isDeepObject}}{{{paramName}}}[{{/isDeepObject}}{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}{{#isDeepObject}}]{{/isDeepObject}}", {{#isContainer}}toMultiValue({{{paramName}}}.{{name}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString({{{paramName}}}.{{name}}){{/isDateTime}}{{#isDate}}parseDateToQueryString({{{paramName}}}.{{name}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.{{name}}.value{{/isString}}{{^isString}}{{{paramName}}}.{{name}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.{{name}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
+                    put("{{#isDeepObject}}{{#lambda.escapeDollar}}{{{vendorExtensions.x-kotlin-param-base-name}}}{{/lambda.escapeDollar}}[{{/isDeepObject}}{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}{{#isDeepObject}}]{{/isDeepObject}}", {{#isContainer}}toMultiValue({{{paramName}}}.{{name}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}.{{name}}){{/isDateTime}}{{#isDate}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}.{{name}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.{{name}}.value{{/isString}}{{^isString}}{{{paramName}}}.{{name}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.{{name}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
                 }
                 {{/vars}}
                 {{/isModel}}
                 {{^isModel}}
-                put("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{#isContainer}}toMultiValue({{{paramName}}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString({{{paramName}}}){{/isDateTime}}{{#isDate}}parseDateToQueryString({{{paramName}}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.value{{/isString}}{{^isString}}{{{paramName}}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
+                put("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}", {{#isContainer}}toMultiValue({{{paramName}}}.toList(), "{{collectionFormat}}"){{/isContainer}}{{^isContainer}}listOf({{#isDateTime}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}){{/isDateTime}}{{#isDate}}parseDateToQueryString<{{{dataType}}}>({{{paramName}}}){{/isDate}}{{#isEnum}}{{#isString}}{{{paramName}}}.value{{/isString}}{{^isString}}{{{paramName}}}.toString(){{/isString}}{{/isEnum}}{{^isEnum}}{{^isDateTime}}{{^isDate}}{{{paramName}}}.toString(){{/isDate}}{{/isDateTime}}{{/isEnum}}){{/isContainer}})
                 {{/isModel}}
                 {{/isNullable}}
                 {{/required}}
+                {{/vendorExtensions.x-kotlin-explode-form-object}}
+                {{/queryParams}}
+                {{#queryParams}}
+                {{#vendorExtensions.x-kotlin-explode-form-object}}
+                // form style, explode: one query parameter per entry, keyed by the property name, appended after the declared ones; null is left out, a collection repeats the key
+                ({{{paramName}}} as? kotlin.collections.Map<*, *>)?.forEach { (key, value) ->
+                    val values = when (value) {
+                        is kotlin.collections.Iterable<*> -> value.toList()
+                        is kotlin.Array<*> -> value.toList()
+                        else -> listOf(value)
+                    }.filterNotNull().map { parameterToString(it) }
+                    if (key != null && values.isNotEmpty()) {
+                        val name = key.toString()
+                        put(name, getOrElse(name) { emptyList() } + values)
+                    }
+                }
+                {{/vendorExtensions.x-kotlin-explode-form-object}}
                 {{/queryParams}}
             }
             {{/hasQueryParams}}
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf({{#hasFormParams}}"Content-Type" to {{^consumes}}"multipart/form-data"{{/consumes}}{{#consumes.0}}"{{{mediaType}}}"{{/consumes.0}}{{/hasFormParams}})
-        {{#headerParams}}
-        {{{paramName}}}{{^required}}?{{/required}}.apply { localVariableHeaders["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] = {{#isContainer}}this.joinToString(separator = collectionDelimiter("{{collectionFormat}}")){{/isContainer}}{{^isContainer}}this.toString(){{/isContainer}} }
-        {{/headerParams}}
         {{^hasFormParams}}{{#hasConsumes}}{{#consumes}}localVariableHeaders["Content-Type"] = "{{{mediaType}}}"
-        {{/consumes}}{{/hasConsumes}}{{/hasFormParams}}{{#hasProduces}}localVariableHeaders["Accept"] = "{{#produces}}{{{mediaType}}}{{^-last}}, {{/-last}}{{/produces}}"
-{{/hasProduces}}
+        {{/consumes}}{{/hasConsumes}}{{/hasFormParams}}{{#hasProduces}}localVariableHeaders["Accept"] = "{{#produces}}{{{mediaType}}}{{^-last}}, {{/-last}}{{/produces}}"{{/hasProduces}}
+{{#headerParams}}
+        {{{paramName}}}{{^required}}?{{/required}}.apply { localVariableHeaders["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] = {{#isContainer}}this.joinToString(separator = collectionDelimiter("{{collectionFormat}}")){{/isContainer}}{{^isContainer}}this.toString(){{/isContainer}} }
+{{/headerParams}}
 
         return RequestConfig(
             method = RequestMethod.{{httpMethod}},

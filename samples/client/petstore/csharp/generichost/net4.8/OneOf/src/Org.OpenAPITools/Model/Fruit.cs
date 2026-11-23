@@ -34,7 +34,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="apple"></param>
         /// <param name="color">color</param>
-        public Fruit(Apple apple, Option<string> color = default)
+        internal Fruit(Apple apple, Option<string> color = default)
         {
             Apple = apple;
             ColorOption = color;
@@ -46,7 +46,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="banana"></param>
         /// <param name="color">color</param>
-        public Fruit(Banana banana, Option<string> color = default)
+        internal Fruit(Banana banana, Option<string> color = default)
         {
             Banana = banana;
             ColorOption = color;
@@ -58,7 +58,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="orange"></param>
         /// <param name="color">color</param>
-        public Fruit(Orange orange, Option<string> color = default)
+        internal Fruit(Orange orange, Option<string> color = default)
         {
             Orange = orange;
             ColorOption = color;
@@ -93,7 +93,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Color
         /// </summary>
         [JsonPropertyName("color")]
-        public string Color { get { return this.ColorOption; } set { this.ColorOption = new Option<string>(value); } }
+        public string Color { get { return this.ColorOption.Value; } set { this.ColorOption = new Option<string>(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -120,7 +120,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -129,8 +129,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="Fruit" />
     /// </summary>
-    public class FruitJsonConverter : JsonConverter<Fruit>
+    public partial class FruitJsonConverter : JsonConverter<Fruit>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FruitJsonConverter" /> class.
+        /// </summary>
+        public FruitJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="Fruit" />
         /// </summary>
@@ -143,10 +153,8 @@ namespace Org.OpenAPITools.Model
         {
             int currentDepth = utf8JsonReader.CurrentDepth;
 
-            if (utf8JsonReader.TokenType != JsonTokenType.StartObject && utf8JsonReader.TokenType != JsonTokenType.StartArray)
-                throw new JsonException();
-
             JsonTokenType startingTokenType = utf8JsonReader.TokenType;
+            bool isScalarToken = startingTokenType != JsonTokenType.StartObject && startingTokenType != JsonTokenType.StartArray;
 
             Option<string> color = default;
 
@@ -154,29 +162,25 @@ namespace Org.OpenAPITools.Model
             Banana banana = default;
             Orange orange = default;
 
-            Utf8JsonReader utf8JsonReaderOneOf = utf8JsonReader;
-            while (utf8JsonReaderOneOf.Read())
+            if (startingTokenType == JsonTokenType.StartObject)
             {
-                if (startingTokenType == JsonTokenType.StartObject && utf8JsonReaderOneOf.TokenType == JsonTokenType.EndObject && currentDepth == utf8JsonReaderOneOf.CurrentDepth)
-                    break;
-
-                if (startingTokenType == JsonTokenType.StartArray && utf8JsonReaderOneOf.TokenType == JsonTokenType.EndArray && currentDepth == utf8JsonReaderOneOf.CurrentDepth)
-                    break;
-
-                if (utf8JsonReaderOneOf.TokenType == JsonTokenType.PropertyName && currentDepth == utf8JsonReaderOneOf.CurrentDepth - 1)
-                {
-                    Utf8JsonReader utf8JsonReaderApple = utf8JsonReader;
-                    ClientUtils.TryDeserialize<Apple>(ref utf8JsonReaderApple, jsonSerializerOptions, out apple);
-
-                    Utf8JsonReader utf8JsonReaderBanana = utf8JsonReader;
-                    ClientUtils.TryDeserialize<Banana>(ref utf8JsonReaderBanana, jsonSerializerOptions, out banana);
-
-                    Utf8JsonReader utf8JsonReaderOrange = utf8JsonReader;
-                    ClientUtils.TryDeserialize<Orange>(ref utf8JsonReaderOrange, jsonSerializerOptions, out orange);
-                }
+                Utf8JsonReader utf8JsonReaderApple = utf8JsonReader;
+                ClientUtils.TryDeserialize<Apple>(ref utf8JsonReaderApple, jsonSerializerOptions, out apple);
             }
 
-            while (utf8JsonReader.Read())
+            if (startingTokenType == JsonTokenType.StartObject)
+            {
+                Utf8JsonReader utf8JsonReaderBanana = utf8JsonReader;
+                ClientUtils.TryDeserialize<Banana>(ref utf8JsonReaderBanana, jsonSerializerOptions, out banana);
+            }
+
+            if (startingTokenType == JsonTokenType.StartObject)
+            {
+                Utf8JsonReader utf8JsonReaderOrange = utf8JsonReader;
+                ClientUtils.TryDeserialize<Orange>(ref utf8JsonReaderOrange, jsonSerializerOptions, out orange);
+            }
+
+            while (!isScalarToken && utf8JsonReader.Read())
             {
                 if (startingTokenType == JsonTokenType.StartObject && utf8JsonReader.TokenType == JsonTokenType.EndObject && currentDepth == utf8JsonReader.CurrentDepth)
                     break;
@@ -201,7 +205,7 @@ namespace Org.OpenAPITools.Model
             }
 
             if (color.IsSet && color.Value == null)
-                throw new ArgumentNullException(nameof(color), "Property is not nullable for class Fruit.");
+                throw new JsonException("Property is not nullable for class Fruit: color.");
 
             if (apple != null)
                 return new Fruit(apple, color);
@@ -221,10 +225,27 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="fruit"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, Fruit fruit, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
+
+            if (fruit.Apple != null)
+            {
+                AppleJsonConverter appleJsonConverter = (AppleJsonConverter) jsonSerializerOptions.Converters.First(c => c.CanConvert(fruit.Apple.GetType()));
+                appleJsonConverter.WriteProperties(writer, fruit.Apple, jsonSerializerOptions);
+            }
+
+            if (fruit.Banana != null)
+            {
+                BananaJsonConverter bananaJsonConverter = (BananaJsonConverter) jsonSerializerOptions.Converters.First(c => c.CanConvert(fruit.Banana.GetType()));
+                bananaJsonConverter.WriteProperties(writer, fruit.Banana, jsonSerializerOptions);
+            }
+
+            if (fruit.Orange != null)
+            {
+                OrangeJsonConverter orangeJsonConverter = (OrangeJsonConverter) jsonSerializerOptions.Converters.First(c => c.CanConvert(fruit.Orange.GetType()));
+                orangeJsonConverter.WriteProperties(writer, fruit.Orange, jsonSerializerOptions);
+            }
 
             WriteProperties(writer, fruit, jsonSerializerOptions);
             writer.WriteEndObject();
@@ -236,11 +257,10 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="fruit"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, Fruit fruit, JsonSerializerOptions jsonSerializerOptions)
         {
             if (fruit.ColorOption.IsSet && fruit.Color == null)
-                throw new ArgumentNullException(nameof(fruit.Color), "Property is required for class Fruit.");
+                throw new JsonException("Cannot write null property Fruit.Color to non-nullable JSON property 'color'.");
 
             if (fruit.ColorOption.IsSet)
                 writer.WriteString("color", fruit.Color);

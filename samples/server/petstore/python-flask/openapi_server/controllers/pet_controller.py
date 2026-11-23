@@ -1,4 +1,4 @@
-import connexion
+import flask
 from typing import Dict
 from typing import Tuple
 from typing import Union
@@ -19,12 +19,12 @@ def add_pet(body):  # noqa: E501
     :rtype: Union[Pet, Tuple[Pet, int], Tuple[Pet, int, Dict[str, str]]
     """
     pet = body
-    if connexion.request.is_json:
-        pet = Pet.from_dict(connexion.request.get_json())  # noqa: E501
+    if flask.request.is_json:
+        pet = Pet.from_dict(flask.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 
-def delete_pet(pet_id, api_key=None):  # noqa: E501
+def delete_pet(pet_id):  # noqa: E501
     """Deletes a pet
 
      # noqa: E501
@@ -36,6 +36,7 @@ def delete_pet(pet_id, api_key=None):  # noqa: E501
 
     :rtype: Union[None, Tuple[None, int], Tuple[None, int, Dict[str, str]]
     """
+    api_key = flask.request.headers.get('api_key')
     return 'do some magic!'
 
 
@@ -89,8 +90,8 @@ def update_pet(body):  # noqa: E501
     :rtype: Union[Pet, Tuple[Pet, int], Tuple[Pet, int, Dict[str, str]]
     """
     pet = body
-    if connexion.request.is_json:
-        pet = Pet.from_dict(connexion.request.get_json())  # noqa: E501
+    if flask.request.is_json:
+        pet = Pet.from_dict(flask.request.get_json())  # noqa: E501
     return 'do some magic!'
 
 

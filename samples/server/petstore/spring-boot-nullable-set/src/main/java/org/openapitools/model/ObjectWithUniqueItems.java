@@ -1,52 +1,49 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
-import java.util.NoSuchElementException;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-
-import java.util.*;
-import javax.annotation.Generated;
 
 /**
  * ObjectWithUniqueItems
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class ObjectWithUniqueItems {
 
-  @Valid
   private JsonNullable<Set<String>> nullSet = JsonNullable.<Set<String>>undefined();
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Set<String> notNullSet = new LinkedHashSet<>();
 
-  @Valid
   private JsonNullable<List<String>> nullList = JsonNullable.<List<String>>undefined();
 
-  @Valid
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private List<String> notNullList = new ArrayList<>();
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime notNullDateField;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime nullDateField;
 
@@ -56,7 +53,7 @@ public class ObjectWithUniqueItems {
   }
 
   public ObjectWithUniqueItems addNullSetItem(String nullSetItem) {
-    if (this.nullSet == null || !this.nullSet.isPresent()) {
+    if (this.nullSet == null || !this.nullSet.isPresent() || this.nullSet.get() == null) {
       this.nullSet = JsonNullable.of(new LinkedHashSet<>());
     }
     this.nullSet.get().add(nullSetItem);
@@ -68,7 +65,7 @@ public class ObjectWithUniqueItems {
    * @return nullSet
    */
   
-  @Schema(name = "nullSet", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "nullSet", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("nullSet")
   public JsonNullable<Set<String>> getNullSet() {
     return nullSet;
@@ -103,6 +100,7 @@ public class ObjectWithUniqueItems {
   }
 
   @JsonDeserialize(as = LinkedHashSet.class)
+  @JsonProperty("notNullSet")
   public void setNotNullSet(Set<String> notNullSet) {
     this.notNullSet = notNullSet;
   }
@@ -113,7 +111,7 @@ public class ObjectWithUniqueItems {
   }
 
   public ObjectWithUniqueItems addNullListItem(String nullListItem) {
-    if (this.nullList == null || !this.nullList.isPresent()) {
+    if (this.nullList == null || !this.nullList.isPresent() || this.nullList.get() == null) {
       this.nullList = JsonNullable.of(new ArrayList<>());
     }
     this.nullList.get().add(nullListItem);
@@ -125,7 +123,7 @@ public class ObjectWithUniqueItems {
    * @return nullList
    */
   
-  @Schema(name = "nullList", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @Schema(name = "nullList", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("nullList")
   public JsonNullable<List<String>> getNullList() {
     return nullList;
@@ -159,6 +157,7 @@ public class ObjectWithUniqueItems {
     return notNullList;
   }
 
+  @JsonProperty("notNullList")
   public void setNotNullList(List<String> notNullList) {
     this.notNullList = notNullList;
   }
@@ -179,6 +178,7 @@ public class ObjectWithUniqueItems {
     return notNullDateField;
   }
 
+  @JsonProperty("notNullDateField")
   public void setNotNullDateField(@Nullable OffsetDateTime notNullDateField) {
     this.notNullDateField = notNullDateField;
   }
@@ -199,6 +199,7 @@ public class ObjectWithUniqueItems {
     return nullDateField;
   }
 
+  @JsonProperty("nullDateField")
   public void setNullDateField(@Nullable OffsetDateTime nullDateField) {
     this.nullDateField = nullDateField;
   }
@@ -255,10 +256,7 @@ public class ObjectWithUniqueItems {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

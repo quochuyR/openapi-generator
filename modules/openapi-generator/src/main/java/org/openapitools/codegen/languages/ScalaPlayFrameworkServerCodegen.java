@@ -39,6 +39,9 @@ import static org.openapitools.codegen.languages.AbstractJavaCodegen.DATE_LIBRAR
 import static org.openapitools.codegen.utils.CamelizeOption.LOWERCASE_FIRST_LETTER;
 import static org.openapitools.codegen.utils.StringUtils.camelize;
 
+/**
+ * <p>Mustache templates are located in {@code src/main/resources/scala-play-server/}.
+ */
 public class ScalaPlayFrameworkServerCodegen extends AbstractScalaCodegen implements CodegenConfig {
     public static final String TITLE = "title";
     public static final String SKIP_STUBS = "skipStubs";
@@ -180,6 +183,7 @@ public class ScalaPlayFrameworkServerCodegen extends AbstractScalaCodegen implem
         supportingFiles.add(new SupportingFile("conf/logback.xml.mustache", "conf", "logback.xml"));
         supportingFiles.add(new SupportingFile("project/build.properties.mustache", "project", "build.properties"));
         supportingFiles.add(new SupportingFile("project/plugins.sbt.mustache", "project", "plugins.sbt"));
+        supportingFiles.add(new SupportingFile("scalafmt.mustache", "", ".scalafmt.conf"));
         supportingFiles.add(new SupportingFile("conf/routes.mustache", "conf", routesFileName));
         supportingFiles.add(new SupportingFile("app/module.scala.mustache", getBasePackagePath(), "Module.scala"));
         supportingFiles.add(new SupportingFile("app/errorHandler.scala.mustache", getBasePackagePath(), "ErrorHandler.scala"));

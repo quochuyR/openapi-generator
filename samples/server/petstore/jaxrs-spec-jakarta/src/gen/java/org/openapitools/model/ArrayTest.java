@@ -21,11 +21,11 @@ import org.openapitools.jackson.nullable.JsonNullable;
 
 
 @JsonTypeName("ArrayTest")
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class ArrayTest  implements Serializable {
-  private @Valid List<String> arrayOfString = new ArrayList<>();
-  private @Valid List<List<Long>> arrayArrayOfInteger = new ArrayList<>();
-  private @Valid List<List<@Valid ReadOnlyFirst>> arrayArrayOfModel = new ArrayList<>();
+  private List<String> arrayOfString = new ArrayList<>();
+  private List<List<Long>> arrayArrayOfInteger = new ArrayList<>();
+  private List<List<@Valid ReadOnlyFirst>> arrayArrayOfModel = new ArrayList<>();
 
   protected ArrayTest(ArrayTestBuilder<?, ?> b) {
     this.arrayOfString = b.arrayOfString;
@@ -116,7 +116,7 @@ public class ArrayTest  implements Serializable {
   
   @ApiModelProperty(value = "")
   @JsonProperty("array_array_of_model")
-  @Valid public List<@Valid List<@Valid ReadOnlyFirst>> getArrayArrayOfModel() {
+  public List<List<@Valid ReadOnlyFirst>> getArrayArrayOfModel() {
     return arrayArrayOfModel;
   }
 
@@ -178,10 +178,7 @@ public class ArrayTest  implements Serializable {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 
 
@@ -224,4 +221,3 @@ public class ArrayTest  implements Serializable {
     }
   }
 }
-

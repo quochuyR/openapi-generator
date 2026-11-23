@@ -471,6 +471,8 @@ java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generat
 ```
 will name the API method as `returnPetById` instead of `getPetById` obtained from OpenAPI doc/spec.
 
+:warning: **NOTE: these mapping options do not perform any validation/change on the input and therefore output (e.g. auto-generated SDK) may not work (e.g. input is a reserved keyword in a particular programming language causing compilation errors). As usual, please test the output to ensure it's working as expected.**
+
 ## Schema Mapping
 
 One can map the schema to something else (e.g. external objects/models outside of the package) using the `schemaMappings` option, e.g. in CLI
@@ -504,6 +506,25 @@ paths:
                 format: binary
 ```
 
+## Inject Model Vendor Extensions
+
+One can add vendor extensions to models, or to their properties, without changing the spec using the `injectModelVendorExtensions` option. Templates can then use them like vendor extensions written in the spec. A class-level extension takes the form `ModelName.x-extension-name=value`, and a property-level extension takes the form `ModelName.propertyBaseName.x-extension-name=value`, where `propertyBaseName` is the property's name in the spec.
+
+For example, with the `java` generator, whose templates support `x-class-extra-annotation` and `x-field-extra-annotation`, in CLI
+```sh
+java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate -g java -i modules/openapi-generator/src/test/resources/3_0/petstore.yaml -o /tmp/java/ --inject-model-vendor-extensions Pet.x-class-extra-annotation=@Deprecated --inject-model-vendor-extensions Pet.name.x-field-extra-annotation=@Deprecated
+```
+or in the Maven plugin
+```xml
+<configuration>
+    <injectModelVendorExtensions>
+        <injectModelVendorExtension>Pet.x-class-extra-annotation=@Deprecated</injectModelVendorExtension>
+        <injectModelVendorExtension>Pet.name.x-field-extra-annotation=@Deprecated</injectModelVendorExtension>
+    </injectModelVendorExtensions>
+</configuration>
+```
+adds `@Deprecated` to the generated `Pet` class and to its `name` field. Injected extensions are applied after the spec has been processed, so they add to, or replace, extensions of the same name in the spec. Only the first `=` separates the name from the value, and a comma separates entries unless it is inside double quotes.
+
 ## Inline Schema Naming
 
 Inline schemas are created as separate schemas automatically and the auto-generated schema name may not look good to everyone. One can customize the name using the `title` field or the `inlineSchemaNameMapping` option. For example, run the following,
@@ -521,6 +542,10 @@ For example, to name the inline schema `meta_200_response` as `MetaObject`, use 
 java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate -g java -i  modules/openapi-generator/src/test/resources/3_0/inline_model_resolver.yaml -o /tmp/java3/ --skip-validate-spec --inline-schema-name-mappings meta_200_response=MetaObject,arbitraryObjectRequestBodyProperty_request=ArbitraryRequest
 ```
 
+Note that inline schema names used with `--inline-schema-name-mappings` are internal identifiers and may differ from generated class/type names. Generators often apply language-specific naming conventions (for example, Java may render `meta_200_response` as `Meta200Response`).
+
+So for Java, to rename `Meta200Response.java`, use `--inline-schema-name-mappings meta_200_response=MetaObject` (not `--inline-schema-name-mappings Meta200Response=MetaObject`).
+
 Another useful option is `inlineSchemaOptions`, which allows you to customize how inline schemas are handled or named
 ```
 --inline-schema-options ARRAY_ITEM_SUFFIX=_array_item,MAP_ITEM_SUFFIX=_map_item,RESOLVE_INLINE_ENUMS=true
@@ -530,7 +555,7 @@ Another useful option is `inlineSchemaOptions`, which allows you to customize ho
 - `MAP_ITEM_SUFFIX` set the map item suffix
 - `SKIP_SCHEMA_REUSE=true` is a special value to skip reusing inline schemas during refactoring
 - `REFACTOR_ALLOF_INLINE_SCHEMAS=true` will restore the 6.x (or below) behaviour to refactor allOf inline schemas into $ref. (v7.0.0 will skip the refactoring of these allOf inline schemas by default)
-- `RESOLVE_INLINE_ENUMS=true` will refactor inline enum definitions into $ref. This must be activated to allow the renaming of inline enum definitions using `inlineSchemaMappings`.
+- `RESOLVE_INLINE_ENUMS=true` will refactor inline enum definitions into $ref. This must be activated to allow the renaming of inline enum definitions using `inlineSchemaNameMappings`.
 
 ## OpenAPI Normalizer
 
@@ -644,11 +669,60 @@ Example:
 java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate -g java -i modules/openapi-generator/src/test/resources/3_0/required-properties.yaml -o /tmp/java-okhttp/ --openapi-normalizer NORMALIZER_CLASS=org.openapitools.codegen.OpenAPINormalizerTest$RemoveRequiredNormalizer
 ```
 
+The class must be resolvable on the generation runtime classpath. When using the
+[Gradle plugin](https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator-gradle-plugin),
+a custom `NORMALIZER_CLASS` that isn't already on the plugin's own classpath must be added via the
+`openApiGeneratorExtra` dependency configuration (or the `generatorClasspath` property) so it is forwarded to the
+code generation worker in both `workerIsolation` modes (`process` and `classloader`) - see the plugin's README for
+details.
+
+Similarly, a custom generator selected by name or fully qualified class name must be resolvable on the generation
+runtime classpath. With the Gradle plugin, add its jar or project output to `openApiGeneratorExtra` (preferred) or
+`generatorClasspath` so it is forwarded to the code generation worker in both `process` and `classloader`
+`workerIsolation` modes.
+
+- `LOOSE_NULL_DEFINITIONS`: When set to true, allow more schema definitions in OpenAPI 3.0 spec to be the same as `null` in OpenAPI 3.1 spec by setting ModelUtils.looseNullDefinitions to true.
+
+Example:
+```
+java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate -g java -i modules/openapi-generator/src/test/resources/bugs/issue_anyof_bare_nullable_object.yaml -o /tmp/java-okhttp/ --openapi-normalizer LOOSE_NULL_DEFINITIONS=true
+```
+
 - `REMOVE_PROPERTIES_FROM_TYPE_OTHER_THAN_OBJECT`: When set to true, remove the "properties" of a schema with type other than "object".
 
 Example:
 ```
 java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate -g java -i modules/openapi-generator/src/test/resources/3_0/required-properties.yaml -o /tmp/java-okhttp/ --openapi-normalizer REMOVE_PROPERTIES_FROM_TYPE_OTHER_THAN_OBJECT=true
+```
+
+- `REPLACE_ONE_OF_BY_DISCRIMINATOR_MAPPING`: when set to true, oneOf is removed and is converted into mappings in a discriminator mapping.
+
+Example:
+```
+java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate -g java -i modules/openapi-generator/src/test/resources/3_0/oneOf_issue_23527.yaml -o /tmp/java/ --openapi-normalizer REPLACE_ONE_OF_BY_DISCRIMINATOR_MAPPING=true
+```
+
+Here is what the change in the spec looks like:
+
+```diff
+diff --git a/api/openapi.yaml b/api/openapi.yaml
+index 6f27abd..146c61c 100644
+--- a/api/openapi.yaml
++++ b/api/openapi.yaml
+@@ -9,10 +9,10 @@ components:
+   schemas:
+     GeoJsonObject:
+       discriminator:
++        mapping:
++          MultiPolygon: "#/components/schemas/Multi-Polygon"
++          Polygon: "#/components/schemas/Polygon"
+         propertyName: type
+-      oneOf:
+-      - $ref: "#/components/schemas/Polygon"
+-      - $ref: "#/components/schemas/Multi-Polygon"
+       properties:
+         type:
+           type: string
 ```
 
 - `FILTER`
@@ -722,6 +796,28 @@ Into this securityScheme:
     api_key:
       scheme: bearer
       type: http
+```
+
+- `SECURITY_SCHEMES_FILTER`
+
+The `SECURITY_SCHEMES_FILTER` parameter allows selective inclusion of API security schemes based on specific criteria. It removes security schemes that do **not** match the specified values, preventing them from being generated. All references to removed security schemes also deleted. Multiple filters can be separated by a semicolon.
+
+### Available Filters
+
+- **`key`**
+  When set to `key:api_key|http_bearer`, security schemes **not** matching `api_key` or `http_bearer` will be marked as internal (`x-internal: true`), and excluded from generation. Matching operations will have `x-internal: false`.
+
+- **`type`**
+  When set to `type:apiKey|http`, security schemes **not** using `apiKey` or `http` types will be marked as internal (`x-internal: true`), preventing their generation.
+
+### Example Usage
+
+```sh
+java -jar modules/openapi-generator-cli/target/openapi-generator-cli.jar generate \
+  -g java \
+  -i modules/openapi-generator/src/test/resources/3_0/petstore.yaml \
+  -o /tmp/java-okhttp/ \
+  --openapi-normalizer SECURITY_SCHEMES_FILTER="key:api_key|http_bearer ; type:oauth2"
 ```
 
 - `SORT_MODEL_PROPERTIES`: When set to true, model properties will be sorted alphabetically by name. This ensures deterministic code generation output regardless of property ordering in the source spec.

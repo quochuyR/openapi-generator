@@ -32,7 +32,7 @@ jobs:
           SWAGGER_HOST: http://petstore.swagger.io
           SWAGGER_BASE_PATH: /v2
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - name: Add hosts to /etc/hosts
         run: |
             sudo echo "127.0.0.1 petstore.swagger.io" | sudo tee -a /etc/hosts
@@ -52,9 +52,13 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          cache-version: 2
           working-directory: ${{ matrix.sample }}
           extra-packages: any::rcmdcheck
           needs: check
+
+      - name: Install curl
+        run: sudo apt-get install -y r-cran-curl
 
       - uses: r-lib/actions/check-r-package@v2
         with:

@@ -1,34 +1,34 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import jakarta.annotation.Generated;
+import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
 
 /**
  * Order
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class Order {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Long id;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Long petId;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Integer quantity;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime shipDate;
 
@@ -69,8 +69,10 @@ public class Order {
     }
   }
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable StatusEnum status;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Boolean complete = false;
 
   public Order id(@Nullable Long id) {
@@ -82,12 +84,12 @@ public class Order {
    * Get id
    * @return id
    */
-  
   @JsonProperty("id")
   public @Nullable Long getId() {
     return id;
   }
 
+  @JsonProperty("id")
   public void setId(@Nullable Long id) {
     this.id = id;
   }
@@ -101,12 +103,12 @@ public class Order {
    * Get petId
    * @return petId
    */
-  
   @JsonProperty("petId")
   public @Nullable Long getPetId() {
     return petId;
   }
 
+  @JsonProperty("petId")
   public void setPetId(@Nullable Long petId) {
     this.petId = petId;
   }
@@ -120,12 +122,12 @@ public class Order {
    * Get quantity
    * @return quantity
    */
-  
   @JsonProperty("quantity")
   public @Nullable Integer getQuantity() {
     return quantity;
   }
 
+  @JsonProperty("quantity")
   public void setQuantity(@Nullable Integer quantity) {
     this.quantity = quantity;
   }
@@ -139,12 +141,12 @@ public class Order {
    * Get shipDate
    * @return shipDate
    */
-  
   @JsonProperty("shipDate")
   public @Nullable OffsetDateTime getShipDate() {
     return shipDate;
   }
 
+  @JsonProperty("shipDate")
   public void setShipDate(@Nullable OffsetDateTime shipDate) {
     this.shipDate = shipDate;
   }
@@ -158,12 +160,12 @@ public class Order {
    * Order Status
    * @return status
    */
-  
   @JsonProperty("status")
   public @Nullable StatusEnum getStatus() {
     return status;
   }
 
+  @JsonProperty("status")
   public void setStatus(@Nullable StatusEnum status) {
     this.status = status;
   }
@@ -177,12 +179,12 @@ public class Order {
    * Get complete
    * @return complete
    */
-  
   @JsonProperty("complete")
   public Boolean getComplete() {
     return complete;
   }
 
+  @JsonProperty("complete")
   public void setComplete(Boolean complete) {
     this.complete = complete;
   }
@@ -228,10 +230,7 @@ public class Order {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

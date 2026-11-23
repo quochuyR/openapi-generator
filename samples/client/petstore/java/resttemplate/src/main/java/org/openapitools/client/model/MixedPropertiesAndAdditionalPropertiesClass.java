@@ -27,6 +27,7 @@ import java.util.UUID;
 import org.openapitools.client.model.Animal;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * MixedPropertiesAndAdditionalPropertiesClass
@@ -36,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   MixedPropertiesAndAdditionalPropertiesClass.JSON_PROPERTY_DATE_TIME,
   MixedPropertiesAndAdditionalPropertiesClass.JSON_PROPERTY_MAP
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class MixedPropertiesAndAdditionalPropertiesClass {
   public static final String JSON_PROPERTY_UUID = "uuid";
   @javax.annotation.Nullable
@@ -56,7 +57,7 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
   /**
    * Constructor with all args parameters
    */
-  public MixedPropertiesAndAdditionalPropertiesClass(@JsonProperty(JSON_PROPERTY_UUID) UUID uuid, @JsonProperty(JSON_PROPERTY_DATE_TIME) OffsetDateTime dateTime, @JsonProperty(JSON_PROPERTY_MAP) Map<String, Animal> map) {
+  public MixedPropertiesAndAdditionalPropertiesClass(@JsonProperty(JSON_PROPERTY_UUID) @javax.annotation.Nullable UUID uuid, @JsonProperty(JSON_PROPERTY_DATE_TIME) @javax.annotation.Nullable OffsetDateTime dateTime, @JsonProperty(JSON_PROPERTY_MAP) @javax.annotation.Nullable Map<String, Animal> map) {
     this.uuid = uuid;
     this.dateTime = dateTime;
     this.map = map;
@@ -181,10 +182,7 @@ public class MixedPropertiesAndAdditionalPropertiesClass {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 
   public static class Builder {

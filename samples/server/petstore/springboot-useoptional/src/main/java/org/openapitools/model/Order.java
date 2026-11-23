@@ -1,37 +1,37 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-
-
-import java.util.*;
-import javax.annotation.Generated;
 
 /**
  * Order
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class Order {
 
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private Optional<Long> id = Optional.empty();
 
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private Optional<Long> petId = Optional.empty();
 
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private Optional<Integer> quantity = Optional.empty();
 
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private Optional<OffsetDateTime> shipDate = Optional.empty();
 
@@ -72,8 +72,10 @@ public class Order {
     }
   }
 
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private Optional<StatusEnum> status = Optional.empty();
 
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   private Optional<Boolean> complete = Optional.of(false);
 
   public Order id(Long id) {
@@ -86,12 +88,13 @@ public class Order {
    * @return id
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "id", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("id")
   public Optional<Long> getId() {
     return id;
   }
 
+  @JsonProperty("id")
   public void setId(Optional<Long> id) {
     this.id = id;
   }
@@ -106,12 +109,13 @@ public class Order {
    * @return petId
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "petId", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("petId")
   public Optional<Long> getPetId() {
     return petId;
   }
 
+  @JsonProperty("petId")
   public void setPetId(Optional<Long> petId) {
     this.petId = petId;
   }
@@ -126,12 +130,13 @@ public class Order {
    * @return quantity
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "quantity", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("quantity")
   public Optional<Integer> getQuantity() {
     return quantity;
   }
 
+  @JsonProperty("quantity")
   public void setQuantity(Optional<Integer> quantity) {
     this.quantity = quantity;
   }
@@ -146,12 +151,13 @@ public class Order {
    * @return shipDate
    */
   @Valid 
-  @ApiModelProperty(value = "")
+  @Schema(name = "shipDate", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("shipDate")
   public Optional<OffsetDateTime> getShipDate() {
     return shipDate;
   }
 
+  @JsonProperty("shipDate")
   public void setShipDate(Optional<OffsetDateTime> shipDate) {
     this.shipDate = shipDate;
   }
@@ -166,12 +172,13 @@ public class Order {
    * @return status
    */
   
-  @ApiModelProperty(value = "Order Status")
+  @Schema(name = "status", description = "Order Status", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("status")
   public Optional<StatusEnum> getStatus() {
     return status;
   }
 
+  @JsonProperty("status")
   public void setStatus(Optional<StatusEnum> status) {
     this.status = status;
   }
@@ -186,12 +193,13 @@ public class Order {
    * @return complete
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "complete", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("complete")
   public Optional<Boolean> getComplete() {
     return complete;
   }
 
+  @JsonProperty("complete")
   public void setComplete(Optional<Boolean> complete) {
     this.complete = complete;
   }
@@ -236,11 +244,8 @@ public class Order {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+  private String toIndentedString(@Nullable Object o) {
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
   
   public static class Builder {

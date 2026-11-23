@@ -13,10 +13,14 @@
 
 package org.openapitools.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+
 import java.util.function.Consumer;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.core.ParameterizedTypeReference;
@@ -25,7 +29,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.InvalidMediaTypeException;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -61,17 +64,17 @@ import org.openapitools.client.auth.HttpBearerAuth;
 import org.openapitools.client.auth.ApiKeyAuth;
 import org.openapitools.client.auth.OAuth;
 
-@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@jakarta.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class ApiClient extends JavaTimeFormatter {
     public enum CollectionFormat {
         CSV(","), TSV("\t"), SSV(" "), PIPES("|"), MULTI(null);
 
-        protected final String separator;
+        private final String separator;
         CollectionFormat(String separator) {
             this.separator = separator;
         }
 
-        protected String collectionToString(Collection<?> collection) {
+        public String collectionToString(Collection<?> collection) {
             return StringUtils.collectionToDelimitedString(collection, separator);
         }
     }
@@ -135,9 +138,15 @@ public class ApiClient extends JavaTimeFormatter {
 
     protected final RestClient restClient;
     protected final DateFormat dateFormat;
-    protected final ObjectMapper objectMapper;
-
+    protected final ObjectMapper mapper;
     protected Map<String, Authentication> authentications;
+
+    /**
+     * The {@link ExceptionProvider} used to create exceptions thrown by this client.
+     * Defaults to {@link ExceptionProvider#DEFAULT}. Can be replaced to customize the exceptions
+     * thrown by this client by calling {@link #setExceptionProvider(ExceptionProvider)}.
+     */
+    protected ExceptionProvider exceptionProvider = ExceptionProvider.DEFAULT;
 
 
     public ApiClient() {
@@ -153,14 +162,14 @@ public class ApiClient extends JavaTimeFormatter {
     }
 
     public ApiClient(RestClient restClient, ObjectMapper mapper, DateFormat format) {
-        this.objectMapper = mapper.copy();
-        this.restClient = Optional.ofNullable(restClient).orElseGet(() -> buildRestClient(this.objectMapper));
+        this.mapper = mapper.copy();
+        this.restClient = Optional.ofNullable(restClient).orElseGet(() -> buildRestClient(this.mapper));
         this.dateFormat = format;
         this.init();
     }
 
     protected ApiClient(RestClient restClient, DateFormat format) {
-        this(restClient, createDefaultObjectMapper(format), format);
+        this(restClient, createDefaultMapper(format), format);
     }
 
     public static DateFormat createDefaultDateFormat() {
@@ -169,7 +178,7 @@ public class ApiClient extends JavaTimeFormatter {
         return dateFormat;
     }
 
-    public static ObjectMapper createDefaultObjectMapper(@Nullable DateFormat dateFormat) {
+    public static ObjectMapper createDefaultMapper(@Nullable DateFormat dateFormat) {
         if (null == dateFormat) {
             dateFormat = createDefaultDateFormat();
         }
@@ -200,6 +209,7 @@ public class ApiClient extends JavaTimeFormatter {
     * @return RestClient
     */
     public static RestClient.Builder buildRestClientBuilder(ObjectMapper mapper) {
+
         Consumer<List<HttpMessageConverter<?>>> messageConverters = converters -> {
             converters.add(0, new MappingJackson2HttpMessageConverter(mapper));
         };
@@ -212,7 +222,7 @@ public class ApiClient extends JavaTimeFormatter {
      * @return RestClient
      */
     public static RestClient.Builder buildRestClientBuilder() {
-        return buildRestClientBuilder(createDefaultObjectMapper(null));
+        return buildRestClientBuilder(createDefaultMapper(null));
     }
 
     /**
@@ -229,7 +239,7 @@ public class ApiClient extends JavaTimeFormatter {
      * @return RestClient
      */
     public static RestClient buildRestClient() {
-        return buildRestClientBuilder(createDefaultObjectMapper(null)).build();
+        return buildRestClientBuilder(createDefaultMapper(null)).build();
     }
 
     /**
@@ -287,6 +297,25 @@ public class ApiClient extends JavaTimeFormatter {
     }
 
     /**
+     * Get the current {@link ExceptionProvider}.
+     * @return the exception provider
+     */
+    public ExceptionProvider getExceptionProvider() {
+        return exceptionProvider;
+    }
+
+    /**
+     * Set a custom {@link ExceptionProvider} to control which exception types are thrown
+     * by this client.
+     * @param exceptionProvider the exception provider
+     * @return this client instance
+     */
+    public ApiClient setExceptionProvider(ExceptionProvider exceptionProvider) {
+        this.exceptionProvider = exceptionProvider;
+        return this;
+    }
+
+    /**
      * Get authentication for the given name.
      *
      * @param authName The authentication name
@@ -307,7 +336,7 @@ public class ApiClient extends JavaTimeFormatter {
                 return;
             }
         }
-        throw new RuntimeException("No Bearer authentication configured!");
+        throw exceptionProvider.bearerAuthException();
     }
 
     /**
@@ -322,7 +351,7 @@ public class ApiClient extends JavaTimeFormatter {
             return;
             }
         }
-        throw new RuntimeException("No Bearer authentication configured!");
+        throw exceptionProvider.bearerAuthException();
     }
 
     /**
@@ -336,7 +365,7 @@ public class ApiClient extends JavaTimeFormatter {
                 return;
             }
         }
-        throw new RuntimeException("No HTTP basic authentication configured!");
+        throw exceptionProvider.httpBasicAuthException();
     }
 
     /**
@@ -350,7 +379,7 @@ public class ApiClient extends JavaTimeFormatter {
                 return;
             }
         }
-        throw new RuntimeException("No HTTP basic authentication configured!");
+        throw exceptionProvider.httpBasicAuthException();
     }
 
     /**
@@ -364,7 +393,7 @@ public class ApiClient extends JavaTimeFormatter {
                 return;
             }
         }
-        throw new RuntimeException("No API key authentication configured!");
+        throw exceptionProvider.apiKeyAuthException();
     }
 
     /**
@@ -378,7 +407,7 @@ public class ApiClient extends JavaTimeFormatter {
                 return;
             }
         }
-        throw new RuntimeException("No API key authentication configured!");
+        throw exceptionProvider.apiKeyAuthException();
     }
 
     /**
@@ -402,7 +431,7 @@ public class ApiClient extends JavaTimeFormatter {
                 return this;
             }
         }
-        throw new RuntimeException("No OAuth2 authentication configured!");
+        throw exceptionProvider.oAuth2Exception();
     }
 
     /**
@@ -457,7 +486,7 @@ public class ApiClient extends JavaTimeFormatter {
         try {
             return dateFormat.parse(str);
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw exceptionProvider.dateTimeException(e);
         }
     }
 
@@ -470,10 +499,10 @@ public class ApiClient extends JavaTimeFormatter {
 
     /**
      * Get the ObjectMapper used to make HTTP requests.
-     * @return ObjectMapper objectMapper
+     * @return ObjectMapper mapper
      */
     public ObjectMapper getObjectMapper() {
-        return objectMapper;
+        return mapper;
     }
 
     /**
@@ -523,21 +552,21 @@ public class ApiClient extends JavaTimeFormatter {
             valueCollection = (Collection<?>) value;
         } else {
             try {
-                return parameterToMultiValueMap(collectionFormat, name, objectMapper.writeValueAsString(value));
+                return parameterToMultiValueMap(collectionFormat, name, mapper.writeValueAsString(value));
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                throw exceptionProvider.jacksonException(e);
             }
         }
 
         List<String> values = new ArrayList<>();
         for(Object o : valueCollection) {
             try {
-                values.add(objectMapper.writeValueAsString(o));
+                values.add(mapper.writeValueAsString(o));
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                throw exceptionProvider.jacksonException(e);
             }
         }
-        return parameterToMultiValueMap(collectionFormat, name, "[" + StringUtils.collectionToDelimitedString(values, collectionFormat.separator) + "]");
+        return parameterToMultiValueMap(collectionFormat, name, "[" + collectionFormat.collectionToString(values) + "]");
     }
 
     /**
@@ -659,10 +688,10 @@ public class ApiClient extends JavaTimeFormatter {
     /**
      * Select the Content-Type header's value from the given array:
      *     if JSON exists in the given array, use it;
-     *     otherwise use the first one of the array.
+     *     otherwise use the first non-wildcard one of the array.
      *
      * @param contentTypes The Content-Type array to select from
-     * @return MediaType The Content-Type header to use. If the given array is empty, null will be returned.
+     * @return MediaType The Content-Type header to use. If the given array is empty, null will be returned; if it only contains wildcard media types, JSON will be used.
      */
     public MediaType selectHeaderContentType(String[] contentTypes) {
         if (contentTypes.length == 0) {
@@ -671,10 +700,20 @@ public class ApiClient extends JavaTimeFormatter {
         for (String contentType : contentTypes) {
             MediaType mediaType = MediaType.parseMediaType(contentType);
             if (isJsonMime(mediaType)) {
+                // A wildcard media type (e.g. "*/*" or "application/*") is treated as
+                // JSON-compatible but cannot be used as a request Content-Type header,
+                // so fall back to concrete JSON in that case.
+                return mediaType.isWildcardType() || mediaType.isWildcardSubtype() ? MediaType.APPLICATION_JSON : mediaType;
+            }
+        }
+        // No JSON type found; use the first concrete (non-wildcard) media type instead.
+        for (String contentType : contentTypes) {
+            MediaType mediaType = MediaType.parseMediaType(contentType);
+            if (!mediaType.isWildcardType() && !mediaType.isWildcardSubtype()) {
                 return mediaType;
             }
         }
-        return MediaType.parseMediaType(contentTypes[0]);
+        return MediaType.APPLICATION_JSON;
     }
 
     /**
@@ -792,14 +831,14 @@ public class ApiClient extends JavaTimeFormatter {
 
         if (MediaType.MULTIPART_FORM_DATA.isCompatibleWith(contentType)) {
             formParams.forEach(
-                    (k, v) -> {
-                        if (v instanceof java.util.ArrayList) {
-                            Object o = v.get(0);
-                            if (o != null && o.getClass().getEnumConstants() != null) {
-                                v.set(0, o.toString());
-                            }
+                (k, v) -> {
+                    if (v instanceof java.util.ArrayList && !v.isEmpty()) {
+                        Object first = v.get(0);
+                        if (first != null && first.getClass().isEnum()) {
+                            v.set(0, first.toString());
                         }
-                    });
+                    }
+            });
         }
 
         var selectedBody = selectBody(body, formParams, contentType);
@@ -868,7 +907,7 @@ public class ApiClient extends JavaTimeFormatter {
         for (String authName : authNames) {
             Authentication auth = authentications.get(authName);
             if (auth == null) {
-                throw new RestClientException("Authentication undefined: " + authName);
+                throw exceptionProvider.undefinedAuthenticationException(authName);
             }
             auth.applyToParams(queryParams, headerParams, cookieParams);
         }

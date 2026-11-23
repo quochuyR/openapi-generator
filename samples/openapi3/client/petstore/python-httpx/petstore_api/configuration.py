@@ -167,7 +167,7 @@ class Configuration:
       when calling API from https server.
     :param ssl_ca_cert: str - the path to a file of concatenated CA certificates
       in PEM format.
-    :param retries: int | aiohttp_retry.RetryOptionsBase - Retry configuration.
+    :param retries: int - Retry configuration.
     :param ca_cert_data: verify the peer using concatenated CA certificate data
       in PEM (str) or DER (bytes) format.
     :param cert_file: the path to a client certificate file, for mTLS.
@@ -277,7 +277,7 @@ conf = petstore_api.Configuration(
         server_operation_variables: Optional[Dict[int, ServerVariablesT]]=None,
         ignore_operation_servers: bool=False,
         ssl_ca_cert: Optional[str]=None,
-        retries: Optional[Union[int, Any]] = None,
+        retries: Optional[int] = None,
         ca_cert_data: Optional[Union[str, bytes]] = None,
         cert_file: Optional[str]=None,
         key_file: Optional[str]=None,
@@ -432,9 +432,9 @@ conf = petstore_api.Configuration(
                 setattr(result, k, copy.deepcopy(v, memo))
         # shallow copy of loggers
         result.logger = copy.copy(self.logger)
-        # use setters to configure loggers
+        # use setter to re-create the file handler (excluded from __dict__ copy)
         result.logger_file = self.logger_file
-        result.debug = self.debug
+
         return result
 
     def __setattr__(self, name: str, value: Any) -> None:
@@ -575,7 +575,8 @@ conf = petstore_api.Configuration(
             self.refresh_api_key_hook(self)
         key = self.api_key.get(identifier, self.api_key.get(alias) if alias is not None else None)
         if key:
-            prefix = self.api_key_prefix.get(identifier)
+            prefix = self.api_key_prefix.get(
+                identifier, self.api_key_prefix.get(alias) if alias is not None else None)
             if prefix:
                 return "%s %s" % (prefix, key)
             else:

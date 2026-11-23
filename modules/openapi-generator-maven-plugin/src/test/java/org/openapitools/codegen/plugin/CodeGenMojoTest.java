@@ -83,6 +83,7 @@ public class CodeGenMojoTest extends BaseTestCase {
         assertEquals("remote.org.openapitools.client.api", getVariableValueFromObject(mojo, "apiPackage"));
         assertEquals("remote.org.openapitools.client.model", getVariableValueFromObject(mojo, "modelPackage"));
         assertEquals("remote.org.openapitools.client", getVariableValueFromObject(mojo, "invokerPackage"));
+        assertEquals(Boolean.TRUE, getVariableValueFromObject(mojo, "quiet"));
 
         Map<String, Object> configOptions = (Map<String, Object>) getVariableValueFromObject(mojo, "configOptions");
         assertNotNull(configOptions);
@@ -245,6 +246,25 @@ public class CodeGenMojoTest extends BaseTestCase {
         ));
     }
 
+    public void testInjectModelVendorExtensions() throws Exception {
+        // GIVEN
+        final Path tempDir = newTempFolder();
+        CodeGenMojo mojo = loadMojo(tempDir, "src/test/resources/default", "file", "executionId");
+        setVariableValueToObject(mojo, "injectModelVendorExtensions", List.of(
+                "Pet.x-class-extra-annotation=@SuppressWarnings(\"serial\")",
+                "Pet.name.x-field-extra-annotation=@SuppressWarnings(\"unused\")"));
+
+        // WHEN
+        mojo.execute();
+
+        // THEN
+        final Path pet = tempDir.resolve(
+                "target/generated-sources/common-maven/remote-openapi/src/main/java/remote/org/openapitools/client/model/Pet.java");
+        final String content = new String(Files.readAllBytes(pet), java.nio.charset.StandardCharsets.UTF_8);
+        assertTrue("class-level extension should be injected", content.contains("@SuppressWarnings(\"serial\")"));
+        assertTrue("property-level extension should be injected", content.contains("@SuppressWarnings(\"unused\")"));
+    }
+
     public void testCollapsedSpecAddedToArtifacts() throws Exception {
         // GIVEN
         CodeGenMojo mojo = loadMojo(newTempFolder(), "src/test/resources/default", "file", "executionId");
@@ -269,7 +289,7 @@ public class CodeGenMojoTest extends BaseTestCase {
         MojoExecutionException e = assertThrows(MojoExecutionException.class, mojo::execute);
 
         // THEN
-        assertEquals("inputSpec or inputSpecRootDirectory must be specified", e.getMessage());
+        assertEquals("inputSpec, inputSpecRootDirectory, or inputSpecFiles must be specified", e.getMessage());
     }
 
     public void testInputSpecRootDirectoryDoesNotRequireInputSpec() throws Exception {
@@ -277,7 +297,7 @@ public class CodeGenMojoTest extends BaseTestCase {
         final Path tempDir = newTempFolder();
         CodeGenMojo mojo = loadMojo(tempDir, "src/test/resources/default", "file", "executionId");
         mojo.inputSpec = null;
-        mojo.inputSpecRootDirectory = "src/test/resources/default";
+        mojo.inputSpecRootDirectory = new File("src/test/resources/default").getAbsolutePath();
 
         // WHEN
         mojo.execute();

@@ -1,33 +1,34 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
 import jakarta.annotation.Generated;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 /**
  * ResponseObjectWithDifferentFieldNamesDto
  */
 
 @JsonTypeName("ResponseObjectWithDifferentFieldNames")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class ResponseObjectWithDifferentFieldNamesDto {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String normalPropertyName;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String UPPER_CASE_PROPERTY_SNAKE;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String lowerCasePropertyDashes;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String propertyNameWithSpaces;
 
   public ResponseObjectWithDifferentFieldNamesDto normalPropertyName(@Nullable String normalPropertyName) {
@@ -39,12 +40,12 @@ public class ResponseObjectWithDifferentFieldNamesDto {
    * Get normalPropertyName
    * @return normalPropertyName
    */
-  
   @JsonProperty("normalPropertyName")
   public @Nullable String getNormalPropertyName() {
     return normalPropertyName;
   }
 
+  @JsonProperty("normalPropertyName")
   public void setNormalPropertyName(@Nullable String normalPropertyName) {
     this.normalPropertyName = normalPropertyName;
   }
@@ -58,12 +59,12 @@ public class ResponseObjectWithDifferentFieldNamesDto {
    * Get UPPER_CASE_PROPERTY_SNAKE
    * @return UPPER_CASE_PROPERTY_SNAKE
    */
-  
   @JsonProperty("UPPER_CASE_PROPERTY_SNAKE")
   public @Nullable String getUPPERCASEPROPERTYSNAKE() {
     return UPPER_CASE_PROPERTY_SNAKE;
   }
 
+  @JsonProperty("UPPER_CASE_PROPERTY_SNAKE")
   public void setUPPERCASEPROPERTYSNAKE(@Nullable String UPPER_CASE_PROPERTY_SNAKE) {
     this.UPPER_CASE_PROPERTY_SNAKE = UPPER_CASE_PROPERTY_SNAKE;
   }
@@ -77,12 +78,12 @@ public class ResponseObjectWithDifferentFieldNamesDto {
    * Get lowerCasePropertyDashes
    * @return lowerCasePropertyDashes
    */
-  
   @JsonProperty("lower-case-property-dashes")
   public @Nullable String getLowerCasePropertyDashes() {
     return lowerCasePropertyDashes;
   }
 
+  @JsonProperty("lower-case-property-dashes")
   public void setLowerCasePropertyDashes(@Nullable String lowerCasePropertyDashes) {
     this.lowerCasePropertyDashes = lowerCasePropertyDashes;
   }
@@ -96,12 +97,12 @@ public class ResponseObjectWithDifferentFieldNamesDto {
    * Get propertyNameWithSpaces
    * @return propertyNameWithSpaces
    */
-  
   @JsonProperty("property name with spaces")
   public @Nullable String getPropertyNameWithSpaces() {
     return propertyNameWithSpaces;
   }
 
+  @JsonProperty("property name with spaces")
   public void setPropertyNameWithSpaces(@Nullable String propertyNameWithSpaces) {
     this.propertyNameWithSpaces = propertyNameWithSpaces;
   }
@@ -143,10 +144,7 @@ public class ResponseObjectWithDifferentFieldNamesDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

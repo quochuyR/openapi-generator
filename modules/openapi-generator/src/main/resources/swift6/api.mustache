@@ -34,6 +34,9 @@ extension {{projectName}}API {
         {{^enumUnknownDefaultCase}}
         {{#allowableValues}}
         {{#enumVars}}
+        {{#enumDescription}}
+        /** {{.}} */
+        {{/enumDescription}}
         case {{name}} = {{{value}}}
         {{/enumVars}}
         {{/allowableValues}}
@@ -289,7 +292,7 @@ extension {{projectName}}API {
             {{#hasFormParams}}
         let localVariableFormParams: [String: (any Sendable)?] = [
                 {{#formParams}}
-            {{> _param}},
+            {{#isMultipart}}{{#isArray}}{{#items.isFile}}"{{baseName}}": {{#required}}Array({{paramName}}){{/required}}{{^required}}{{paramName}}.map { Array($0) }{{/required}},{{/items.isFile}}{{^items.isFile}}{{> _param}},{{/items.isFile}}{{/isArray}}{{^isArray}}{{#isFile}}"{{baseName}}": {{paramName}},{{/isFile}}{{^isFile}}{{> _param}},{{/isFile}}{{/isArray}}{{/isMultipart}}{{^isMultipart}}{{> _param}},{{/isMultipart}}
                 {{/formParams}}
         ]
 
@@ -301,11 +304,12 @@ extension {{projectName}}API {
             {{/hasFormParams}}
 {{/bodyParam}}{{#hasQueryParams}}
         var localVariableUrlComponents = URLComponents(string: localVariableURLString)
-        localVariableUrlComponents?.queryItems = APIHelper.mapValuesToQueryItems([{{^queryParams}}:{{/queryParams}}
+        let localVariableQueryParameters: [String: (wrappedValue: (any Sendable)?, isExplode: Bool)] = [{{^queryParams}}:{{/queryParams}}
             {{#queryParams}}
             {{> _param}},
             {{/queryParams}}
-        ]){{/hasQueryParams}}{{^hasQueryParams}}
+        ]
+        localVariableUrlComponents?.queryItems = APIHelper.mapValuesToQueryItems(localVariableQueryParameters){{/hasQueryParams}}{{^hasQueryParams}}
         let localVariableUrlComponents = URLComponents(string: localVariableURLString){{/hasQueryParams}}
 
         let localVariableNillableHeaders: [String: (any Sendable)?] = [{{^headerParams}}{{^hasFormParams}}{{^hasConsumes}}
@@ -351,7 +355,7 @@ extension {{projectName}}API {
     {{#isDeprecated}}
     @available(*, deprecated, message: "This operation is deprecated.")
     {{/isDeprecated}}
-    {{#nonPublicApi}}internal{{/nonPublicApi}}{{^nonPublicApi}}open{{/nonPublicApi}} {{#apiStaticMethod}}class {{/apiStaticMethod}}func {{operationId}}Raw({{#allParams}}{{paramName}}: {{#isEnum}}{{#isArray}}[{{enumName}}_{{operationId}}]{{/isArray}}{{^isArray}}{{#isContainer}}{{{dataType}}}{{/isContainer}}{{^isContainer}}{{{datatypeWithEnum}}}_{{operationId}}{{/isContainer}}{{/isArray}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{/isEnum}}{{^required}}? = nil{{/required}}{{^-last}}, {{/-last}}{{/allParams}}{{#hasParams}}, {{/hasParams}}headers: HTTPHeaders? = nil, apiConfiguration: {{projectName}}APIConfiguration = {{projectName}}APIConfiguration.shared, beforeSend: (inout ClientRequest) throws -> () = { _ in }) -> EventLoopFuture<ClientResponse> {
+    {{#nonPublicApi}}internal{{/nonPublicApi}}{{^nonPublicApi}}open{{/nonPublicApi}} {{#apiStaticMethod}}class {{/apiStaticMethod}}func {{operationId}}Raw({{#allParams}}{{paramName}}: {{#isEnum}}{{#isArray}}[{{enumName}}_{{operationId}}]{{/isArray}}{{^isArray}}{{#isContainer}}{{{dataType}}}{{/isContainer}}{{^isContainer}}{{{datatypeWithEnum}}}_{{operationId}}{{/isContainer}}{{/isArray}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{/isEnum}}{{^required}}? = nil{{/required}}{{^-last}}, {{/-last}}{{/allParams}}{{#hasParams}}, {{/hasParams}}headers: HTTPHeaders? = nil, apiConfiguration: {{projectName}}APIConfiguration = {{projectName}}APIConfiguration.shared, beforeSend: @Sendable (inout ClientRequest) throws -> () = { _ in }) -> EventLoopFuture<ClientResponse> {
         {{^pathParams}}let{{/pathParams}}{{#pathParams}}{{#-first}}var{{/-first}}{{/pathParams}} localVariablePath = "{{{path}}}"{{#pathParams}}
         let {{paramName}}PreEscape = String(describing: {{#isEnum}}{{paramName}}{{#isContainer}}{{{dataType}}}{{/isContainer}}{{^isContainer}}.rawValue{{/isContainer}}{{/isEnum}}{{^isEnum}}{{paramName}}{{/isEnum}})
         let {{paramName}}PostEscape = {{paramName}}PreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
@@ -431,7 +435,7 @@ extension {{projectName}}API {
     {{#isDeprecated}}
     @available(*, deprecated, message: "This operation is deprecated.")
     {{/isDeprecated}}
-    {{#nonPublicApi}}internal{{/nonPublicApi}}{{^nonPublicApi}}open{{/nonPublicApi}} {{#apiStaticMethod}}class {{/apiStaticMethod}}func {{operationId}}({{#allParams}}{{paramName}}: {{#isEnum}}{{#isArray}}[{{enumName}}_{{operationId}}]{{/isArray}}{{^isArray}}{{#isContainer}}{{{dataType}}}{{/isContainer}}{{^isContainer}}{{{datatypeWithEnum}}}_{{operationId}}{{/isContainer}}{{/isArray}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{/isEnum}}{{^required}}? = nil{{/required}}{{^-last}}, {{/-last}}{{/allParams}}{{#hasParams}}, {{/hasParams}}headers: HTTPHeaders? = nil, apiConfiguration: {{projectName}}APIConfiguration = {{projectName}}APIConfiguration.shared, beforeSend: (inout ClientRequest) throws -> () = { _ in }) -> EventLoopFuture<{{#lambda.titlecase}}{{operationId}}{{/lambda.titlecase}}> {
+    {{#nonPublicApi}}internal{{/nonPublicApi}}{{^nonPublicApi}}open{{/nonPublicApi}} {{#apiStaticMethod}}class {{/apiStaticMethod}}func {{operationId}}({{#allParams}}{{paramName}}: {{#isEnum}}{{#isArray}}[{{enumName}}_{{operationId}}]{{/isArray}}{{^isArray}}{{#isContainer}}{{{dataType}}}{{/isContainer}}{{^isContainer}}{{{datatypeWithEnum}}}_{{operationId}}{{/isContainer}}{{/isArray}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{/isEnum}}{{^required}}? = nil{{/required}}{{^-last}}, {{/-last}}{{/allParams}}{{#hasParams}}, {{/hasParams}}headers: HTTPHeaders? = nil, apiConfiguration: {{projectName}}APIConfiguration = {{projectName}}APIConfiguration.shared, beforeSend: @Sendable (inout ClientRequest) throws -> () = { _ in }) -> EventLoopFuture<{{#lambda.titlecase}}{{operationId}}{{/lambda.titlecase}}> {
         return {{operationId}}Raw({{#allParams}}{{paramName}}: {{paramName}}{{^-last}}, {{/-last}}{{/allParams}}{{#hasParams}}, {{/hasParams}}headers: headers, apiConfiguration: apiConfiguration, beforeSend: beforeSend).flatMapThrowing { response -> {{#lambda.titlecase}}{{operationId}}{{/lambda.titlecase}} in
             switch response.status.code {
             {{#responses}}

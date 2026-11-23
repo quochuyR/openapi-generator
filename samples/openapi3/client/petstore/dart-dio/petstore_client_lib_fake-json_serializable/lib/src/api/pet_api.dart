@@ -63,7 +63,8 @@ class PetApi {
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(pet);
+      _bodyData = jsonEncode(pet);
+
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(
@@ -113,7 +114,7 @@ _bodyData=jsonEncode(pet);
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/pet/{petId}'.replaceAll('{' r'petId' '}', petId.toString());
+    final _path = r'/pet/{petId}'.replaceAll('{' r'petId' '}', Uri.encodeComponent(petId.toString()),);
     final _options = Options(
       method: r'DELETE',
       headers: <String, dynamic>{
@@ -331,7 +332,7 @@ _responseData = rawData == null ? null : deserialize<Set<Pet>, Pet>(rawData, 'Se
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/pet/{petId}'.replaceAll('{' r'petId' '}', petId.toString());
+    final _path = r'/pet/{petId}'.replaceAll('{' r'petId' '}', Uri.encodeComponent(petId.toString()),);
     final _options = Options(
       method: r'GET',
       headers: <String, dynamic>{
@@ -432,7 +433,8 @@ _responseData = rawData == null ? null : deserialize<Pet, Pet>(rawData, 'Pet', g
     dynamic _bodyData;
 
     try {
-_bodyData=jsonEncode(pet);
+      _bodyData = jsonEncode(pet);
+
     } catch(error, stackTrace) {
       throw DioException(
          requestOptions: _options.compose(
@@ -484,7 +486,7 @@ _bodyData=jsonEncode(pet);
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/pet/{petId}'.replaceAll('{' r'petId' '}', petId.toString());
+    final _path = r'/pet/{petId}'.replaceAll('{' r'petId' '}', Uri.encodeComponent(petId.toString()),);
     final _options = Options(
       method: r'POST',
       headers: <String, dynamic>{
@@ -506,6 +508,10 @@ _bodyData=jsonEncode(pet);
     dynamic _bodyData;
 
     try {
+      _bodyData = <String, dynamic>{
+        if (name != null) r'name': name,
+        if (status != null) r'status': status,
+      };
 
     } catch(error, stackTrace) {
       throw DioException(
@@ -558,7 +564,7 @@ _bodyData=jsonEncode(pet);
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/pet/{petId}/uploadImage'.replaceAll('{' r'petId' '}', petId.toString());
+    final _path = r'/pet/{petId}/uploadImage'.replaceAll('{' r'petId' '}', Uri.encodeComponent(petId.toString()),);
     final _options = Options(
       method: r'POST',
       headers: <String, dynamic>{
@@ -580,6 +586,10 @@ _bodyData=jsonEncode(pet);
     dynamic _bodyData;
 
     try {
+      _bodyData = FormData.fromMap(<String, dynamic>{
+        if (additionalMetadata != null) r'additionalMetadata': additionalMetadata,
+        if (file != null) r'file': file,
+      });
 
     } catch(error, stackTrace) {
       throw DioException(
@@ -657,7 +667,7 @@ _responseData = rawData == null ? null : deserialize<ApiResponse, ApiResponse>(r
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    final _path = r'/fake/{petId}/uploadImageWithRequiredFile'.replaceAll('{' r'petId' '}', petId.toString());
+    final _path = r'/fake/{petId}/uploadImageWithRequiredFile'.replaceAll('{' r'petId' '}', Uri.encodeComponent(petId.toString()),);
     final _options = Options(
       method: r'POST',
       headers: <String, dynamic>{
@@ -679,6 +689,10 @@ _responseData = rawData == null ? null : deserialize<ApiResponse, ApiResponse>(r
     dynamic _bodyData;
 
     try {
+      _bodyData = FormData.fromMap(<String, dynamic>{
+        if (additionalMetadata != null) r'additionalMetadata': additionalMetadata,
+        r'requiredFile': requiredFile,
+      });
 
     } catch(error, stackTrace) {
       throw DioException(

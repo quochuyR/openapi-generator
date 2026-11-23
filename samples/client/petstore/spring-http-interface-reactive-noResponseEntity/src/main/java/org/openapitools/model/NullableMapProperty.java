@@ -1,31 +1,26 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.Generated;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import org.openapitools.jackson.nullable.JsonNullable;
 import org.springframework.lang.Nullable;
-import java.util.NoSuchElementException;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
-import jakarta.annotation.Generated;
 
 /**
  * NullableMapProperty
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class NullableMapProperty {
 
-  
   private JsonNullable<Map<String, String>> languageValues = JsonNullable.<Map<String, String>>undefined();
 
   public NullableMapProperty languageValues(Map<String, String> languageValues) {
@@ -34,7 +29,7 @@ public class NullableMapProperty {
   }
 
   public NullableMapProperty putLanguageValuesItem(String key, String languageValuesItem) {
-    if (this.languageValues == null || !this.languageValues.isPresent()) {
+    if (this.languageValues == null || !this.languageValues.isPresent() || this.languageValues.get() == null) {
       this.languageValues = JsonNullable.of(new HashMap<>());
     }
     this.languageValues.get().put(key, languageValuesItem);
@@ -45,7 +40,6 @@ public class NullableMapProperty {
    * Get languageValues
    * @return languageValues
    */
-  
   @JsonProperty("languageValues")
   public JsonNullable<Map<String, String>> getLanguageValues() {
     return languageValues;
@@ -97,10 +91,7 @@ public class NullableMapProperty {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

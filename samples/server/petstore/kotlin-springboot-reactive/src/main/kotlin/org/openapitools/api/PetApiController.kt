@@ -107,6 +107,7 @@ class PetApiController(@Autowired(required = true) val service: PetApiService) {
             ApiResponse(responseCode = "400", description = "Invalid tag value") ],
         security = [ SecurityRequirement(name = "petstore_auth", scopes = [ "read:pets" ]) ]
     )
+    @Deprecated(message="Operation is deprecated")
     @RequestMapping(
         method = [RequestMethod.GET],
         // "/pet/findByTags"
@@ -205,7 +206,7 @@ class PetApiController(@Autowired(required = true) val service: PetApiService) {
     suspend fun uploadFile(
         @Parameter(description = "ID of pet to update", required = true) @PathVariable("petId") petId: kotlin.Long,
         @Parameter(description = "Additional data to pass to server") @Valid @RequestParam(value = "additionalMetadata", required = false) additionalMetadata: kotlin.String?,
-        @Parameter(description = "file to upload") @Valid @RequestPart("file", required = false) file: org.springframework.web.multipart.MultipartFile
+        @Parameter(description = "file to upload") @Valid @RequestPart("file", required = false) file: org.springframework.http.codec.multipart.Part?
     ): ResponseEntity<ModelApiResponse> {
         return ResponseEntity(service.uploadFile(petId, additionalMetadata, file), HttpStatus.valueOf(200))
     }

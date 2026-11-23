@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 
 @JsonTypeName("AdditionalPropertiesClass")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")    @XmlAccessorType(XmlAccessType.FIELD)
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")    @XmlAccessorType(XmlAccessType.FIELD)
      @XmlType(name = "AdditionalPropertiesClass", propOrder =
     { "mapProperty", "mapOfMapProperty"
     })
@@ -34,8 +34,8 @@ import javax.xml.bind.annotation.XmlEnumValue;
     @XmlRootElement(name="AdditionalPropertiesClass")
 
 public class AdditionalPropertiesClass  implements Serializable {
-  private @Valid Map<String, String> mapProperty = new HashMap<>();
-  private @Valid Map<String, Map<String, String>> mapOfMapProperty = new HashMap<>();
+  private Map<String, String> mapProperty = new HashMap<>();
+  private Map<String, Map<String, String>> mapOfMapProperty = new HashMap<>();
 
   protected AdditionalPropertiesClass(AdditionalPropertiesClassBuilder<?, ?> b) {
     this.mapProperty = b.mapProperty;
@@ -152,10 +152,7 @@ public class AdditionalPropertiesClass  implements Serializable {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 
 
@@ -193,4 +190,3 @@ public class AdditionalPropertiesClass  implements Serializable {
     }
   }
 }
-

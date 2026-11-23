@@ -1,25 +1,26 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonValue;
-import java.time.OffsetDateTime;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
+import com.fasterxml.jackson.annotation.Nulls;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import tools.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import tools.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import tools.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import jakarta.xml.bind.annotation.*;
-
+import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.*;
-import jakarta.annotation.Generated;
+import java.util.Objects;
+import org.openapitools.configuration.ValuedEnum;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
+import tools.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import tools.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import tools.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 /**
  * An order for a pets from the pet store
@@ -29,22 +30,30 @@ import jakarta.annotation.Generated;
 @JacksonXmlRootElement(localName = "Order")
 @XmlRootElement(name = "Order")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class Order {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable Long id;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable Long petId;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable Integer quantity;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
   private @Nullable OffsetDateTime shipDate;
 
   /**
    * Order Status
    */
-  public enum StatusEnum {
+  public enum StatusEnum implements ValuedEnum<String> {
     PLACED("placed"),
     
     APPROVED("approved"),
@@ -78,8 +87,12 @@ public class Order {
     }
   }
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private @Nullable StatusEnum status;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  @JsonSetter(nulls = Nulls.SKIP)
   private Boolean complete = false;
 
   public Order() {
@@ -116,6 +129,8 @@ public class Order {
     return id;
   }
 
+  @JsonProperty("id")
+  @JacksonXmlProperty(localName = "id")
   public void setId(@Nullable Long id) {
     this.id = id;
   }
@@ -138,6 +153,8 @@ public class Order {
     return petId;
   }
 
+  @JsonProperty("petId")
+  @JacksonXmlProperty(localName = "petId")
   public void setPetId(@Nullable Long petId) {
     this.petId = petId;
   }
@@ -160,6 +177,8 @@ public class Order {
     return quantity;
   }
 
+  @JsonProperty("quantity")
+  @JacksonXmlProperty(localName = "quantity")
   public void setQuantity(@Nullable Integer quantity) {
     this.quantity = quantity;
   }
@@ -182,6 +201,8 @@ public class Order {
     return shipDate;
   }
 
+  @JsonProperty("shipDate")
+  @JacksonXmlProperty(localName = "shipDate")
   public void setShipDate(@Nullable OffsetDateTime shipDate) {
     this.shipDate = shipDate;
   }
@@ -204,6 +225,8 @@ public class Order {
     return status;
   }
 
+  @JsonProperty("status")
+  @JacksonXmlProperty(localName = "status")
   public void setStatus(@Nullable StatusEnum status) {
     this.status = status;
   }
@@ -226,6 +249,8 @@ public class Order {
     return complete;
   }
 
+  @JsonProperty("complete")
+  @JacksonXmlProperty(localName = "complete")
   public void setComplete(Boolean complete) {
     this.complete = complete;
   }
@@ -271,10 +296,7 @@ public class Order {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
   
   public static class Builder {

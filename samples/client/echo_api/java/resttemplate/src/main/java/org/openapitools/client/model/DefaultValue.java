@@ -30,6 +30,7 @@ import org.openapitools.jackson.nullable.JsonNullable;
 import java.util.NoSuchElementException;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * to test the default value of properties
@@ -44,7 +45,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
   DefaultValue.JSON_PROPERTY_ARRAY_STRING_EXTENSION_NULLABLE,
   DefaultValue.JSON_PROPERTY_STRING_NULLABLE
 })
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class DefaultValue {
   public static final String JSON_PROPERTY_ARRAY_STRING_ENUM_REF_DEFAULT = "array_string_enum_ref_default";
   @javax.annotation.Nullable
@@ -126,7 +127,7 @@ public class DefaultValue {
 
   public DefaultValue addArrayStringEnumRefDefaultItem(StringEnumRef arrayStringEnumRefDefaultItem) {
     if (this.arrayStringEnumRefDefault == null) {
-      this.arrayStringEnumRefDefault = new ArrayList<>(Arrays.asList(StringEnumRef.SUCCESS, StringEnumRef.FAILURE));
+      this.arrayStringEnumRefDefault = new ArrayList<>();
     }
     this.arrayStringEnumRefDefault.add(arrayStringEnumRefDefaultItem);
     return this;
@@ -159,7 +160,7 @@ public class DefaultValue {
 
   public DefaultValue addArrayStringEnumDefaultItem(ArrayStringEnumDefaultEnum arrayStringEnumDefaultItem) {
     if (this.arrayStringEnumDefault == null) {
-      this.arrayStringEnumDefault = new ArrayList<>(Arrays.asList(ArrayStringEnumDefaultEnum.SUCCESS, ArrayStringEnumDefaultEnum.FAILURE));
+      this.arrayStringEnumDefault = new ArrayList<>();
     }
     this.arrayStringEnumDefault.add(arrayStringEnumDefaultItem);
     return this;
@@ -192,7 +193,7 @@ public class DefaultValue {
 
   public DefaultValue addArrayStringDefaultItem(String arrayStringDefaultItem) {
     if (this.arrayStringDefault == null) {
-      this.arrayStringDefault = new ArrayList<>(Arrays.asList("failure", "skipped"));
+      this.arrayStringDefault = new ArrayList<>();
     }
     this.arrayStringDefault.add(arrayStringDefaultItem);
     return this;
@@ -225,7 +226,7 @@ public class DefaultValue {
 
   public DefaultValue addArrayIntegerDefaultItem(Integer arrayIntegerDefaultItem) {
     if (this.arrayIntegerDefault == null) {
-      this.arrayIntegerDefault = new ArrayList<>(Arrays.asList(1, 3));
+      this.arrayIntegerDefault = new ArrayList<>();
     }
     this.arrayIntegerDefault.add(arrayIntegerDefaultItem);
     return this;
@@ -290,7 +291,7 @@ public class DefaultValue {
   }
 
   public DefaultValue addArrayStringNullableItem(String arrayStringNullableItem) {
-    if (this.arrayStringNullable == null || !this.arrayStringNullable.isPresent()) {
+    if (this.arrayStringNullable == null || !this.arrayStringNullable.isPresent() || this.arrayStringNullable.get() == null) {
       this.arrayStringNullable = JsonNullable.<List<String>>of(new ArrayList<>());
     }
     try {
@@ -335,7 +336,7 @@ public class DefaultValue {
   }
 
   public DefaultValue addArrayStringExtensionNullableItem(String arrayStringExtensionNullableItem) {
-    if (this.arrayStringExtensionNullable == null || !this.arrayStringExtensionNullable.isPresent()) {
+    if (this.arrayStringExtensionNullable == null || !this.arrayStringExtensionNullable.isPresent() || this.arrayStringExtensionNullable.get() == null) {
       this.arrayStringExtensionNullable = JsonNullable.<List<String>>of(new ArrayList<>());
     }
     try {
@@ -463,10 +464,7 @@ public class DefaultValue {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 
 }

@@ -21,10 +21,10 @@ import org.openapitools.jackson.nullable.JsonNullable;
 
 
 @JsonTypeName("FileSchemaTestClass")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class FileSchemaTestClass  implements Serializable {
   private ModelFile _file;
-  private @Valid List<@Valid ModelFile> files = new ArrayList<>();
+  private List<@Valid ModelFile> files = new ArrayList<>();
 
   protected FileSchemaTestClass(FileSchemaTestClassBuilder<?, ?> b) {
     this._file = b._file;
@@ -63,7 +63,7 @@ public class FileSchemaTestClass  implements Serializable {
   
   @ApiModelProperty(value = "")
   @JsonProperty("files")
-  @Valid public List<@Valid ModelFile> getFiles() {
+  public List<@Valid ModelFile> getFiles() {
     return files;
   }
 
@@ -123,10 +123,7 @@ public class FileSchemaTestClass  implements Serializable {
    * (except the first line).
    */
   private String toIndentedString(Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 
 
@@ -164,4 +161,3 @@ public class FileSchemaTestClass  implements Serializable {
     }
   }
 }
-

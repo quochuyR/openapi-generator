@@ -1,31 +1,32 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Generated;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 /**
  * Model for testing model name same as property name
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class Name {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Integer name;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Integer snakeCase;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String property;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable Integer _123number;
 
   public Name() {
@@ -48,12 +49,12 @@ public class Name {
    * Get name
    * @return name
    */
-  @NotNull
   @JsonProperty("name")
   public Integer getName() {
     return name;
   }
 
+  @JsonProperty("name")
   public void setName(Integer name) {
     this.name = name;
   }
@@ -67,12 +68,12 @@ public class Name {
    * Get snakeCase
    * @return snakeCase
    */
-  
   @JsonProperty("snake_case")
   public @Nullable Integer getSnakeCase() {
     return snakeCase;
   }
 
+  @JsonProperty("snake_case")
   public void setSnakeCase(@Nullable Integer snakeCase) {
     this.snakeCase = snakeCase;
   }
@@ -86,12 +87,12 @@ public class Name {
    * Get property
    * @return property
    */
-  
   @JsonProperty("property")
   public @Nullable String getProperty() {
     return property;
   }
 
+  @JsonProperty("property")
   public void setProperty(@Nullable String property) {
     this.property = property;
   }
@@ -105,12 +106,12 @@ public class Name {
    * Get _123number
    * @return _123number
    */
-  
   @JsonProperty("123Number")
   public @Nullable Integer get123number() {
     return _123number;
   }
 
+  @JsonProperty("123Number")
   public void set123number(@Nullable Integer _123number) {
     this._123number = _123number;
   }
@@ -152,10 +153,7 @@ public class Name {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

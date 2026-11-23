@@ -1,11 +1,23 @@
 #![allow(unused_qualifications)]
 
+#[cfg(feature = "server")]
 use http::HeaderValue;
 use validator::Validate;
 
 #[cfg(feature = "server")]
 use crate::header;
 use crate::{models, types::*};
+
+#[cfg(feature = "server")]
+#[allow(dead_code)]
+pub type SSE = std::pin::Pin<
+    std::boxed::Box<
+        dyn futures_util::Stream<
+                Item = std::result::Result<axum::response::sse::Event, std::convert::Infallible>,
+            > + std::marker::Send
+            + std::marker::Sync,
+    >,
+>;
 
 #[allow(dead_code)]
 fn from_validation_error(e: validator::ValidationError) -> validator::ValidationErrors {
@@ -14,9 +26,21 @@ fn from_validation_error(e: validator::ValidationError) -> validator::Validation
     errs
 }
 
+/// XSS detection relies on `ammonia`, which is only pulled in by the `server` feature.
+/// Without it (e.g. models-only WASM builds), values are never flagged as HTML.
+#[cfg(feature = "server")]
+fn contains_html(v: &str) -> bool {
+    ammonia::is_html(v)
+}
+
+#[cfg(not(feature = "server"))]
+fn contains_html(_v: &str) -> bool {
+    false
+}
+
 #[allow(dead_code)]
 pub fn check_xss_string(v: &str) -> std::result::Result<(), validator::ValidationError> {
-    if ammonia::is_html(v) {
+    if contains_html(v) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -25,7 +49,7 @@ pub fn check_xss_string(v: &str) -> std::result::Result<(), validator::Validatio
 
 #[allow(dead_code)]
 pub fn check_xss_vec_string(v: &[String]) -> std::result::Result<(), validator::ValidationError> {
-    if v.iter().any(|i| ammonia::is_html(i)) {
+    if v.iter().any(|i| contains_html(i)) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -36,7 +60,7 @@ pub fn check_xss_vec_string(v: &[String]) -> std::result::Result<(), validator::
 pub fn check_xss_map_string(
     v: &std::collections::HashMap<String, String>,
 ) -> std::result::Result<(), validator::ValidationError> {
-    if v.keys().any(|k| ammonia::is_html(k)) || v.values().any(|v| ammonia::is_html(v)) {
+    if v.keys().any(|k| contains_html(k)) || v.values().any(|v| contains_html(v)) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -50,7 +74,7 @@ pub fn check_xss_map_nested<T>(
 where
     T: validator::Validate,
 {
-    if v.keys().any(|k| ammonia::is_html(k)) || v.values().any(|v| v.validate().is_err()) {
+    if v.keys().any(|k| contains_html(k)) || v.values().any(|v| v.validate().is_err()) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -61,7 +85,7 @@ where
 pub fn check_xss_map<T>(
     v: &std::collections::HashMap<String, T>,
 ) -> std::result::Result<(), validator::ValidationError> {
-    if v.keys().any(|k| ammonia::is_html(k)) {
+    if v.keys().any(|k| contains_html(k)) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -176,8 +200,8 @@ pub struct DeleteOrderPathParams {
 #[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
 pub struct GetOrderByIdPathParams {
     /// ID of pet that needs to be fetched
-    #[validate(range(min = 1i64, max = 5i64))]
-    pub order_id: i64,
+    #[validate(range(min = 1u64, max = 5u64))]
+    pub order_id: u64,
 }
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
@@ -446,14 +470,8 @@ impl std::str::FromStr for Animal {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "className" => intermediate_rep.class_name.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "color" => intermediate_rep.color.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "className" => intermediate_rep.class_name.push(val.to_string()),
+                    "color" => intermediate_rep.color.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing Animal".to_string(),
@@ -754,14 +772,8 @@ impl std::str::FromStr for ApiResponse {
                     "code" => intermediate_rep.code.push(
                         <i32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "type" => intermediate_rep.r_type.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "message" => intermediate_rep.message.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "type" => intermediate_rep.r_type.push(val.to_string()),
+                    "message" => intermediate_rep.message.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing ApiResponse".to_string(),
@@ -1416,30 +1428,14 @@ impl std::str::FromStr for Capitalization {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "smallCamel" => intermediate_rep.small_camel.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "CapitalCamel" => intermediate_rep.capital_camel.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "small_Snake" => intermediate_rep.small_snake.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "Capital_Snake" => intermediate_rep.capital_snake.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "SCA_ETH_Flow_Points" => intermediate_rep.sca_eth_flow_points.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "ATT_NAME" => intermediate_rep.att_name.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "smallCamel" => intermediate_rep.small_camel.push(val.to_string()),
+                    "CapitalCamel" => intermediate_rep.capital_camel.push(val.to_string()),
+                    "small_Snake" => intermediate_rep.small_snake.push(val.to_string()),
+                    "Capital_Snake" => intermediate_rep.capital_snake.push(val.to_string()),
+                    "SCA_ETH_Flow_Points" => {
+                        intermediate_rep.sca_eth_flow_points.push(val.to_string())
+                    }
+                    "ATT_NAME" => intermediate_rep.att_name.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing Capitalization".to_string(),
@@ -1591,14 +1587,8 @@ impl std::str::FromStr for Cat {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "className" => intermediate_rep.class_name.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "color" => intermediate_rep.color.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "className" => intermediate_rep.class_name.push(val.to_string()),
+                    "color" => intermediate_rep.color.push(val.to_string()),
                     #[allow(clippy::redundant_clone)]
                     "declawed" => intermediate_rep.declawed.push(
                         <bool as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
@@ -1749,10 +1739,7 @@ impl std::str::FromStr for Category {
                     "id" => intermediate_rep.id.push(
                         <i64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "name" => intermediate_rep.name.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "name" => intermediate_rep.name.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing Category".to_string(),
@@ -1884,10 +1871,7 @@ impl std::str::FromStr for ClassModel {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "_class" => intermediate_rep._class.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "_class" => intermediate_rep._class.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing ClassModel".to_string(),
@@ -2017,10 +2001,7 @@ impl std::str::FromStr for Client {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "client" => intermediate_rep.client.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "client" => intermediate_rep.client.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing Client".to_string(),
@@ -2168,18 +2149,9 @@ impl std::str::FromStr for Dog {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "className" => intermediate_rep.class_name.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "color" => intermediate_rep.color.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "breed" => intermediate_rep.breed.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "className" => intermediate_rep.class_name.push(val.to_string()),
+                    "color" => intermediate_rep.color.push(val.to_string()),
+                    "breed" => intermediate_rep.breed.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing Dog".to_string(),
@@ -2317,8 +2289,8 @@ impl std::str::FromStr for DollarSpecialLeftSquareBracketModelNameRightSquareBra
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "$special[property.name]" => intermediate_rep.dollar_special_left_square_bracket_property_name_right_square_bracket.push(<i64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "$special[property.name]" => intermediate_rep.dollar_special_left_square_bracket_property_name_right_square_bracket.push(<i64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
                     _ => return std::result::Result::Err("Unexpected key while parsing DollarSpecialLeftSquareBracketModelNameRightSquareBracket".to_string())
                 }
             }
@@ -2479,10 +2451,7 @@ impl std::str::FromStr for EnumArrays {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "just_symbol" => intermediate_rep.just_symbol.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "just_symbol" => intermediate_rep.just_symbol.push(val.to_string()),
                     "array_enum" => {
                         return std::result::Result::Err(
                             "Parsing a container in this style is not supported in EnumArrays"
@@ -2713,14 +2682,10 @@ impl std::str::FromStr for EnumTest {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "enum_string" => intermediate_rep.enum_string.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "enum_string_required" => intermediate_rep.enum_string_required.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "enum_string" => intermediate_rep.enum_string.push(val.to_string()),
+                    "enum_string_required" => {
+                        intermediate_rep.enum_string_required.push(val.to_string())
+                    }
                     #[allow(clippy::redundant_clone)]
                     "enum_integer" => intermediate_rep.enum_integer.push(
                         <i32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
@@ -2812,9 +2777,9 @@ pub struct FormatTest {
     pub integer: Option<u8>,
 
     #[serde(rename = "int32")]
-    #[validate(range(min = 20u8, max = 200u8))]
+    #[validate(range(min = 20u32, max = 200u32))]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub int32: Option<u8>,
+    pub int32: Option<u32>,
 
     #[serde(rename = "int64")]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -2968,7 +2933,7 @@ impl std::str::FromStr for FormatTest {
         #[allow(dead_code)]
         struct IntermediateRep {
             pub integer: Vec<u8>,
-            pub int32: Vec<u8>,
+            pub int32: Vec<u32>,
             pub int64: Vec<i64>,
             pub number: Vec<f64>,
             pub float: Vec<f32>,
@@ -3006,9 +2971,9 @@ impl std::str::FromStr for FormatTest {
                         .integer
                         .push(<u8 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
                     #[allow(clippy::redundant_clone)]
-                    "int32" => intermediate_rep
-                        .int32
-                        .push(<u8 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                    "int32" => intermediate_rep.int32.push(
+                        <u32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
+                    ),
                     #[allow(clippy::redundant_clone)]
                     "int64" => intermediate_rep.int64.push(
                         <i64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
@@ -3025,10 +2990,7 @@ impl std::str::FromStr for FormatTest {
                     "double" => intermediate_rep.double.push(
                         <f64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "string" => intermediate_rep.string.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "string" => intermediate_rep.string.push(val.to_string()),
                     "byte" => {
                         return std::result::Result::Err(
                             "Parsing binary data in this style is not supported in FormatTest"
@@ -3056,10 +3018,7 @@ impl std::str::FromStr for FormatTest {
                         <uuid::Uuid as std::str::FromStr>::from_str(val)
                             .map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "password" => intermediate_rep.password.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "password" => intermediate_rep.password.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing FormatTest".to_string(),
@@ -3229,14 +3188,8 @@ impl std::str::FromStr for HasOnlyReadOnly {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "bar" => intermediate_rep.bar.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "foo" => intermediate_rep.foo.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "bar" => intermediate_rep.bar.push(val.to_string()),
+                    "foo" => intermediate_rep.foo.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing HasOnlyReadOnly".to_string(),
@@ -3368,10 +3321,7 @@ impl std::str::FromStr for List {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "123-list" => intermediate_rep.param_123_list.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "123-list" => intermediate_rep.param_123_list.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing List".to_string(),
@@ -3693,10 +3643,10 @@ impl std::str::FromStr for MixedPropertiesAndAdditionalPropertiesClass {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "uuid" => intermediate_rep.uuid.push(<uuid::Uuid as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "dateTime" => intermediate_rep.date_time.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                       #[allow(clippy::redundant_clone)]
+                       "uuid" => intermediate_rep.uuid.push(<uuid::Uuid as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "dateTime" => intermediate_rep.date_time.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
                     "map" => return std::result::Result::Err("Parsing a container in this style is not supported in MixedPropertiesAndAdditionalPropertiesClass".to_string()),
                     _ => return std::result::Result::Err("Unexpected key while parsing MixedPropertiesAndAdditionalPropertiesClass".to_string())
                 }
@@ -3847,10 +3797,7 @@ impl std::str::FromStr for Model200Response {
                     "name" => intermediate_rep.name.push(
                         <i32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "class" => intermediate_rep.class.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "class" => intermediate_rep.class.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing Model200Response".to_string(),
@@ -4017,10 +3964,7 @@ impl std::str::FromStr for Name {
                     "snake_case" => intermediate_rep.snake_case.push(
                         <i32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "property" => intermediate_rep.property.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "property" => intermediate_rep.property.push(val.to_string()),
                     #[allow(clippy::redundant_clone)]
                     "123Number" => intermediate_rep.param_123_number.push(
                         <i32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
@@ -4286,8 +4230,8 @@ impl std::str::FromStr for ObjectContainingObjectWithOnlyAdditionalProperties {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "inner" => intermediate_rep.inner.push(<models::ObjectWithOnlyAdditionalProperties as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "inner" => intermediate_rep.inner.push(<models::ObjectWithOnlyAdditionalProperties as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
                     _ => return std::result::Result::Err("Unexpected key while parsing ObjectContainingObjectWithOnlyAdditionalProperties".to_string())
                 }
             }
@@ -4539,10 +4483,7 @@ impl std::str::FromStr for Order {
                         <chrono::DateTime<chrono::Utc> as std::str::FromStr>::from_str(val)
                             .map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "status" => intermediate_rep.status.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "status" => intermediate_rep.status.push(val.to_string()),
                     #[allow(clippy::redundant_clone)]
                     "complete" => intermediate_rep.complete.push(
                         <bool as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
@@ -4738,10 +4679,7 @@ impl std::str::FromStr for OuterComposite {
                     "my_number" => intermediate_rep.my_number.push(
                         <f64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "my_string" => intermediate_rep.my_string.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "my_string" => intermediate_rep.my_string.push(val.to_string()),
                     #[allow(clippy::redundant_clone)]
                     "my_boolean" => intermediate_rep.my_boolean.push(
                         <bool as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
@@ -5065,10 +5003,7 @@ impl std::str::FromStr for Pet {
                         <models::Category as std::str::FromStr>::from_str(val)
                             .map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "name" => intermediate_rep.name.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "name" => intermediate_rep.name.push(val.to_string()),
                     "photoUrls" => {
                         return std::result::Result::Err(
                             "Parsing a container in this style is not supported in Pet".to_string(),
@@ -5079,10 +5014,7 @@ impl std::str::FromStr for Pet {
                             "Parsing a container in this style is not supported in Pet".to_string(),
                         );
                     }
-                    #[allow(clippy::redundant_clone)]
-                    "status" => intermediate_rep.status.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "status" => intermediate_rep.status.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing Pet".to_string(),
@@ -5233,14 +5165,8 @@ impl std::str::FromStr for ReadOnlyFirst {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "bar" => intermediate_rep.bar.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "baz" => intermediate_rep.baz.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "bar" => intermediate_rep.bar.push(val.to_string()),
+                    "baz" => intermediate_rep.baz.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing ReadOnlyFirst".to_string(),
@@ -5517,10 +5443,7 @@ impl std::str::FromStr for Tag {
                     "id" => intermediate_rep.id.push(
                         <i64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "name" => intermediate_rep.name.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "name" => intermediate_rep.name.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing Tag".to_string(),
@@ -5584,15 +5507,15 @@ impl std::convert::TryFrom<HeaderValue> for header::IntoHeaderValue<Tag> {
 pub struct TestEndpointParametersRequest {
     /// None
     #[serde(rename = "integer")]
-    #[validate(range(min = 10u8, max = 100u8))]
+    #[validate(range(min = 10u32, max = 100u32))]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub integer: Option<u8>,
+    pub integer: Option<u32>,
 
     /// None
     #[serde(rename = "int32")]
-    #[validate(range(min = 20u8, max = 200u8))]
+    #[validate(range(min = 20u32, max = 200u32))]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub int32: Option<u8>,
+    pub int32: Option<u32>,
 
     /// None
     #[serde(rename = "int64")]
@@ -5761,8 +5684,8 @@ impl std::str::FromStr for TestEndpointParametersRequest {
         #[derive(Default)]
         #[allow(dead_code)]
         struct IntermediateRep {
-            pub integer: Vec<u8>,
-            pub int32: Vec<u8>,
+            pub integer: Vec<u32>,
+            pub int32: Vec<u32>,
             pub int64: Vec<i64>,
             pub number: Vec<f64>,
             pub float: Vec<f32>,
@@ -5796,32 +5719,28 @@ impl std::str::FromStr for TestEndpointParametersRequest {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "integer" => intermediate_rep.integer.push(<u8 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "int32" => intermediate_rep.int32.push(<u8 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "int64" => intermediate_rep.int64.push(<i64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "number" => intermediate_rep.number.push(<f64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "float" => intermediate_rep.float.push(<f32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "double" => intermediate_rep.double.push(<f64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "string" => intermediate_rep.string.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "pattern_without_delimiter" => intermediate_rep.pattern_without_delimiter.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "integer" => intermediate_rep.integer.push(<u32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "int32" => intermediate_rep.int32.push(<u32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "int64" => intermediate_rep.int64.push(<i64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "number" => intermediate_rep.number.push(<f64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "float" => intermediate_rep.float.push(<f32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "double" => intermediate_rep.double.push(<f64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                       "string" => intermediate_rep.string.push(val.to_string()),
+                       "pattern_without_delimiter" => intermediate_rep.pattern_without_delimiter.push(val.to_string()),
                     "byte" => return std::result::Result::Err("Parsing binary data in this style is not supported in TestEndpointParametersRequest".to_string()),
                     "binary" => return std::result::Result::Err("Parsing binary data in this style is not supported in TestEndpointParametersRequest".to_string()),
-                    #[allow(clippy::redundant_clone)]
-                    "date" => intermediate_rep.date.push(<chrono::naive::NaiveDate as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "dateTime" => intermediate_rep.date_time.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "password" => intermediate_rep.password.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "callback" => intermediate_rep.callback.push(<String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "date" => intermediate_rep.date.push(<chrono::naive::NaiveDate as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "dateTime" => intermediate_rep.date_time.push(<chrono::DateTime::<chrono::Utc> as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                       "password" => intermediate_rep.password.push(val.to_string()),
+                       "callback" => intermediate_rep.callback.push(val.to_string()),
                     _ => return std::result::Result::Err("Unexpected key while parsing TestEndpointParametersRequest".to_string())
                 }
             }
@@ -5981,10 +5900,7 @@ impl std::str::FromStr for TestEnumParametersRequest {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "enum_form_string" => intermediate_rep.enum_form_string.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "enum_form_string" => intermediate_rep.enum_form_string.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing TestEnumParametersRequest".to_string(),
@@ -6121,14 +6037,8 @@ impl std::str::FromStr for TestJsonFormDataRequest {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "param" => intermediate_rep.param.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "param2" => intermediate_rep.param2.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "param" => intermediate_rep.param.push(val.to_string()),
+                    "param2" => intermediate_rep.param2.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing TestJsonFormDataRequest".to_string(),
@@ -6281,14 +6191,8 @@ impl std::str::FromStr for UpdatePetWithFormRequest {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "name" => intermediate_rep.name.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "status" => intermediate_rep.status.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "name" => intermediate_rep.name.push(val.to_string()),
+                    "status" => intermediate_rep.status.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing UpdatePetWithFormRequest".to_string(),
@@ -6437,10 +6341,9 @@ impl std::str::FromStr for UploadFileRequest {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "additionalMetadata" => intermediate_rep.additional_metadata.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "additionalMetadata" => {
+                        intermediate_rep.additional_metadata.push(val.to_string())
+                    }
                     "file" => return std::result::Result::Err(
                         "Parsing binary data in this style is not supported in UploadFileRequest"
                             .to_string(),
@@ -6650,30 +6553,12 @@ impl std::str::FromStr for User {
                     "id" => intermediate_rep.id.push(
                         <i64 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
                     ),
-                    #[allow(clippy::redundant_clone)]
-                    "username" => intermediate_rep.username.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "firstName" => intermediate_rep.first_name.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "lastName" => intermediate_rep.last_name.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "email" => intermediate_rep.email.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "password" => intermediate_rep.password.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
-                    #[allow(clippy::redundant_clone)]
-                    "phone" => intermediate_rep.phone.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "username" => intermediate_rep.username.push(val.to_string()),
+                    "firstName" => intermediate_rep.first_name.push(val.to_string()),
+                    "lastName" => intermediate_rep.last_name.push(val.to_string()),
+                    "email" => intermediate_rep.email.push(val.to_string()),
+                    "password" => intermediate_rep.password.push(val.to_string()),
+                    "phone" => intermediate_rep.phone.push(val.to_string()),
                     #[allow(clippy::redundant_clone)]
                     "userStatus" => intermediate_rep.user_status.push(
                         <i32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,

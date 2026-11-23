@@ -1,11 +1,23 @@
 #![allow(unused_qualifications)]
 
+#[cfg(feature = "server")]
 use http::HeaderValue;
 use validator::Validate;
 
 #[cfg(feature = "server")]
 use crate::header;
 use crate::{models, types::*};
+
+#[cfg(feature = "server")]
+#[allow(dead_code)]
+pub type SSE = std::pin::Pin<
+    std::boxed::Box<
+        dyn futures_util::Stream<
+                Item = std::result::Result<axum::response::sse::Event, std::convert::Infallible>,
+            > + std::marker::Send
+            + std::marker::Sync,
+    >,
+>;
 
 #[allow(dead_code)]
 fn from_validation_error(e: validator::ValidationError) -> validator::ValidationErrors {
@@ -14,9 +26,21 @@ fn from_validation_error(e: validator::ValidationError) -> validator::Validation
     errs
 }
 
+/// XSS detection relies on `ammonia`, which is only pulled in by the `server` feature.
+/// Without it (e.g. models-only WASM builds), values are never flagged as HTML.
+#[cfg(feature = "server")]
+fn contains_html(v: &str) -> bool {
+    ammonia::is_html(v)
+}
+
+#[cfg(not(feature = "server"))]
+fn contains_html(_v: &str) -> bool {
+    false
+}
+
 #[allow(dead_code)]
 pub fn check_xss_string(v: &str) -> std::result::Result<(), validator::ValidationError> {
-    if ammonia::is_html(v) {
+    if contains_html(v) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -25,7 +49,7 @@ pub fn check_xss_string(v: &str) -> std::result::Result<(), validator::Validatio
 
 #[allow(dead_code)]
 pub fn check_xss_vec_string(v: &[String]) -> std::result::Result<(), validator::ValidationError> {
-    if v.iter().any(|i| ammonia::is_html(i)) {
+    if v.iter().any(|i| contains_html(i)) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -36,7 +60,7 @@ pub fn check_xss_vec_string(v: &[String]) -> std::result::Result<(), validator::
 pub fn check_xss_map_string(
     v: &std::collections::HashMap<String, String>,
 ) -> std::result::Result<(), validator::ValidationError> {
-    if v.keys().any(|k| ammonia::is_html(k)) || v.values().any(|v| ammonia::is_html(v)) {
+    if v.keys().any(|k| contains_html(k)) || v.values().any(|v| contains_html(v)) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -50,7 +74,7 @@ pub fn check_xss_map_nested<T>(
 where
     T: validator::Validate,
 {
-    if v.keys().any(|k| ammonia::is_html(k)) || v.values().any(|v| v.validate().is_err()) {
+    if v.keys().any(|k| contains_html(k)) || v.values().any(|v| v.validate().is_err()) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -61,7 +85,7 @@ where
 pub fn check_xss_map<T>(
     v: &std::collections::HashMap<String, T>,
 ) -> std::result::Result<(), validator::ValidationError> {
-    if v.keys().any(|k| ammonia::is_html(k)) {
+    if v.keys().any(|k| contains_html(k)) {
         std::result::Result::Err(validator::ValidationError::new("xss detected"))
     } else {
         std::result::Result::Ok(())
@@ -152,6 +176,15 @@ pub struct ParamgetGetQueryParams {
     #[serde(rename = "someList")]
     #[serde(default)]
     pub some_list: Vec<models::MyId>,
+}
+
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
+#[cfg_attr(feature = "conversion", derive(frunk::LabelledGeneric))]
+pub struct QueryExampleGetQueryParams {
+    #[serde(rename = "required_no_example")]
+    pub required_no_example: String,
+    #[serde(rename = "required_with_example")]
+    pub required_with_example: i32,
 }
 
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize, validator::Validate)]
@@ -709,10 +742,7 @@ impl std::str::FromStr for AnotherXmlObject {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "inner_string" => intermediate_rep.inner_string.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "inner_string" => intermediate_rep.inner_string.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing AnotherXmlObject".to_string(),
@@ -1114,10 +1144,7 @@ impl std::str::FromStr for DuplicateXmlObject {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "inner_string" => intermediate_rep.inner_string.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "inner_string" => intermediate_rep.inner_string.push(val.to_string()),
                     #[allow(clippy::redundant_clone)]
                     "inner_array" => intermediate_rep.inner_array.push(
                         <models::XmlArray as std::str::FromStr>::from_str(val)
@@ -1422,10 +1449,7 @@ impl std::str::FromStr for FormTestRequest {
                                 .to_string(),
                         );
                     }
-                    #[allow(clippy::redundant_clone)]
-                    "enum_field" => intermediate_rep.enum_field.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "enum_field" => intermediate_rep.enum_field.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing FormTestRequest".to_string(),
@@ -1593,10 +1617,7 @@ impl std::str::FromStr for MultigetGet201Response {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "foo" => intermediate_rep.foo.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "foo" => intermediate_rep.foo.push(val.to_string()),
                     _ => {
                         return std::result::Result::Err(
                             "Unexpected key while parsing MultigetGet201Response".to_string(),
@@ -2638,13 +2659,13 @@ impl std::str::FromStr for ObjectUntypedProps {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "required_untyped" => intermediate_rep.required_untyped.push(<crate::types::Object as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "required_untyped" => intermediate_rep.required_untyped.push(<crate::types::Object as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
                     "required_untyped_nullable" => return std::result::Result::Err("Parsing a nullable type in this style is not supported in ObjectUntypedProps".to_string()),
-                    #[allow(clippy::redundant_clone)]
-                    "not_required_untyped" => intermediate_rep.not_required_untyped.push(<crate::types::Object as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
-                    #[allow(clippy::redundant_clone)]
-                    "not_required_untyped_nullable" => intermediate_rep.not_required_untyped_nullable.push(<crate::types::Object as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "not_required_untyped" => intermediate_rep.not_required_untyped.push(<crate::types::Object as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
+                        #[allow(clippy::redundant_clone)]
+                       "not_required_untyped_nullable" => intermediate_rep.not_required_untyped_nullable.push(<crate::types::Object as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?),
                     _ => return std::result::Result::Err("Unexpected key while parsing ObjectUntypedProps".to_string())
                 }
             }
@@ -3451,10 +3472,7 @@ impl std::str::FromStr for XmlObject {
             if let Some(key) = key_result {
                 #[allow(clippy::match_single_binding)]
                 match key {
-                    #[allow(clippy::redundant_clone)]
-                    "innerString" => intermediate_rep.inner_string.push(
-                        <String as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,
-                    ),
+                    "innerString" => intermediate_rep.inner_string.push(val.to_string()),
                     #[allow(clippy::redundant_clone)]
                     "other_inner_rename" => intermediate_rep.other_inner_rename.push(
                         <i32 as std::str::FromStr>::from_str(val).map_err(|x| x.to_string())?,

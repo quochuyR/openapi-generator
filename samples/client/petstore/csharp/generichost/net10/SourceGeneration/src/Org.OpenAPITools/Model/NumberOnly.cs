@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -56,7 +55,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets JustNumber
         /// </summary>
         [JsonPropertyName("JustNumber")]
-        public decimal? JustNumber { get { return this.JustNumberOption; } set { this.JustNumberOption = new(value); } }
+        public decimal? JustNumber { get { return this.JustNumberOption.Value; } set { this.JustNumberOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -83,7 +82,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -92,8 +91,18 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="NumberOnly" />
     /// </summary>
-    public class NumberOnlyJsonConverter : JsonConverter<NumberOnly>
+    public partial class NumberOnlyJsonConverter : JsonConverter<NumberOnly>
     {
+        partial void OnCreated();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NumberOnlyJsonConverter" /> class.
+        /// </summary>
+        public NumberOnlyJsonConverter()
+        {
+            OnCreated();
+        }
+
         /// <summary>
         /// Deserializes json to <see cref="NumberOnly" />
         /// </summary>
@@ -138,7 +147,7 @@ namespace Org.OpenAPITools.Model
             }
 
             if (justNumber.IsSet && justNumber.Value == null)
-                throw new ArgumentNullException(nameof(justNumber), "Property is not nullable for class NumberOnly.");
+                throw new JsonException("Property is not nullable for class NumberOnly: JustNumber.");
 
             return new NumberOnly(justNumber);
         }
@@ -149,7 +158,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="numberOnly"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, NumberOnly numberOnly, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -164,18 +172,13 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="numberOnly"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, NumberOnly numberOnly, JsonSerializerOptions jsonSerializerOptions)
         {
+            if (numberOnly.JustNumberOption.IsSet && numberOnly.JustNumber == null)
+                throw new JsonException("Cannot write null property NumberOnly.JustNumber to non-nullable JSON property 'JustNumber'.");
+
             if (numberOnly.JustNumberOption.IsSet)
                 writer.WriteNumber("JustNumber", numberOnly.JustNumberOption.Value!.Value);
         }
     }
-
-    /// <summary>
-    /// The NumberOnlySerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(NumberOnly))]
-    public partial class NumberOnlySerializationContext : JsonSerializerContext { }
 }

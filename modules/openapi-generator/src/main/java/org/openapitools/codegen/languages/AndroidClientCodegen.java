@@ -35,6 +35,12 @@ import java.util.HashSet;
 import static org.openapitools.codegen.utils.CamelizeOption.LOWERCASE_FIRST_LETTER;
 import static org.openapitools.codegen.utils.StringUtils.camelize;
 
+/**
+ * <p>Mustache templates are located in
+ * {@code src/main/resources/android/} (root templates shared across all libraries) and
+ * {@code src/main/resources/android/libraries/} (library-specific overrides).
+ * A library-specific template shadows a root-level template of the same name.
+ */
 public class AndroidClientCodegen extends DefaultCodegen implements CodegenConfig {
     private final Logger LOGGER = LoggerFactory.getLogger(AndroidClientCodegen.class);
     public static final String USE_ANDROID_MAVEN_GRADLE_PLUGIN = "useAndroidMavenGradlePlugin";
@@ -212,11 +218,6 @@ public class AndroidClientCodegen extends DefaultCodegen implements CodegenConfi
     @Override
     public String modelDocFileFolder() {
         return outputFolder + File.separator + modelDocPath.replace('/', File.separatorChar);
-    }
-
-    @Override
-    public String toApiDocFilename(String name) {
-        return toApiName(name);
     }
 
     @Override

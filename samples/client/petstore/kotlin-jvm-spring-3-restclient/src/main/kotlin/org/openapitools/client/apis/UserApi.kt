@@ -8,9 +8,17 @@
 
 @file:Suppress(
     "ArrayInDataClass",
+    "DuplicatedCode",
     "EnumEntryName",
     "RemoveRedundantQualifierName",
-    "UnusedImport"
+    "RemoveRedundantCallsOfConversionMethods",
+    "REDUNDANT_CALL_OF_CONVERSION_METHOD",
+    "RedundantUnitReturnType",
+    "RemoveEmptyClassBody",
+    "UnnecessaryVariable",
+    "UnusedImport",
+    "UnnecessaryVariable",
+    "unused"
 )
 
 package org.openapitools.client.apis
@@ -56,6 +64,7 @@ open class UserApi(client: RestClient) : ApiClient(client) {
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
         
+
         val params = mutableMapOf<String, Any>(
         )
 
@@ -90,6 +99,7 @@ open class UserApi(client: RestClient) : ApiClient(client) {
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
         
+
         val params = mutableMapOf<String, Any>(
         )
 
@@ -124,6 +134,7 @@ open class UserApi(client: RestClient) : ApiClient(client) {
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
         
+
         val params = mutableMapOf<String, Any>(
         )
 
@@ -157,6 +168,7 @@ open class UserApi(client: RestClient) : ApiClient(client) {
         val localVariableQuery = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         
+
         val params = mutableMapOf<String, Any>(
             "username" to username,
         )
@@ -266,6 +278,7 @@ open class UserApi(client: RestClient) : ApiClient(client) {
         val localVariableQuery = mutableMapOf<kotlin.String, kotlin.collections.List<kotlin.String>>()
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         
+
         val params = mutableMapOf<String, Any>(
         )
 
@@ -300,6 +313,7 @@ open class UserApi(client: RestClient) : ApiClient(client) {
         val localVariableHeaders: MutableMap<String, String> = mutableMapOf()
         localVariableHeaders["Content-Type"] = "application/json"
         
+
         val params = mutableMapOf<String, Any>(
             "username" to username,
         )

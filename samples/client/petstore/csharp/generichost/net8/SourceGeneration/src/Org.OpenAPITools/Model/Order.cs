@@ -22,7 +22,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using OpenAPIClientUtils = Org.OpenAPITools.Client.ClientUtils;
-using System.Text.Json.Serialization.Metadata;
 using Org.OpenAPITools.Client;
 
 namespace Org.OpenAPITools.Model
@@ -148,7 +147,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <value>Order Status</value>
         [JsonPropertyName("status")]
-        public StatusEnum? Status { get { return this.StatusOption; } set { this.StatusOption = new(value); } }
+        public StatusEnum? Status { get { return this.StatusOption.Value; } set { this.StatusOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Complete
@@ -161,7 +160,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Complete
         /// </summary>
         [JsonPropertyName("complete")]
-        public bool? Complete { get { return this.CompleteOption; } set { this.CompleteOption = new(value); } }
+        public bool? Complete { get { return this.CompleteOption.Value; } set { this.CompleteOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Id
@@ -174,7 +173,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Id
         /// </summary>
         [JsonPropertyName("id")]
-        public long? Id { get { return this.IdOption; } set { this.IdOption = new(value); } }
+        public long? Id { get { return this.IdOption.Value; } set { this.IdOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of PetId
@@ -187,7 +186,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets PetId
         /// </summary>
         [JsonPropertyName("petId")]
-        public long? PetId { get { return this.PetIdOption; } set { this.PetIdOption = new(value); } }
+        public long? PetId { get { return this.PetIdOption.Value; } set { this.PetIdOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of Quantity
@@ -200,7 +199,7 @@ namespace Org.OpenAPITools.Model
         /// Gets or Sets Quantity
         /// </summary>
         [JsonPropertyName("quantity")]
-        public int? Quantity { get { return this.QuantityOption; } set { this.QuantityOption = new(value); } }
+        public int? Quantity { get { return this.QuantityOption.Value; } set { this.QuantityOption = new(value); } }
 
         /// <summary>
         /// Used to track the state of ShipDate
@@ -214,7 +213,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /* <example>2020-02-02T20:20:20.000222Z</example> */
         [JsonPropertyName("shipDate")]
-        public DateTime? ShipDate { get { return this.ShipDateOption; } set { this.ShipDateOption = new(value); } }
+        public DateTime? ShipDate { get { return this.ShipDateOption.Value; } set { this.ShipDateOption = new(value); } }
 
         /// <summary>
         /// Gets or Sets additional properties
@@ -246,7 +245,7 @@ namespace Org.OpenAPITools.Model
         /// </summary>
         /// <param name="validationContext">Validation context</param>
         /// <returns>Validation Result</returns>
-        IEnumerable<ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
+        IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
             yield break;
         }
@@ -255,12 +254,17 @@ namespace Org.OpenAPITools.Model
     /// <summary>
     /// A Json converter for type <see cref="Order" />
     /// </summary>
-    public class OrderJsonConverter : JsonConverter<Order>
+    public partial class OrderJsonConverter : JsonConverter<Order>
     {
+        partial void OnCreated();
+
         /// <summary>
-        /// The format to use to serialize ShipDate
+        /// Initializes a new instance of the <see cref="OrderJsonConverter" /> class.
         /// </summary>
-        public static string ShipDateFormat { get; set; } = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffffK";
+        public OrderJsonConverter()
+        {
+            OnCreated();
+        }
 
         /// <summary>
         /// Deserializes json to <see cref="Order" />
@@ -319,7 +323,12 @@ namespace Org.OpenAPITools.Model
                         case "status":
                             string? statusRawValue = utf8JsonReader.GetString();
                             if (statusRawValue != null)
-                                status = new Option<Order.StatusEnum?>(Order.StatusEnumFromStringOrDefault(statusRawValue));
+                            {
+                                Order.StatusEnum? statusValue = Order.StatusEnumFromStringOrDefault(statusRawValue);
+                                if (statusValue == null)
+                                    throw new JsonException();
+                                status = new Option<Order.StatusEnum?>(statusValue);
+                            }
                             break;
                         default:
                             break;
@@ -328,22 +337,22 @@ namespace Org.OpenAPITools.Model
             }
 
             if (complete.IsSet && complete.Value == null)
-                throw new ArgumentNullException(nameof(complete), "Property is not nullable for class Order.");
+                throw new JsonException("Property is not nullable for class Order: complete.");
 
             if (id.IsSet && id.Value == null)
-                throw new ArgumentNullException(nameof(id), "Property is not nullable for class Order.");
+                throw new JsonException("Property is not nullable for class Order: id.");
 
             if (petId.IsSet && petId.Value == null)
-                throw new ArgumentNullException(nameof(petId), "Property is not nullable for class Order.");
+                throw new JsonException("Property is not nullable for class Order: petId.");
 
             if (quantity.IsSet && quantity.Value == null)
-                throw new ArgumentNullException(nameof(quantity), "Property is not nullable for class Order.");
+                throw new JsonException("Property is not nullable for class Order: quantity.");
 
             if (shipDate.IsSet && shipDate.Value == null)
-                throw new ArgumentNullException(nameof(shipDate), "Property is not nullable for class Order.");
+                throw new JsonException("Property is not nullable for class Order: shipDate.");
 
             if (status.IsSet && status.Value == null)
-                throw new ArgumentNullException(nameof(status), "Property is not nullable for class Order.");
+                throw new JsonException("Property is not nullable for class Order: status.");
 
             return new Order(complete, id, petId, quantity, shipDate, status);
         }
@@ -354,7 +363,6 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="order"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public override void Write(Utf8JsonWriter writer, Order order, JsonSerializerOptions jsonSerializerOptions)
         {
             writer.WriteStartObject();
@@ -369,9 +377,26 @@ namespace Org.OpenAPITools.Model
         /// <param name="writer"></param>
         /// <param name="order"></param>
         /// <param name="jsonSerializerOptions"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void WriteProperties(Utf8JsonWriter writer, Order order, JsonSerializerOptions jsonSerializerOptions)
         {
+            if (order.CompleteOption.IsSet && order.Complete == null)
+                throw new JsonException("Cannot write null property Order.Complete to non-nullable JSON property 'complete'.");
+
+            if (order.IdOption.IsSet && order.Id == null)
+                throw new JsonException("Cannot write null property Order.Id to non-nullable JSON property 'id'.");
+
+            if (order.PetIdOption.IsSet && order.PetId == null)
+                throw new JsonException("Cannot write null property Order.PetId to non-nullable JSON property 'petId'.");
+
+            if (order.QuantityOption.IsSet && order.Quantity == null)
+                throw new JsonException("Cannot write null property Order.Quantity to non-nullable JSON property 'quantity'.");
+
+            if (order.ShipDateOption.IsSet && order.ShipDate == null)
+                throw new JsonException("Cannot write null property Order.ShipDate to non-nullable JSON property 'shipDate'.");
+
+            if (order.StatusOption.IsSet && order.Status == null)
+                throw new JsonException("Cannot write null property Order.Status to non-nullable JSON property 'status'.");
+
             if (order.CompleteOption.IsSet)
                 writer.WriteBoolean("complete", order.CompleteOption.Value!.Value);
 
@@ -385,17 +410,16 @@ namespace Org.OpenAPITools.Model
                 writer.WriteNumber("quantity", order.QuantityOption.Value!.Value);
 
             if (order.ShipDateOption.IsSet)
-                writer.WriteString("shipDate", order.ShipDateOption.Value!.Value.ToString(ShipDateFormat));
+                {
+                            writer.WritePropertyName("shipDate");
+                                JsonSerializer.Serialize(writer, order.ShipDateOption.Value!.Value, jsonSerializerOptions);
+                            }
 
-            var statusRawValue = Order.StatusEnumToJsonValue(order.StatusOption.Value!.Value);
-            writer.WriteString("status", statusRawValue);
+            if (order.StatusOption.IsSet)
+            {
+                var statusRawValue = Order.StatusEnumToJsonValue(order.StatusOption.Value!.Value);
+                writer.WriteString("status", statusRawValue);
+            }
         }
     }
-
-    /// <summary>
-    /// The OrderSerializationContext
-    /// </summary>
-    [JsonSourceGenerationOptions(WriteIndented = true, GenerationMode = JsonSourceGenerationMode.Metadata | JsonSourceGenerationMode.Serialization)]
-    [JsonSerializable(typeof(Order))]
-    public partial class OrderSerializationContext : JsonSerializerContext { }
 }

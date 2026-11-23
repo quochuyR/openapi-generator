@@ -2,6 +2,8 @@ package org.openapitools.api
 
 import org.openapitools.model.User
 import io.swagger.annotations.Api
+import io.swagger.annotations.ApiImplicitParam
+import io.swagger.annotations.ApiImplicitParams
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
@@ -67,7 +69,7 @@ class UserApiController(@Autowired(required = true) val service: UserApiService)
         value = [PATH_CREATE_USERS_WITH_ARRAY_INPUT]
     )
     fun createUsersWithArrayInput(
-        @ApiParam(value = "List of user object", required = true) @Valid @RequestBody body: kotlin.collections.List<User>
+        @ApiParam(value = "List of user object", required = true) @Valid @RequestBody body: kotlin.collections.List<@Valid User>
     ): ResponseEntity<Unit> {
         return ResponseEntity(service.createUsersWithArrayInput(body), HttpStatus.valueOf(200))
     }
@@ -85,7 +87,7 @@ class UserApiController(@Autowired(required = true) val service: UserApiService)
         value = [PATH_CREATE_USERS_WITH_LIST_INPUT]
     )
     fun createUsersWithListInput(
-        @ApiParam(value = "List of user object", required = true) @Valid @RequestBody body: kotlin.collections.List<User>
+        @ApiParam(value = "List of user object", required = true) @Valid @RequestBody body: kotlin.collections.List<@Valid User>
     ): ResponseEntity<Unit> {
         return ResponseEntity(service.createUsersWithListInput(body), HttpStatus.valueOf(200))
     }

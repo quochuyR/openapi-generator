@@ -7,18 +7,18 @@ import org.springframework.http.MediaType;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.*;
-import javax.validation.Valid;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Generated;
+import jakarta.annotation.Generated;
 
 /**
  * A delegate to be called by the {@link StoreApiController}}.
  * Implement this interface with a {@link org.springframework.stereotype.Service} annotated class.
  */
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public interface StoreApiDelegate {
 
     default Optional<NativeWebRequest> getRequest() {
@@ -46,7 +46,7 @@ public interface StoreApiDelegate {
      * @return successful operation (status code 200)
      * @see StoreApi#getInventory
      */
-    default Map<String, Integer> getInventory() {
+    default @Valid Map<String, Integer> getInventory() {
         throw new IllegalArgumentException("Not implemented");
 
     }
@@ -61,11 +61,11 @@ public interface StoreApiDelegate {
      *         or Order not found (status code 404)
      * @see StoreApi#getOrderById
      */
-    default Order getOrderById(Long orderId) {
+    default @Valid Order getOrderById(Long orderId) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"petId\" : 6, \"quantity\" : 1, \"id\" : 0, \"shipDate\" : \"2000-01-23T04:56:07.000+00:00\", \"complete\" : false, \"status\" : \"placed\" }";
+                    String exampleString = "{ \"id\" : 0, \"petId\" : 6, \"quantity\" : 1, \"shipDate\" : \"2000-01-23T04:56:07.000+00:00\", \"status\" : \"placed\", \"complete\" : false }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }
@@ -89,11 +89,11 @@ public interface StoreApiDelegate {
      *         or Invalid Order (status code 400)
      * @see StoreApi#placeOrder
      */
-    default Order placeOrder(Order order) {
+    default @Valid Order placeOrder(Order order) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {
                 if (mediaType.isCompatibleWith(MediaType.valueOf("application/json"))) {
-                    String exampleString = "{ \"petId\" : 6, \"quantity\" : 1, \"id\" : 0, \"shipDate\" : \"2000-01-23T04:56:07.000+00:00\", \"complete\" : false, \"status\" : \"placed\" }";
+                    String exampleString = "{ \"id\" : 0, \"petId\" : 6, \"quantity\" : 1, \"shipDate\" : \"2000-01-23T04:56:07.000+00:00\", \"status\" : \"placed\", \"complete\" : false }";
                     ApiUtil.setExampleResponse(request, "application/json", exampleString);
                     break;
                 }

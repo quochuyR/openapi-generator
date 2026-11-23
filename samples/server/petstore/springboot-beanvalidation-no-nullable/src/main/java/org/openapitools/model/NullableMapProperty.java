@@ -1,30 +1,26 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import org.springframework.lang.Nullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-
-
-import java.util.*;
-import javax.annotation.Generated;
 
 /**
  * NullableMapProperty
  */
 
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class NullableMapProperty {
 
-  @Valid
   private @Nullable Map<String, String> languageValues;
 
   public NullableMapProperty languageValues(@Nullable Map<String, String> languageValues) {
@@ -45,12 +41,13 @@ public class NullableMapProperty {
    * @return languageValues
    */
   
-  @ApiModelProperty(value = "")
+  @Schema(name = "languageValues", requiredMode = Schema.RequiredMode.NOT_REQUIRED, nullable = true)
   @JsonProperty("languageValues")
   public @Nullable Map<String, String> getLanguageValues() {
     return languageValues;
   }
 
+  @JsonProperty("languageValues")
   public void setLanguageValues(@Nullable Map<String, String> languageValues) {
     this.languageValues = languageValues;
   }
@@ -86,10 +83,7 @@ public class NullableMapProperty {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

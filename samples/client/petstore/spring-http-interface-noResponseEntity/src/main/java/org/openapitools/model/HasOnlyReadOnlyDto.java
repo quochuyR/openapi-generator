@@ -1,29 +1,28 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import jakarta.validation.constraints.NotNull;
-
-
-import java.util.*;
 import jakarta.annotation.Generated;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 /**
  * HasOnlyReadOnlyDto
  */
 
 @JsonTypeName("hasOnlyReadOnly")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class HasOnlyReadOnlyDto {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String bar;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String foo;
 
   public HasOnlyReadOnlyDto bar(@Nullable String bar) {
@@ -35,12 +34,12 @@ public class HasOnlyReadOnlyDto {
    * Get bar
    * @return bar
    */
-  
   @JsonProperty("bar")
   public @Nullable String getBar() {
     return bar;
   }
 
+  @JsonProperty("bar")
   public void setBar(@Nullable String bar) {
     this.bar = bar;
   }
@@ -54,12 +53,12 @@ public class HasOnlyReadOnlyDto {
    * Get foo
    * @return foo
    */
-  
   @JsonProperty("foo")
   public @Nullable String getFoo() {
     return foo;
   }
 
+  @JsonProperty("foo")
   public void setFoo(@Nullable String foo) {
     this.foo = foo;
   }
@@ -97,10 +96,7 @@ public class HasOnlyReadOnlyDto {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
 }
 

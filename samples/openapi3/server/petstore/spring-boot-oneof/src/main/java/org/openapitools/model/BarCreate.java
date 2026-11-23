@@ -1,25 +1,23 @@
 package org.openapitools.model;
 
-import java.net.URI;
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.Objects;
 import org.openapitools.model.Entity;
 import org.openapitools.model.FooRefOrValue;
 import org.springframework.lang.Nullable;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-
-import java.util.*;
-import javax.annotation.Generated;
 
 /**
  * BarCreate
@@ -27,13 +25,16 @@ import javax.annotation.Generated;
 
 
 @JsonTypeName("Bar_Create")
-@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.21.0-SNAPSHOT")
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", comments = "Generator version: 7.28.0-SNAPSHOT")
 public class BarCreate extends Entity {
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String barPropA;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable String fooPropB;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private @Nullable FooRefOrValue foo;
 
   public BarCreate() {
@@ -63,6 +64,7 @@ public class BarCreate extends Entity {
     return barPropA;
   }
 
+  @JsonProperty("barPropA")
   public void setBarPropA(@Nullable String barPropA) {
     this.barPropA = barPropA;
   }
@@ -83,6 +85,7 @@ public class BarCreate extends Entity {
     return fooPropB;
   }
 
+  @JsonProperty("fooPropB")
   public void setFooPropB(@Nullable String fooPropB) {
     this.fooPropB = fooPropB;
   }
@@ -103,6 +106,7 @@ public class BarCreate extends Entity {
     return foo;
   }
 
+  @JsonProperty("foo")
   public void setFoo(@Nullable FooRefOrValue foo) {
     this.foo = foo;
   }
@@ -169,10 +173,7 @@ public class BarCreate extends Entity {
    * (except the first line).
    */
   private String toIndentedString(@Nullable Object o) {
-    if (o == null) {
-      return "null";
-    }
-    return o.toString().replace("\n", "\n    ");
+    return o == null ? "null" : o.toString().replace("\n", "\n    ");
   }
   
   public static class Builder extends Entity.Builder {

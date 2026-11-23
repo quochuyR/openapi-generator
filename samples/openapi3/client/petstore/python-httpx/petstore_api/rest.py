@@ -119,7 +119,7 @@ class RESTClientObject:
             )
 
         post_params = post_params or {}
-        headers = headers or {}
+        headers = httpx.Headers(headers or {})
         timeout = _request_timeout or 5 * 60
 
         if 'Content-Type' not in headers:
@@ -137,6 +137,8 @@ class RESTClientObject:
             if re.search('json', headers['Content-Type'], re.IGNORECASE):
                 if body is not None:
                     args["json"] = body
+                if body is None and post_params:
+                    args["json"] = dict(post_params)
             elif headers['Content-Type'] == 'application/x-www-form-urlencoded':  # noqa: E501
                 args["data"] = dict(post_params)
             elif headers['Content-Type'] == 'multipart/form-data':
